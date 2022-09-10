@@ -15,7 +15,7 @@ import {URL_USER_SVC} from "../configs";
 import {STATUS_CODE_CONFLICT, STATUS_CODE_CREATED} from "../constants";
 import {Link} from "react-router-dom";
 
-function LoginPage() {
+function QuestionSelectionPage() {
     // const [username, setUsername] = useState("")
     // const [password, setPassword] = useState("")
     // const [isDialogOpen, setIsDialogOpen] = useState(false)
@@ -66,4 +66,4 @@ function LoginPage() {
     )
 }
 
-export default LoginPage;
+export default QuestionSelectionPage;
