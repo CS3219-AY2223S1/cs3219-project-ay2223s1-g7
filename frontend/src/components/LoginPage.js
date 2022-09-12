@@ -12,12 +12,14 @@ import {
 import {useState} from "react";
 import axios from "axios";
 import {URL_USER_SVC} from "../configs";
-import {STATUS_CODE_CONFLICT, STATUS_CODE_CREATED} from "../constants";
-import {Link} from "react-router-dom";
+import {STATUS_CODE_CONFLICT, STATUS_CODE_CREATED, STATUS_CODE_OK} from "../constants";
+import {Link, useNavigate} from "react-router-dom";
 
 function LoginPage() {
-    const [username, setUsername] = useState("")
-    const [password, setPassword] = useState("")
+    const navigate = useNavigate();
+
+    const [username, setUsername] = useState("users789")
+    const [password, setPassword] = useState("789")
     const [isDialogOpen, setIsDialogOpen] = useState(false)
     const [dialogTitle, setDialogTitle] = useState("")
     const [dialogMsg, setDialogMsg] = useState("")
@@ -34,11 +36,34 @@ function LoginPage() {
                 }
             })
         if (res && res.status === STATUS_CODE_CREATED) {
+
+            createCookieInHour(res.data.token);
+
             setSuccessDialog('Successfully logged in')
             setIsLoginSuccess(true)
         }
     }
+    const handleAuth = async () => {
+        const token = document.cookie.replace(/(?:(?:^|.*;\s*)jwt_token\s*\=\s*([^;]*).*$)|^.*$/, "$1");
+        console.log(token)
+        const res = await axios.post(URL_USER_SVC + '/authenticate', {token})
+            .catch((err) => {
+                // setIsLoginSuccess(false)
+                console.log(err)
 
+                if (err.response.status === STATUS_CODE_CONFLICT) {
+                    setErrorDialog('Invalid token!')
+                } else {
+                    setErrorDialog('Please try again later')
+                }
+            })
+        if (res && res.status === STATUS_CODE_OK) {
+            console.log("Auth")
+
+            setIsDialogOpen(false)
+            navigate("/home")
+        }
+    }
     const closeDialog = () => setIsDialogOpen(false)
 
     const setSuccessDialog = (msg) => {
@@ -51,6 +76,12 @@ function LoginPage() {
         setIsDialogOpen(true)
         setDialogTitle('Error')
         setDialogMsg(msg)
+    }
+
+    const createCookieInHour = (cookieValue) => {
+        let date = new Date();
+        date.setTime(date.getTime()+(60*60*1000));
+        document.cookie = "jwt_token" + "=" + cookieValue + ";expires=" +date.toGMTString();
     }
 
     return (
@@ -86,7 +117,7 @@ function LoginPage() {
                 </DialogContent>
                 <DialogActions>
                     {isLoginSuccess
-                        ? <Button component={Link} to="/home">Proceed</Button>
+                        ? <Button onClick={handleAuth}>Proceed</Button>
                         : <Button onClick={closeDialog}>Done</Button>
                     }
                 </DialogActions>

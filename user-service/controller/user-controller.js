@@ -1,5 +1,5 @@
-import jwt from 'jsonwebtoken'
-import { ormCreateUser as _createUser, ormLoginUser as _loginUser, ormSearchUser as _searchUser} from '../model/user-orm.js'
+import { ormCreateUser as _createUser, ormLoginUser as _loginUser, ormSearchUser as _searchUser,
+    ormIssueJWT as _issueJWT, ormAddBlacklist as _addBlackList, ormCheckValidToken as _checkValidToken} from '../model/user-orm.js'
 
 
 export async function createUser(req, res) {
@@ -26,16 +26,21 @@ export async function loginUser(req, res) {
         const { username, password } = req.body;
 
         if (username && password) {
-            const user = await _searchUser(username);
             const resp = await _loginUser(username, password);
             if (resp.err) {
                 return res.status(409).json({message: 'Invalid credentials!'});
             } else {
-                console.log(`Login successfully!`, user._id)
-                return res.status(201).json({
-                    token: generateToken(user._id),
-                    message: `Login successfully!`
-                });
+
+                const token = await _issueJWT(username);
+                if (token.err) {
+                    return res.status(409).json({message: 'Token already exists'});
+                } else {
+                    console.log(`Login successfully!`, username);
+                    return res.status(201).json({
+                        token: token,
+                        message: `Login successfully!`
+                    });                
+                }                
             }
         } else {
             return res.status(400).json({message: 'Username and/or Password are missing!'});
@@ -45,9 +50,41 @@ export async function loginUser(req, res) {
     }
 }
 
-export function generateToken(id) {
-    //add SECRET_KEY in env file
-    return jwt.sign({ id }, process.env.SECRET_KEY, {
-        expiresIn: '1d',
-    })
+
+export async function logoutUser(req, res) {
+    try {
+        const {token} = req.body;
+
+        const resp = await _addBlackList(token);
+        if (resp.err) {
+            return res.status(409).json({message: 'Unable to add to blacklist'});
+        } else {
+            return res.status(200).json({message: `Logout successful`});
+        }
+  
+    } catch (err) {
+       return res.status(500).json({message: 'Database failure when logging in!'})
+    }
 }
+
+
+export async function authUser(req, res) {
+    try {
+        const {token} = req.body;
+
+        if (!token) {
+            return res.status(409).json({message: 'No token provided'});
+        } 
+        const resp = await _checkValidToken(token);
+        if (resp.err) {
+            return res.status(409).json({message: 'Invalid Token'});
+        } else {
+            return res.status(200).json({message: `Login successful`});
+        } 
+    } catch (err) {
+        return res.status(500).json({message: 'Database failure when logging in!'})
+    }
+}
+
+
+

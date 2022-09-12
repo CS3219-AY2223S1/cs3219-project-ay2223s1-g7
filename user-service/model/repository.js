@@ -1,5 +1,8 @@
 import UserModel from './user-model.js';
+import BlackListModel from './blacklist-model.js';
+
 import 'dotenv/config'
+
 
 //Set up mongoose connection
 import mongoose from 'mongoose';
@@ -15,7 +18,6 @@ export async function createUser(params) {
   return new UserModel(params)
 }
 
-
 export async function checkUserInDatabase(inputUsername) { 
   return db.collection("usermodels")
     .countDocuments( { username: inputUsername } )
@@ -25,12 +27,29 @@ export async function checkUserInDatabase(inputUsername) {
       }  
       return false;
     });
-  
 }
 
 export async function findUser(inputUsername) { 
   return db.collection("usermodels")
     .findOne( { username: inputUsername } );
 }
+
+
+
+export async function createBlackList(params) { 
+  return new BlackListModel(params)
+}
+
+export async function checkBlackList(token) { 
+  return db.collection("blacklistmodels")
+  .countDocuments({ jwt_token: token }, { limit: 1 }) 
+  .then(num => {
+    if (num > 0) {
+      return true;
+    }  
+    return false;
+  });
+}
+
 
 
