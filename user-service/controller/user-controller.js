@@ -46,7 +46,8 @@ export async function loginUser(req, res) {
 }
 
 export function generateToken(id) {
-    return jwt.sign({ id }, process.env.JWT_SECRET, {
+    //add SECRET_KEY in env file
+    return jwt.sign({ id }, process.env.SECRET_KEY, {
         expiresIn: '1d',
     })
 }
