@@ -27,3 +27,10 @@ export async function checkUserInDatabase(inputUsername) {
     });
   
 }
+
+export async function findUser(inputUsername) { 
+  return db.collection("usermodels")
+    .findOne( { username: inputUsername } );
+}
+
+

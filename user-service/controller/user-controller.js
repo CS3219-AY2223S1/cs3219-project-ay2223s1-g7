@@ -1,11 +1,12 @@
-import { ormCreateUser as _createUser } from '../model/user-orm.js'
+import jwt from 'jsonwebtoken'
+import { ormCreateUser as _createUser, ormLoginUser as _loginUser, ormSearchUser as _searchUser} from '../model/user-orm.js'
+
 
 export async function createUser(req, res) {
     try {
         const { username, password } = req.body;
         if (username && password) {
             const resp = await _createUser(username, password);
-            console.log(resp);
             if (resp.err) {
                 return res.status(409).json({message: 'Could not create a new user!'});
             } else {
@@ -18,4 +19,34 @@ export async function createUser(req, res) {
     } catch (err) {
         return res.status(500).json({message: 'Database failure when creating new user!'})
     }
+}
+
+export async function loginUser(req, res) {
+    try {
+        const { username, password } = req.body;
+
+        if (username && password) {
+            const user = await _searchUser(username);
+            const resp = await _loginUser(username, password);
+            if (resp.err) {
+                return res.status(409).json({message: 'Invalid credentials!'});
+            } else {
+                console.log(`Login successfully!`, user._id)
+                return res.status(201).json({
+                    token: generateToken(user._id),
+                    message: `Login successfully!`
+                });
+            }
+        } else {
+            return res.status(400).json({message: 'Username and/or Password are missing!'});
+        }
+    } catch (err) {
+        return res.status(500).json({message: 'Database failure when logging in!'})
+    }
+}
+
+export function generateToken(id) {
+    return jwt.sign({ id }, process.env.JWT_SECRET, {
+        expiresIn: '1d',
+    })
 }
