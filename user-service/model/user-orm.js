@@ -1,13 +1,8 @@
-import { checkUserInDatabase, createUser } from './repository.js';
+import { createUser } from './repository.js';
 
 //need to separate orm functions from repository to decouple business logic from persistence
 export async function ormCreateUser(username, password) {
-
     try {
-        const isInDb = await checkUserInDatabase(username) 
-        if (isInDb ) {
-            throw new Error("Duplicate user")
-        }
         const newUser = await createUser({username, password});
         newUser.save();
         return true;
