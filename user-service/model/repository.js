@@ -15,3 +15,15 @@ export async function createUser(params) {
   return new UserModel(params)
 }
 
+
+export async function checkUserInDatabase(inputUsername) { 
+  return db.collection("usermodels")
+    .countDocuments( { username: inputUsername } )
+    .then(num => {
+      if (num > 0) {
+        return true;
+      }  
+      return false;
+    });
+  
+}
