@@ -4,6 +4,7 @@ import SignupPage from './components/SignupPage';
 import LoginPage from './components/LoginPage';
 import QuestionSelectionPage from './components/QuestionSelectionPage'
 import {Box} from "@mui/material";
+import QuestionSelectionPage from './components/QuestionSelectionPage'
 
 function App() {
     return (
