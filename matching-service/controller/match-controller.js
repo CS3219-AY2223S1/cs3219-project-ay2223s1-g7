@@ -1,4 +1,4 @@
-import { ormStorePendingMatch, ormQueryPendingMatch } from '../model/match-orm.js'
+import { ormStorePendingMatch, ormQueryPendingMatch, ormRemoveMatch } from '../model/match-orm.js'
 
 
 export async function connectMatch(socket, username, difficulty) {
@@ -13,6 +13,7 @@ export async function connectMatch(socket, username, difficulty) {
             let pendingUser = pendingMatchUser[0].username
             roomName = roomName + pendingUser
             console.log("matching", pendingUser, username)
+            await ormRemoveMatch(pendingUser, difficulty)
         }
         return roomName
         

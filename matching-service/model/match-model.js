@@ -4,7 +4,8 @@ let PendingMatchModelSchema = new Schema({
     username: {
         type: String,
         required: true,
-        unique: true,
+        
+        // unique: true,
     },
     difficulty: {
         type: String,

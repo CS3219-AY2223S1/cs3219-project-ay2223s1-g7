@@ -16,5 +16,10 @@ export async function storePendingMatch(params) {
 }
 
 export async function queryPendingMatches(params) {
-  return PendingMatchModel.find(params)
+  let match = PendingMatchModel.find(params)
+  return match
+}
+
+export async function removeMatch(params) {
+  return PendingMatchModel.deleteOne(params)
 }
