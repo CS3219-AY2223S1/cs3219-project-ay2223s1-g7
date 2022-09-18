@@ -37,7 +37,7 @@ function LoginPage() {
             })
         if (res && res.status === STATUS_CODE_CREATED) {
 
-            createCookieInHour(res.data.token);
+            createCookieInHour(res.data.token, username);
 
             setSuccessDialog('Successfully logged in')
             setIsLoginSuccess(true)
@@ -78,10 +78,11 @@ function LoginPage() {
         setDialogMsg(msg)
     }
 
-    const createCookieInHour = (cookieValue) => {
+    const createCookieInHour = (cookieValue, username) => {
         let date = new Date();
         date.setTime(date.getTime()+(60*60*1000));
         document.cookie = "jwt_token" + "=" + cookieValue + ";expires=" +date.toGMTString();
+        document.cookie = "user" + "=" + username + ";expires=" +date.toGMTString();
     }
 
     return (

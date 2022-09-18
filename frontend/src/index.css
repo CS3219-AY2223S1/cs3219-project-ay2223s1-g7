@@ -50,3 +50,14 @@ code {
 .header li:hover {
   background-color: #777;
 }
+
+.home {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  align-items: center;
+}
+
+.settings-button {
+  width: fit-content;
+}
