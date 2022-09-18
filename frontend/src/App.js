@@ -3,6 +3,7 @@ import Header from './components/Header'
 import SignupPage from './components/SignupPage';
 import LoginPage from './components/LoginPage';
 import QuestionSelectionPage from './components/QuestionSelectionPage'
+import LoadingPage from './components/LoadingPage'
 import {Box} from "@mui/material";
 
 function App() {
@@ -18,6 +19,7 @@ function App() {
                         <Route path="/signup" element={<SignupPage/>}/>
                         <Route path="/login" element={<LoginPage/>}/>
                         <Route path="/home" element={<QuestionSelectionPage/>}/>
+                        <Route path="/loading" element={<LoadingPage/>}/>
                     </Routes>
                 </Router>
             </Box>
