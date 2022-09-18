@@ -1,6 +1,6 @@
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
-import { checkUserInDatabase, createUser, findUser,checkBlackList, createBlackList} from './repository.js';
+import { checkUserInDatabase, createUser, findUser, deleteUser, checkBlackList, createBlackList} from './repository.js';
 
 //need to separate orm functions from repository to decouple business logic from persistence
 export async function ormCreateUser(username, password) {
@@ -48,6 +48,21 @@ export async function ormLoginUser(username, password) {
             return true;
         } else {
             throw new Error("Invalid credentials")
+        }        
+    } catch (err) {
+        console.log('ERROR: Could not login');
+        return { err };
+    }
+}
+
+export async function ormDeleteUser(username) {
+
+    try {
+        const user = await deleteUser(username) 
+        if (user) {
+            return true;
+        } else {
+            throw new Error("Invalid deletion")
         }        
     } catch (err) {
         console.log('ERROR: Could not login');

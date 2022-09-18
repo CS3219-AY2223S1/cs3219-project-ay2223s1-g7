@@ -1,4 +1,4 @@
-import { ormCreateUser as _createUser, ormLoginUser as _loginUser, ormSearchUser as _searchUser,
+import { ormCreateUser as _createUser, ormLoginUser as _loginUser, ormSearchUser as _searchUser, ormDeleteUser as _deleteUser,
     ormIssueJWT as _issueJWT, ormAddBlacklist as _addBlackList, ormCheckValidToken as _checkValidToken} from '../model/user-orm.js'
 
 
@@ -61,6 +61,27 @@ export async function logoutUser(req, res) {
         } else {
             return res.status(200).json({message: `Logout successful`});
         }
+  
+    } catch (err) {
+       return res.status(500).json({message: 'Database failure when logging in!'})
+    }
+}
+
+export async function deleteUser(req, res) {
+    try {
+        const {username, token} = req.body;
+
+        const resp = await _addBlackList(token);
+        if (resp.err) {
+            return res.status(409).json({message: 'Unable to add to blacklist'});
+        }
+
+        const deleteResp = await _deleteUser(username);
+        if (deleteResp.err) {
+            return res.status(409).json({message: 'Unable to delete User'});
+        }
+
+        return res.status(200).json({message: `Delete successful`});
   
     } catch (err) {
        return res.status(500).json({message: 'Database failure when logging in!'})

@@ -34,7 +34,10 @@ export async function findUser(inputUsername) {
     .findOne( { username: inputUsername } );
 }
 
-
+export async function deleteUser(inputUsername) { 
+  return db.collection("usermodels")
+    .findOneAndDelete( { username: inputUsername } );
+}
 
 export async function createBlackList(params) { 
   return new BlackListModel(params)
