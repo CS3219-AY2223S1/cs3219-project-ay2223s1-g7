@@ -1,2 +1,4 @@
 node_modules
 .env
+frontend/my-app/
+user-service/.env.bak
