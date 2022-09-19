@@ -61,7 +61,8 @@ function LoginPage() {
             console.log("Auth")
 
             setIsDialogOpen(false)
-            navigate("/home")
+            console.log('navigated to home');
+            window.location.href = "http://localhost:3000/home"
         }
     }
     const closeDialog = () => setIsDialogOpen(false)

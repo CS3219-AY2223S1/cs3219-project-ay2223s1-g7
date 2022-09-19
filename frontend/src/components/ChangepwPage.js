@@ -44,7 +44,7 @@ function ChangepwPage() {
         }
     }
 
-    const toLogin = () => navigate('/login')
+    const toLogin = () => window.location.href="http://localhost:3000/login"
 
     const closeDialog = () => setIsDialogOpen(false)
 
