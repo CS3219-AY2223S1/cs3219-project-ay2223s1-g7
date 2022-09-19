@@ -6,7 +6,7 @@ app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
 app.use(cors()) // config cors so that front-end can use
 app.options('*', cors())
-import { createUser, loginUser, logoutUser, authUser, deleteUser} from './controller/user-controller.js';
+import { createUser, loginUser, logoutUser, authUser, deleteUser, changepwUser} from './controller/user-controller.js';
 
 const router = express.Router()
 
@@ -16,6 +16,7 @@ router.post('/', createUser)
 router.post('/login', loginUser)
 router.post('/logout', logoutUser)
 router.post('/delete', deleteUser)
+router.post('/changepw', changepwUser)
 router.post('/authenticate', authUser)
 
 

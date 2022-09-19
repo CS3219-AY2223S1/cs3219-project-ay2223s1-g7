@@ -39,6 +39,11 @@ export async function deleteUser(inputUsername) {
     .findOneAndDelete( { username: inputUsername } );
 }
 
+export async function changepwUser(inputUsername, newPassword) { 
+  return db.collection("usermodels")
+    .findOneAndUpdate( { username: inputUsername }, {$set: {password: newPassword}}, {returnNewDocument:true} );
+}
+
 export async function createBlackList(params) { 
   return new BlackListModel(params)
 }
