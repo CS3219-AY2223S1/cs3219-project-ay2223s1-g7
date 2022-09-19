@@ -25,15 +25,38 @@ const io = new Server(
     }
 );
 
+function deleteRoom(roomName) {
+    if (io.sockets.adapter.rooms.get(roomName)?.size < 2) {
+        console.log("failed to match")
+        io.to(roomName).emit("matchFail")
+    }
+}
+
+
 io.on('connection', async (socket) => {
     let query = socket.handshake.query
+    if (query.username.length == 0 || query.difficulty.length == 0) {
+        console.log("missing username and/or difficulty")
+        socket.disconnect()
+        return
+    }
     console.log(`A user connected ${socket.id} ${query.username} ${query.difficulty}`)
-    let roomName = await connectMatch(socket, query.username, query.difficulty)
-    socket.join(roomName)
+    
+    let joinRoom = (roomName) => {
+        socket.join(roomName)
+    }
 
-    socket.on('send_message', (data) => {
-        io.to(roomName).emit("received_message", data);
-    })
+    let setUpMessage = (roomName) => {
+        if (io.sockets.adapter.rooms.get(roomName)?.size == 2) {
+            io.to(roomName).emit("matchSuccess", roomName)
+        }
+        socket.on('send_message', (data) => {
+            io.to(roomName).emit("received_message", data);
+        })
+    }
+
+    await connectMatch(deleteRoom, joinRoom, setUpMessage, query.username, query.difficulty)
+
     //Whenever someone disconnects this piece of code executed
     socket.on('disconnect', () => {
         console.log('A user disconnected')

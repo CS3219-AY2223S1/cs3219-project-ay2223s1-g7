@@ -9,17 +9,17 @@ import {
     TextField,
     Typography
 } from "@mui/material";
-import {useState} from "react";
+import { useState } from "react";
 import axios from "axios";
-import {URL_USER_SVC} from "../configs";
-import {STATUS_CODE_CONFLICT, STATUS_CODE_CREATED, STATUS_CODE_OK} from "../constants";
-import {Link, useNavigate} from "react-router-dom";
+import { URL_USER_SVC } from "../configs";
+import { STATUS_CODE_CONFLICT, STATUS_CODE_CREATED, STATUS_CODE_OK } from "../constants";
+import { Link, useNavigate } from "react-router-dom";
 
 function LoginPage() {
     const navigate = useNavigate();
 
-    const [username, setUsername] = useState("users789")
-    const [password, setPassword] = useState("789")
+    const [username, setUsername] = useState("")
+    const [password, setPassword] = useState("")
     const [isDialogOpen, setIsDialogOpen] = useState(false)
     const [dialogTitle, setDialogTitle] = useState("")
     const [dialogMsg, setDialogMsg] = useState("")
@@ -46,7 +46,7 @@ function LoginPage() {
     const handleAuth = async () => {
         const token = document.cookie.replace(/(?:(?:^|.*;\s*)jwt_token\s*\=\s*([^;]*).*$)|^.*$/, "$1");
         console.log(token)
-        const res = await axios.post(URL_USER_SVC + '/authenticate', {token})
+        const res = await axios.post(URL_USER_SVC + '/authenticate', { token })
             .catch((err) => {
                 // setIsLoginSuccess(false)
                 console.log(err)
@@ -80,9 +80,9 @@ function LoginPage() {
 
     const createCookieInHour = (cookieValue, username) => {
         let date = new Date();
-        date.setTime(date.getTime()+(60*60*1000));
-        document.cookie = "jwt_token" + "=" + cookieValue + ";expires=" +date.toGMTString();
-        document.cookie = "user" + "=" + username + ";expires=" +date.toGMTString();
+        date.setTime(date.getTime() + (60 * 60 * 1000));
+        document.cookie = "jwt_token=" + cookieValue + ";expires=" + date.toGMTString();
+        document.cookie = "user=" + username + ";expires=" + date.toGMTString();
     }
 
     return (
@@ -93,7 +93,7 @@ function LoginPage() {
                 variant="standard"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                sx={{marginBottom: "1rem"}}
+                sx={{ marginBottom: "1rem" }}
                 autoFocus
             />
             <TextField
@@ -102,7 +102,7 @@ function LoginPage() {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                sx={{marginBottom: "2rem"}}
+                sx={{ marginBottom: "2rem" }}
             />
             <Box display={"flex"} flexDirection={"row"} justifyContent={"flex-end"}>
                 <Button variant={"outlined"} onClick={handleLogin}>Login</Button>
