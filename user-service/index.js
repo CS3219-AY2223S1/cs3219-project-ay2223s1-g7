@@ -10,6 +10,7 @@ import { createUser, loginUser, logoutUser, authUser, deleteUser} from './contro
 
 const router = express.Router()
 
+
 // Controller will contain all the User-defined Routes
 router.get('/', (_, res) => res.send('Hello World from user-service'))
 router.post('/', createUser)
@@ -17,6 +18,7 @@ router.post('/login', loginUser)
 router.post('/logout', logoutUser)
 router.post('/delete', deleteUser)
 router.post('/authenticate', authUser)
+
 
 
 app.use('/api/user', router).all((_, res) => {

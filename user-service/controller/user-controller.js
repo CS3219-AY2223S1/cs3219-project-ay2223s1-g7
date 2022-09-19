@@ -92,12 +92,14 @@ export async function deleteUser(req, res) {
 export async function authUser(req, res) {
     try {
         const {token} = req.body;
+        console.log("TEST AUTH")
 
         if (!token) {
             return res.status(409).json({message: 'No token provided'});
         } 
         const resp = await _checkValidToken(token);
         if (resp.err) {
+
             return res.status(409).json({message: 'Invalid Token'});
         } else {
             return res.status(200).json({message: `Login successful`});
