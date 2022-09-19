@@ -64,7 +64,13 @@ function Header() {
         </a> 
         </li></Fragment>);
     
-    const authLinks = (<Fragment><li>
+    const authLinks = (<Fragment>
+      <li>
+      <a href="/home">
+        <FaSignInAlt /> Home
+      </a>
+      </li>
+      <li>
       <a href="/settings">
         <FaSignInAlt /> Settings
       </a>
