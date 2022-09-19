@@ -8,13 +8,14 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { URL_USER_SVC, URL_MATCH_SVC } from "../configs";
 import { STATUS_CODE_CONFLICT, STATUS_CODE_CREATED } from "../constants";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { io } from "socket.io-client"
 import { getCookie, setCookie } from "../utils/cookies"
 
 // const socket = io(URL_MATCH_SVC)
 
 function QuestionSelectionPage() {
+    const navigate = useNavigate()
     const [difficulty, setDifficulty] = useState("")
     const [socket, setSocket] = useState(io())
     const [text, setText] = useState("")
@@ -39,7 +40,6 @@ function QuestionSelectionPage() {
         return ''; // Legacy method for cross browser support
     };
     useEffect(() => {
-
         socket.on('connection')
 
         socket.on('matchFail', () => {
@@ -69,6 +69,8 @@ function QuestionSelectionPage() {
             },
             closeOnBeforeunload: false
         }))
+
+        navigate("/loading")
     }
 
     const handleTextChange = (event) => {

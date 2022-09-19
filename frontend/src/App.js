@@ -4,7 +4,7 @@ import SignupPage from './components/SignupPage';
 import LoginPage from './components/LoginPage';
 import QuestionSelectionPage from './components/QuestionSelectionPage'
 import SettingsPage from './components/SettingsPage'
-
+import LoadingPage from './components/LoadingPage'
 import {Box} from "@mui/material";
 
 function App() {
@@ -21,6 +21,7 @@ function App() {
                         <Route path="/login" element={<LoginPage/>}/>
                         <Route path="/settings" element={<SettingsPage/>}/>
                         <Route path="/home" element={<QuestionSelectionPage/>}/>
+                        <Route path="/loading" element={<LoadingPage/>}/>
                     </Routes>
                 </Router>
             </Box>
