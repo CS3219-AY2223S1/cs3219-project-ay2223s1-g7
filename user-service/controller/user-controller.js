@@ -1,5 +1,5 @@
 import { ormCreateUser as _createUser, ormLoginUser as _loginUser, ormSearchUser as _searchUser, ormDeleteUser as _deleteUser,
-    ormIssueJWT as _issueJWT, ormAddBlacklist as _addBlackList, ormCheckValidToken as _checkValidToken} from '../model/user-orm.js'
+    ormIssueJWT as _issueJWT, ormAddBlacklist as _addBlackList, ormChangePwUser as _changepwUser, ormCheckValidToken as _checkValidToken} from '../model/user-orm.js'
 
 
 export async function createUser(req, res) {
@@ -85,6 +85,37 @@ export async function deleteUser(req, res) {
   
     } catch (err) {
        return res.status(500).json({message: 'Database failure when logging in!'})
+    }
+}
+
+export async function changepwUser(req, res) {
+
+    try {
+        const {username, oldPassword, newPassword, token} = req.body;
+        if (username && oldPassword && newPassword) {
+            const resp = await _loginUser(username, oldPassword);
+            if (resp.err) {
+                return res.status(409).json({message: 'Invalid credentials!'});
+            } else {
+                const blacklistResp = await _addBlackList(token);
+                if (blacklistResp.err) {
+                    return res.status(409).json({message: 'Unable to add to blacklist'});
+                }
+                const changeResp = await _changepwUser(username, newPassword);
+                if (changeResp.err) {
+                    return res.status(409).json({message: 'Unable to change password'});
+                } else {
+                    console.log(`Change password successfully!`, username);
+                    return res.status(201).json({
+                        message: `Change password successfully!`
+                    });                
+                }                
+            }
+        } else {
+            return res.status(400).json({message: 'Missing information!'});
+        }
+    } catch (err) {
+        return res.status(500).json({message: 'Database failure when logging in!'})
     }
 }
 

@@ -1,6 +1,6 @@
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
-import { checkUserInDatabase, createUser, findUser, deleteUser, checkBlackList, createBlackList} from './repository.js';
+import { checkUserInDatabase, createUser, findUser, deleteUser, changepwUser, checkBlackList, createBlackList} from './repository.js';
 
 //need to separate orm functions from repository to decouple business logic from persistence
 export async function ormCreateUser(username, password) {
@@ -66,6 +66,24 @@ export async function ormDeleteUser(username) {
         }        
     } catch (err) {
         console.log('ERROR: Could not login');
+        return { err };
+    }
+}
+
+export async function ormChangePwUser(username, newPassword) {
+
+    try {
+         //Hash password
+         const saltRounds = 10; // Increase according to alloted processing time, saw 20k as recommended
+         const hashedPassword = await bcrypt.hash(newPassword, saltRounds)
+        const user = await changepwUser(username, hashedPassword) 
+        if (user) {
+            return true;
+        } else {
+            throw new Error("Invalid password change")
+        }        
+    } catch (err) {
+        console.log('ERROR: Could not change password');
         return { err };
     }
 }
