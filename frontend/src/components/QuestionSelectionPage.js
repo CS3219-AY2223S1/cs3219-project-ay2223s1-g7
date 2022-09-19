@@ -4,12 +4,13 @@ import {
     TextField,
     Typography
 } from "@mui/material";
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
-import {URL_USER_SVC, URL_MATCH_SVC} from "../configs";
-import {STATUS_CODE_CONFLICT, STATUS_CODE_CREATED} from "../constants";
-import {Link} from "react-router-dom";
+import { URL_USER_SVC, URL_MATCH_SVC } from "../configs";
+import { STATUS_CODE_CONFLICT, STATUS_CODE_CREATED } from "../constants";
+import { Link } from "react-router-dom";
 import { io } from "socket.io-client"
+import { getCookie } from "../utils/cookies"
 
 // const socket = io(URL_MATCH_SVC)
 
@@ -19,6 +20,17 @@ function QuestionSelectionPage() {
     const [text, setText] = useState("")
 
     useEffect(() => {
+        window.addEventListener("beforeunload", alertUser);
+        return () => {
+            window.removeEventListener("beforeunload", alertUser);
+        };
+    }, []);
+    const alertUser = (e) => {
+        e.preventDefault();
+        e.returnValue = "";
+    };
+
+    useEffect(() => {
 
         socket.on('connection')
 
@@ -26,11 +38,11 @@ function QuestionSelectionPage() {
             setText(data)
         })
     }, [socket])
-    
+
     const handleMatching = async (difficulty) => {
         console.log(difficulty)
         setDifficulty(difficulty)
-        var username = "something"
+        let username = getCookie("user")
         setSocket(io(URL_MATCH_SVC, {
             query: {
                 "username": username,
@@ -51,7 +63,7 @@ function QuestionSelectionPage() {
             <Button variant={"contained"} color={"success"} onClick={() => handleMatching("EASY")}>EASY</Button>
             <Button variant={"contained"} color={"warning"} onClick={() => handleMatching("MEDIUM")}>MEDIUM</Button>
             <Button variant={"contained"} color={"error"} onClick={() => handleMatching("HARD")}>HARD</Button>
-            <TextField multiline rows={7} onChange={handleTextChange} value={text}/>
+            <TextField multiline rows={7} onChange={handleTextChange} value={text} />
         </Box>
     )
 }
