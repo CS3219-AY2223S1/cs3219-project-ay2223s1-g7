@@ -10,7 +10,7 @@ import { URL_USER_SVC, URL_MATCH_SVC } from "../configs";
 import { STATUS_CODE_CONFLICT, STATUS_CODE_CREATED } from "../constants";
 import { Link } from "react-router-dom";
 import { io } from "socket.io-client"
-import { getCookie } from "../utils/cookies"
+import { getCookie, setCookie } from "../utils/cookies"
 
 // const socket = io(URL_MATCH_SVC)
 
@@ -19,20 +19,39 @@ function QuestionSelectionPage() {
     const [socket, setSocket] = useState(io())
     const [text, setText] = useState("")
 
-    useEffect(() => {
-        window.addEventListener("beforeunload", alertUser);
-        return () => {
-            window.removeEventListener("beforeunload", alertUser);
-        };
-    }, []);
-    const alertUser = (e) => {
+    // useEffect(() => {
+    //     window.addEventListener("beforeunload", alertUser);
+    //     return () => {
+    //         window.removeEventListener("beforeunload", alertUser);
+    //     };
+    // }, []);
+    // const alertUser = (e) => {
+    //     e.preventDefault();
+    //     e.returnValue = "";
+    // };
+    window.onbeforeunload = (event) => {
+        const e = event || window.event;
+        // Cancel the event
         e.preventDefault();
-        e.returnValue = "";
+        if (e) {
+            e.returnValue = ''; // Legacy method for cross browser support
+        }
+        return ''; // Legacy method for cross browser support
     };
-
     useEffect(() => {
 
         socket.on('connection')
+
+        socket.on('matchFail', () => {
+            // handle match fail
+            console.log("match failed")
+        })
+
+        socket.on('matchSuccess', (roomName) => {
+            // handle match success
+            console.log("match Success")
+            setCookie("room_name", roomName, 5)
+        })
 
         socket.on("received_message", (data) => {
             setText(data)
@@ -47,7 +66,8 @@ function QuestionSelectionPage() {
             query: {
                 "username": username,
                 "difficulty": difficulty
-            }
+            },
+            closeOnBeforeunload: false
         }))
     }
 

@@ -26,7 +26,7 @@ const io = new Server(
 );
 
 function deleteRoom(roomName) {
-    if (io.sockets.adapter.rooms.get(roomName).size < 2) {
+    if (io.sockets.adapter.rooms.get(roomName)?.size < 2) {
         console.log("failed to match")
         io.to(roomName).emit("matchFail")
     }
@@ -35,6 +35,11 @@ function deleteRoom(roomName) {
 
 io.on('connection', async (socket) => {
     let query = socket.handshake.query
+    if (query.username.length == 0 || query.difficulty.length == 0) {
+        console.log("missing username and/or difficulty")
+        socket.disconnect()
+        return
+    }
     console.log(`A user connected ${socket.id} ${query.username} ${query.difficulty}`)
     
     let joinRoom = (roomName) => {
@@ -42,6 +47,9 @@ io.on('connection', async (socket) => {
     }
 
     let setUpMessage = (roomName) => {
+        if (io.sockets.adapter.rooms.get(roomName)?.size == 2) {
+            io.to(roomName).emit("matchSuccess", roomName)
+        }
         socket.on('send_message', (data) => {
             io.to(roomName).emit("received_message", data);
         })

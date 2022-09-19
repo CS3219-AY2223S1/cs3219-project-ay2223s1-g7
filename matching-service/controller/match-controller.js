@@ -16,19 +16,19 @@ function getUniqueId(str, seed = 0) {
 export async function connectMatch(deleteRoom, joinRoom, setUpMessage, username, difficulty) {
     try {
         const pendingMatchUser = await ormQueryPendingMatch(difficulty);
-        let roomName = "room-"
         if (pendingMatchUser.length == 0) {
-            roomName = roomName + getUniqueId(username)
+            let roomName = "room-" + getUniqueId(username)
             await ormStorePendingMatch(username, difficulty);
             setTimeout(async () => {
                 deleteRoom(roomName)
                 await ormRemoveMatch(username, difficulty)
             }, 30000);
             joinRoom(roomName)
+            setUpMessage(roomName)
         } else {
             // matching
             let pendingUser = pendingMatchUser[0].username
-            roomName = roomName + getUniqueId(pendingUser)
+            let roomName = "room-" + getUniqueId(pendingUser)
             console.log("matching", pendingUser, username)
             await ormRemoveMatch(pendingUser, difficulty)
             joinRoom(roomName)
