@@ -60,10 +60,15 @@ function SettingsPage() {
         setSuccessDialog('Are you sure you want to delete?')
     }
 
+    const handleChangePw = () => {
+        navigate('/changepw')
+    }
+
     return (
         <div className="home">
           
           <Button  className="settings-button" variant={"outlined"} onClick={handleDel}>Delete User</Button>
+          <Button  className="settings-button" variant={"outlined"} onClick={handleChangePw}>Change password</Button>
             
             {
             <Dialog

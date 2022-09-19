@@ -4,6 +4,8 @@ import SignupPage from './components/SignupPage';
 import LoginPage from './components/LoginPage';
 import QuestionSelectionPage from './components/QuestionSelectionPage'
 import SettingsPage from './components/SettingsPage'
+import ChangepwPage from './components/ChangepwPage'
+
 
 import {Box} from "@mui/material";
 
@@ -20,6 +22,7 @@ function App() {
                         <Route path="/signup" element={<SignupPage/>}/>
                         <Route path="/login" element={<LoginPage/>}/>
                         <Route path="/settings" element={<SettingsPage/>}/>
+                        <Route path="/changepw" element={<ChangepwPage/>}/>
                         <Route path="/home" element={<QuestionSelectionPage/>}/>
                     </Routes>
                 </Router>
