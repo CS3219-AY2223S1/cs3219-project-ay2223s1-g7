@@ -1,7 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import { createServer } from 'http';
-import { connectMatch } from './controller/match-controller.js';
+import { connectMatch, removeMatch } from './controller/match-controller.js';
 import { Server } from 'socket.io'
 
 const app = express();
@@ -17,25 +17,60 @@ app.get('/', (req, res) => {
 const httpServer = createServer(app)
 
 const io = new Server(
-    httpServer, { 
-        cors: { 
-            origin: "*", 
-            credentials: true
-        } 
+    httpServer, {
+    cors: {
+        origin: "*",
+        credentials: true
     }
+}
 );
+
+function deleteRoom(roomName) {
+    if (io.sockets.adapter.rooms.get(roomName)?.size < 2) {
+        console.log("failed to match")
+        io.to(roomName).emit("matchFail")
+    }
+}
+
 
 io.on('connection', async (socket) => {
     let query = socket.handshake.query
+    if (query.username.length == 0 || query.difficulty.length == 0) {
+        console.log("missing username and/or difficulty")
+        socket.disconnect()
+        return
+    }
     console.log(`A user connected ${socket.id} ${query.username} ${query.difficulty}`)
-    let roomName = await connectMatch(socket, query.username, query.difficulty)
-    socket.join(roomName)
 
-    socket.on('send_message', (data) => {
-        io.to(roomName).emit("received_message", data);
-    })
-    //Whenever someone disconnects this piece of code executed
+    let timer = null
+
+    let joinRoom = (roomName) => {
+        socket.join(roomName)
+        timer = setTimeout(async () => {
+            let roomSize = io.sockets.adapter.rooms.get(roomName)?.size
+            if (roomSize < 2) {
+                deleteRoom(roomName)
+                removeMatch(query.username, query.difficulty)
+            }
+        }, 30000);
+    }
+
+    let setUpMessage = (roomName) => {
+        if (io.sockets.adapter.rooms.get(roomName)?.size == 2) {
+            io.to(roomName).emit("matchSuccess", roomName)
+        }
+        socket.on('send_message', (data) => {
+            io.to(roomName).emit("received_message", data);
+        })
+    }
+
+    await connectMatch(joinRoom, setUpMessage, query.username, query.difficulty)
+
     socket.on('disconnect', () => {
+        removeMatch(query.username, query.difficulty)
+        if (timer) {
+            clearTimeout(timer)
+        }
         console.log('A user disconnected')
     })
 })

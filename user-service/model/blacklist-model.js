@@ -6,10 +6,14 @@ let BlackListSchema = new Schema({
         required: true,
         unique: true,
     },
-    createdAt: {
-        type: Date,
-        expires: 600, 
-        required: true,
+    createdDate: {
+        type: Date
+        // expireAfterSeconds: 15000, 
+        // default: Date.now,
+        // required: true,
     }
 })
+
+BlackListSchema.path('createdDate').index({ expires: 3600 }); // 1h
+
 export default mongoose.model('BlackListModel', BlackListSchema)

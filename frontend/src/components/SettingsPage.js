@@ -38,7 +38,7 @@ function SettingsPage() {
             document.cookie = "jwt_token= ; expires = Thu, 01 Jan 1970 00:00:00 GMT"
             document.cookie = "user= ; expires = Thu, 01 Jan 1970 00:00:00 GMT"
 
-            navigate("/login")
+            window.location.href="http://localhost:3000/login"
         }
     }
     
@@ -60,10 +60,15 @@ function SettingsPage() {
         setSuccessDialog('Are you sure you want to delete?')
     }
 
+    const handleChangePw = () => {
+        navigate('/changepw')
+    }
+
     return (
         <div className="home">
           
           <Button  className="settings-button" variant={"outlined"} onClick={handleDel}>Delete User</Button>
+          <Button  className="settings-button" variant={"outlined"} onClick={handleChangePw}>Change password</Button>
             
             {
             <Dialog
