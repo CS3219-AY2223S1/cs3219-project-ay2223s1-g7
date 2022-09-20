@@ -10,6 +10,7 @@ import { createUser, loginUser, logoutUser, authUser, deleteUser, changepwUser} 
 
 const router = express.Router()
 
+
 // Controller will contain all the User-defined Routes
 router.get('/', (_, res) => res.send('Hello World from user-service'))
 router.post('/', createUser)
@@ -18,6 +19,7 @@ router.post('/logout', logoutUser)
 router.post('/delete', deleteUser)
 router.post('/changepw', changepwUser)
 router.post('/authenticate', authUser)
+
 
 
 app.use('/api/user', router).all((_, res) => {

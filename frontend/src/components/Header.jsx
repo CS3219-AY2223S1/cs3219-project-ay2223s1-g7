@@ -19,18 +19,13 @@ function Header() {
   const [loggedIn, setLoggedIn] = useState(false)
 
     useEffect(() => {
-        const handleAuth = async () => {
-            const token = document.cookie.replace(/(?:(?:^|.*;\s*)jwt_token\s*\=\s*([^;]*).*$)|^.*$/, "$1");
-            console.log(token)
-            const res = await axios.post(URL_USER_SVC + '/authenticate', {token})
-                .catch((err) => {
-                    console.log(err)
-                })
-            if (res && res.status === STATUS_CODE_OK) {
-                setLoggedIn(true)
-            }
-        }
-        handleAuth();
+          // will implement something better after changing Header to a route -> useLocation, check in list of protected places
+          if (window.location.pathname === "/login" || window.location.pathname === "/signup" ) {
+              setLoggedIn(false)
+          }
+          else {
+            setLoggedIn(true)
+          }
     });
 
       const handleLogout = async () => {
@@ -46,8 +41,8 @@ function Header() {
             })
 
             if (res.status === STATUS_CODE_OK) {
-              document.cookie = "jwt_token= ; expires = Thu, 01 Jan 1970 00:00:00 GMT"
-              document.cookie = "user= ; expires = Thu, 01 Jan 1970 00:00:00 GMT"
+              // document.cookie = "jwt_token= ; expires = Thu, 01 Jan 1970 00:00:00 GMT"
+              // document.cookie = "user= ; expires = Thu, 01 Jan 1970 00:00:00 GMT"
               window.location.href="http://localhost:3000/login"
             }
           }

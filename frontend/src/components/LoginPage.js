@@ -16,8 +16,6 @@ import { STATUS_CODE_CONFLICT, STATUS_CODE_CREATED, STATUS_CODE_OK } from "../co
 import { Link, useNavigate } from "react-router-dom";
 
 function LoginPage() {
-    const navigate = useNavigate();
-
     const [username, setUsername] = useState("")
     const [password, setPassword] = useState("")
     const [isDialogOpen, setIsDialogOpen] = useState(false)
@@ -43,28 +41,6 @@ function LoginPage() {
             setIsLoginSuccess(true)
         }
     }
-    const handleAuth = async () => {
-        const token = document.cookie.replace(/(?:(?:^|.*;\s*)jwt_token\s*\=\s*([^;]*).*$)|^.*$/, "$1");
-        console.log(token)
-        const res = await axios.post(URL_USER_SVC + '/authenticate', { token })
-            .catch((err) => {
-                // setIsLoginSuccess(false)
-                console.log(err)
-
-                if (err.response.status === STATUS_CODE_CONFLICT) {
-                    setErrorDialog('Invalid token!')
-                } else {
-                    setErrorDialog('Please try again later')
-                }
-            })
-        if (res && res.status === STATUS_CODE_OK) {
-            console.log("Auth")
-
-            setIsDialogOpen(false)
-            console.log('navigated to home');
-            window.location.href = "http://localhost:3000/home"
-        }
-    }
     const closeDialog = () => setIsDialogOpen(false)
 
     const setSuccessDialog = (msg) => {
@@ -84,6 +60,11 @@ function LoginPage() {
         date.setTime(date.getTime() + (60 * 60 * 1000));
         document.cookie = "jwt_token=" + cookieValue + ";expires=" + date.toGMTString();
         document.cookie = "user=" + username + ";expires=" + date.toGMTString();
+    }
+
+    const routeToHome = () => {
+        window.location.href = "http://localhost:3000/home"
+            // navigate("/home")
     }
 
     return (
@@ -119,7 +100,8 @@ function LoginPage() {
                 </DialogContent>
                 <DialogActions>
                     {isLoginSuccess
-                        ? <Button onClick={handleAuth}>Proceed</Button>
+
+                        ? <Button onClick={routeToHome}>Proceed</Button>
                         : <Button onClick={closeDialog}>Done</Button>
                     }
                 </DialogActions>

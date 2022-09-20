@@ -116,15 +116,11 @@ export async function ormAddBlacklist(token) {
 
 export async function ormCheckValidToken(token) {
     try {
-
         const isInBlackList = await checkBlackList(token)
-
         if(isInBlackList){
             throw new Error("Invalid Token!")
         }
-
-        jwt.verify(token, process.env.SECRET_KEY)
-
+        jwt.verify(token, process.env.SECRET_KEY) // Automatically throws error if invalid
         return true;
     } catch (err) {
         throw new Error("Invalid Token!")
