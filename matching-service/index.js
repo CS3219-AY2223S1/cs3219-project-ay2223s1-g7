@@ -1,7 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import { createServer } from 'http';
-import { connectMatch } from './controller/match-controller.js';
+import { connectMatch, removeMatch } from './controller/match-controller.js';
 import { Server } from 'socket.io'
 
 const app = express();
@@ -57,8 +57,8 @@ io.on('connection', async (socket) => {
 
     await connectMatch(deleteRoom, joinRoom, setUpMessage, query.username, query.difficulty)
 
-    //Whenever someone disconnects this piece of code executed
     socket.on('disconnect', () => {
+        removeMatch(query.username, query.difficulty)
         console.log('A user disconnected')
     })
 })

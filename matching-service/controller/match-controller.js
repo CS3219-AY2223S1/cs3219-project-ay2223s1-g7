@@ -38,3 +38,11 @@ export async function connectMatch(deleteRoom, joinRoom, setUpMessage, username,
         return err
     }
 }
+
+export async function removeMatch(username, difficulty) {
+    try {
+        await ormRemoveMatch(username, difficulty)
+    } catch (err) {
+        return err
+    }
+}
