@@ -1,11 +1,14 @@
 import React from "react";
+import './Timer.css'
 
+// Maybe should use this react-countdown-circle-timer package instead of css
+// https://www.npmjs.com/package/react-countdown-circle-timer
 
 // https://stackoverflow.com/questions/40885923/countdown-timer-in-react
 export class Timer extends React.Component {
     constructor() {
         super();
-        this.state = {seconds: 30};
+        this.state = { seconds: 30 };
         this.timer = 0;
         this.startTimer = this.startTimer.bind(this);
         this.countDown = this.countDown.bind(this);
@@ -38,9 +41,24 @@ export class Timer extends React.Component {
     }
 
     render() {
+        // https://spin.atomicobject.com/2018/11/08/countdown-timer-react-typescript/
         return (
-            <div>
-                s: {this.state.seconds}
+            <div className="countdown-timer">
+                <div className="countdown-timer__circle">
+                    <svg>
+                        <circle
+                            r="24"
+                            cx="26"
+                            cy="26"
+                            style={{
+                                animation: `countdown-animation 30s linear`
+                            }}
+                        />
+                    </svg>
+                </div>
+                <div className="countdown-timer__text">
+                    {this.state.seconds}s
+                </div>
             </div>
         );
     }
