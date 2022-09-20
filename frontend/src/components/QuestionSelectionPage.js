@@ -4,12 +4,6 @@ import {
     TextField,
     Typography
 } from "@mui/material";
-import React from 'react';
-import axios from "axios";
-import {URL_USER_SVC} from "../configs";
-import {STATUS_CODE_OK, STATUS_CODE_CONFLICT} from "../constants";
-import { useState, useEffect} from "react";
-import { Navigate, useNavigate} from "react-router-dom";
 function QuestionSelectionPage(props) {
 
     return (

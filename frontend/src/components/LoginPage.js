@@ -11,13 +11,13 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 import axios from "axios";
-import {URL_USER_SVC} from "../configs";
-import {STATUS_CODE_CONFLICT, STATUS_CODE_CREATED} from "../constants";
-import {Link} from "react-router-dom";
+import { URL_USER_SVC } from "../configs";
+import { STATUS_CODE_CONFLICT, STATUS_CODE_CREATED, STATUS_CODE_OK } from "../constants";
+import { Link, useNavigate } from "react-router-dom";
 
 function LoginPage() {
-    const [username, setUsername] = useState("users789")
-    const [password, setPassword] = useState("789")
+    const [username, setUsername] = useState("")
+    const [password, setPassword] = useState("")
     const [isDialogOpen, setIsDialogOpen] = useState(false)
     const [dialogTitle, setDialogTitle] = useState("")
     const [dialogMsg, setDialogMsg] = useState("")
