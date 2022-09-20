@@ -1,7 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import { createServer } from 'http';
-import { connectMatch } from './controller/match-controller.js';
+import { connectMatch, removeMatch } from './controller/match-controller.js';
 import { Server } from 'socket.io'
 
 const app = express();
@@ -17,12 +17,12 @@ app.get('/', (req, res) => {
 const httpServer = createServer(app)
 
 const io = new Server(
-    httpServer, { 
-        cors: { 
-            origin: "*", 
-            credentials: true
-        } 
+    httpServer, {
+    cors: {
+        origin: "*",
+        credentials: true
     }
+}
 );
 
 function deleteRoom(roomName) {
@@ -41,9 +41,18 @@ io.on('connection', async (socket) => {
         return
     }
     console.log(`A user connected ${socket.id} ${query.username} ${query.difficulty}`)
-    
+
+    let timer = null
+
     let joinRoom = (roomName) => {
         socket.join(roomName)
+        timer = setTimeout(async () => {
+            let roomSize = io.sockets.adapter.rooms.get(roomName)?.size
+            if (roomSize < 2) {
+                deleteRoom(roomName)
+                removeMatch(query.username, query.difficulty)
+            }
+        }, 30000);
     }
 
     let setUpMessage = (roomName) => {
@@ -55,10 +64,13 @@ io.on('connection', async (socket) => {
         })
     }
 
-    await connectMatch(deleteRoom, joinRoom, setUpMessage, query.username, query.difficulty)
+    await connectMatch(joinRoom, setUpMessage, query.username, query.difficulty)
 
-    //Whenever someone disconnects this piece of code executed
     socket.on('disconnect', () => {
+        removeMatch(query.username, query.difficulty)
+        if (timer) {
+            clearTimeout(timer)
+        }
         console.log('A user disconnected')
     })
 })

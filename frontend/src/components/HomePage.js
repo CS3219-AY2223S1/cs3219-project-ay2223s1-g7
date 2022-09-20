@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { URL_USER_SVC, URL_MATCH_SVC } from "../configs";
 import { STATUS_CODE_CONFLICT, STATUS_CODE_CREATED } from "../constants";
 import { Link, useNavigate, useLocation } from "react-router-dom";
@@ -8,7 +8,6 @@ import QuestionSelectionPage from "./QuestionSelectionPage";
 import LoadingPage from "./LoadingPage";
 import QuestionPage from "./QuestionPage";
 
-// const socket = io(URL_MATCH_SVC)
 
 function HomePage(props) {
     const navigate = useNavigate()
@@ -17,16 +16,17 @@ function HomePage(props) {
     const [text, setText] = useState("")
     const [route, setRoute] = useState(useLocation().pathname)
 
+
     // Adds prompt before exiting/refreshing the page
     // Exiting/refreshing the page will disconnect socket
-    window.onbeforeunload = (event) => {
-        const e = event || window.event;
-        e.preventDefault();
-        if (e) {
-            e.returnValue = ''; // Legacy method for cross browser support
-        }
-        return ''; // Legacy method for cross browser support
-    };
+    // window.onbeforeunload = (event) => {
+    //     const e = event || window.event;
+    //     e.preventDefault();
+    //     if (e) {
+    //         e.returnValue = ''; // Legacy method for cross browser support
+    //     }
+    //     return ''; // Legacy method for cross browser support
+    // };
 
     useEffect(() => {
         socket.on('connection')
@@ -73,13 +73,6 @@ function HomePage(props) {
     }
 
     const handleExitToHome = async () => {
-        /* setSocket(io(URL_MATCH_SVC, {
-            query: {
-                "username": username,
-                "difficulty": difficulty
-            }
-        }))
-        */
         setText("")
         socket.disconnect()
         setRoute("/home")
