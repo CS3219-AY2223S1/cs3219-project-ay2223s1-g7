@@ -13,16 +13,12 @@ function getUniqueId(str, seed = 0) {
     return 4294967296 * (2097151 & h2) + (h1 >>> 0);
 }
 
-export async function connectMatch(deleteRoom, joinRoom, setUpMessage, username, difficulty) {
+export async function connectMatch(joinRoom, setUpMessage, username, difficulty) {
     try {
         const pendingMatchUser = await ormQueryPendingMatch(difficulty);
         if (pendingMatchUser.length == 0) {
             let roomName = "room-" + getUniqueId(username)
             await ormStorePendingMatch(username, difficulty);
-            setTimeout(async () => {
-                deleteRoom(roomName)
-                await ormRemoveMatch(username, difficulty)
-            }, 30000);
             joinRoom(roomName)
             setUpMessage(roomName)
         } else {
