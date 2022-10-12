@@ -7,7 +7,7 @@ import { Server } from 'socket.io'
 const app = express();
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
-app.use(cors()) // config cors so that front-end can use
+app.use(cors())
 app.options('*', cors())
 
 app.get('/', (req, res) => {
@@ -17,25 +17,20 @@ app.get('/', (req, res) => {
 const httpServer = createServer(app)
 
 const io = new Server(
-    httpServer, {
-    cors: {
-        origin: "*",
-        credentials: true
+    httpServer,
+    {
+        cors: {
+            origin: "*",
+            credentials: true
+        }
     }
-}
 );
 
-function deleteRoom(roomName) {
-    if (io.sockets.adapter.rooms.get(roomName)?.size < 2) {
-        console.log("failed to match")
-        io.to(roomName).emit("matchFail")
-    }
-}
 
-
-io.on('connection', async (socket) => {
+io.on('connection', (socket) => {
     let query = socket.handshake.query
-    if (query.username.length == 0 || query.difficulty.length == 0) {
+    if (query.username.length === 0 || query.difficulty.length === 0) {
+        // can check for valid username or difficulty
         console.log("missing username and/or difficulty")
         socket.disconnect()
         return
@@ -44,34 +39,37 @@ io.on('connection', async (socket) => {
 
     let timer = null
 
+    let sendMatchFail = (roomName) => {
+        if (io.sockets.adapter.rooms.get(roomName)?.size < 2) {
+            console.log("failed to match")
+            io.to(roomName).emit("matchFail")
+        }
+    }
     let joinRoom = (roomName) => {
         socket.join(roomName)
         timer = setTimeout(async () => {
             let roomSize = io.sockets.adapter.rooms.get(roomName)?.size
-            if (roomSize < 2) {
-                deleteRoom(roomName)
+            if (!isNaN(roomSize) && roomSize < 2) {
+                sendMatchFail(roomName)
                 removeMatch(query.username, query.difficulty)
             }
         }, 30000);
     }
 
     let setUpMessage = (roomName) => {
-        if (io.sockets.adapter.rooms.get(roomName)?.size == 2) {
+        if (io.sockets.adapter.rooms.get(roomName)?.size === 2) {
             io.to(roomName).emit("matchSuccess", roomName)
         }
-        socket.on('send_message', (data) => {
-            io.to(roomName).emit("received_message", data);
-        })
     }
 
-    await connectMatch(joinRoom, setUpMessage, query.username, query.difficulty)
+    connectMatch(joinRoom, setUpMessage, query.username, query.difficulty)
 
     socket.on('disconnect', () => {
         removeMatch(query.username, query.difficulty)
         if (timer) {
             clearTimeout(timer)
         }
-        console.log('A user disconnected')
+        console.log(`${query.username} disconnected`)
     })
 })
 
