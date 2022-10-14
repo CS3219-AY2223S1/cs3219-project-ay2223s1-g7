@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import { createServer } from 'http';
 import { Server } from 'socket.io'
+import { DocumentHistory } from './document-history.js'
 
 const app = express();
 app.use(express.urlencoded({ extended: true }))
@@ -12,6 +13,8 @@ app.options('*', cors())
 app.get('/', (req, res) => {
     res.send('Hello World from collaboration-service');
 });
+
+// TODO: add cookie parser to get roomname and some other info
 
 const httpServer = createServer(app)
 
@@ -25,14 +28,20 @@ const io = new Server(
     }
 );
 
+// map of documents for each room
+const documentMap = new Map()
+
 io.on('connection', async (socket) => {
     let query = socket.handshake.query
 
+    // TODO: possible to use uuid to validate room name 
     if (query.username.length === 0 || query.roomName.length === 0) {
         console.log("missing username and/or roomName")
         socket.disconnect()
         return
     }
+    socket.emit("connectSuccess")
+
     let roomName = query.roomName
 
     console.log(`A user connected ${socket.id} ${query.username} ${roomName}`)
@@ -41,22 +50,34 @@ io.on('connection', async (socket) => {
 
     // send everyone's usernames in the room
     let sockets = await io.in(roomName).fetchSockets();
-    console.log(sockets)
     let users = sockets.map(socket => socket.handshake.query.username)
     console.log(users)
     io.to(roomName).emit("joinRoomSuccess", { users })
 
-    socket.on('send_message', (data) => {
-        io.to(roomName).emit("received_message", data);
-    })
+    let document = documentMap.get(roomName)
+    if (typeof document === "undefined") {
+        document = new DocumentHistory(roomName)
+        documentMap.set(roomName, document)
+    }
 
-    socket.on('send_cursor_pos', (data) => {
-        io.to(roomName).emit("received_cursor_pos", data);
+    socket.on("pushUpdates", (data, callback) => {
+        console.log("pushing updates")
+        document.pushUpdates(data, callback)
+    });
+
+    socket.on("pullUpdates", (data, callback) => {
+        console.log("pulling updates")
+        document.pullUpdates(data, callback)
+    });
+
+    socket.on("getDocument", (callback) => {
+        console.log("getting document")
+        document.getDocument(callback)
     })
 
     socket.on('disconnect', () => {
         if (io.sockets.adapter.rooms.get(roomName)?.size === 1) {
-            io.to(roomName).emit("collaborator_left");
+            socket.broadcast.to(roomName).emit("collaborator_left");
         }
         console.log('A user disconnected')
     })
