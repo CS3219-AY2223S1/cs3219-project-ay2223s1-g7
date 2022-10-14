@@ -3,6 +3,7 @@ import React, { useRef, useEffect, useState } from 'react';
 import { basicSetup } from 'codemirror';
 import { EditorState } from '@codemirror/state';
 import { EditorView, keymap } from '@codemirror/view';
+import { indentUnit } from '@codemirror/language';
 import { defaultKeymap, indentWithTab } from '@codemirror/commands';
 
 // https://codemirror.net/examples/collab/
@@ -28,6 +29,7 @@ export const Editor = (props) => {
                 keymap.of([defaultKeymap, indentWithTab]),
                 props.peerExtension(props.initVersion),
                 fixedHeightEditor,
+                indentUnit.of("    "),
                 onUpdate,
             ],
         });

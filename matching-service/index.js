@@ -1,8 +1,8 @@
 import express from 'express';
 import cors from 'cors';
 import { createServer } from 'http';
-import { connectMatch, removeMatch } from './controller/match-controller.js';
 import { Server } from 'socket.io'
+import { connectMatch, removeMatch } from './controller/match-controller.js';
 
 const app = express();
 app.use(express.urlencoded({ extended: true }))

@@ -11,7 +11,6 @@ export class DocumentHistory {
     }
 
     pullUpdates(data, resp) {
-        console.log(resp)
         if (data.version < this.updates.length) {
             resp(this.updates.slice(data.version))
         } else {
@@ -20,7 +19,6 @@ export class DocumentHistory {
     }
 
     pushUpdates(data, resp) {
-        console.log(data.version)
         if (data.version != this.updates.length) {
             resp(false)
         } else {
@@ -33,7 +31,6 @@ export class DocumentHistory {
             // Notify pending requests
             while (this.pending.length > 0) {
                 let something = this.pending.pop()
-                console.log(` type of ${typeof something}`)
                 something(data.updates)
             }
             resp(true)

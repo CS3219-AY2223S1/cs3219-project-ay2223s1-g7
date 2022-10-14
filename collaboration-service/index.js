@@ -61,17 +61,14 @@ io.on('connection', async (socket) => {
     }
 
     socket.on("pushUpdates", (data, callback) => {
-        console.log("pushing updates")
         document.pushUpdates(data, callback)
     });
 
     socket.on("pullUpdates", (data, callback) => {
-        console.log("pulling updates")
         document.pullUpdates(data, callback)
     });
 
     socket.on("getDocument", (callback) => {
-        console.log("getting document")
         document.getDocument(callback)
     })
 

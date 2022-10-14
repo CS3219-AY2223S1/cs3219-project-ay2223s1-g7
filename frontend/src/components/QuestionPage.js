@@ -12,7 +12,6 @@ import { receiveUpdates, sendableUpdates, collab, getSyncedVersion } from "@code
 import { getCookie } from "../utils/cookies"
 import { Editor } from "./Editor";
 import { URL_COLLAB_SVC } from "../configs";
-import { border } from "@mui/system";
 
 // codemirror collaboration implementation (operational transformation)
 // https://github.com/codemirror/website/blob/master/site/examples/collab/collab.ts
@@ -49,7 +48,6 @@ function QuestionPage(props) {
             let username = getCookie("user")
             if (users.length === 2) {
                 let collaboratorName = users.filter(name => name !== username)[0]
-                console.log(collaboratorName)
                 setCollaboratorName(collaboratorName)
             }
         })
@@ -66,10 +64,8 @@ function QuestionPage(props) {
             clientID: u.clientID,
             changes: u.changes.toJSON()
         }))
-        console.log(collabSocket)
         return new Promise((resolve) => {
             collabSocket.emit('pushUpdates', { version, updates }, (response) => {
-                console.log(response)
                 resolve(
                     response
                 )
@@ -80,7 +76,6 @@ function QuestionPage(props) {
     function pullUpdates(version) {
         return new Promise((resolve) => {
             collabSocket.emit('pullUpdates', { version }, (response) => {
-                console.log(response)
                 resolve(
                     response.map(u => ({
                         changes: ChangeSet.fromJSON(u.changes),
@@ -92,7 +87,6 @@ function QuestionPage(props) {
     }
 
     function getDocument() {
-        console.log(collabSocket)
         return new Promise((resolve) => {
             collabSocket.emit('getDocument', (response) => {
                 resolve({
