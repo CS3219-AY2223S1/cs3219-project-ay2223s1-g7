@@ -1,58 +1,45 @@
 import {
     Box,
     Button,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogContentText,
-    DialogTitle,
     TextField,
-    Typography
+    Typography,
+    Avatar,
+    Link,
+    Grid,
+    Container,
+    Alert,
 } from "@mui/material";
+// import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+
 import { useState } from "react";
 import axios from "axios";
 import { URL_USER_SVC } from "../configs";
 import { STATUS_CODE_CONFLICT, STATUS_CODE_CREATED, STATUS_CODE_OK } from "../constants";
-import { Link, useNavigate } from "react-router-dom";
 
 function LoginPage() {
     const [username, setUsername] = useState("")
     const [password, setPassword] = useState("")
-    const [isDialogOpen, setIsDialogOpen] = useState(false)
-    const [dialogTitle, setDialogTitle] = useState("")
-    const [dialogMsg, setDialogMsg] = useState("")
     const [isLoginSuccess, setIsLoginSuccess] = useState(false)
+    const [hasSubmit, setHasSubmit] = useState(false);
+    const [errMessage, setErrMessage] = useState("")
 
     const handleLogin = async () => {
+        setHasSubmit(true);
         setIsLoginSuccess(false)
         const res = await axios.post(URL_USER_SVC + '/login', { username, password })
             .catch((err) => {
                 if (err.response.status === STATUS_CODE_CONFLICT) {
-                    setErrorDialog('Invalid credentials')
+                    setErrMessage('The username and password you entered did not match our records.');
                 } else {
-                    setErrorDialog('Please try again later')
+                    setErrMessage("Please double-check and try again later.");
                 }
             })
         if (res && res.status === STATUS_CODE_CREATED) {
-
             createCookieInHour(res.data.token, username);
-
-            setSuccessDialog('Successfully logged in')
-            setIsLoginSuccess(true)
+            setIsLoginSuccess(true);
+            // route to home
+            window.location.href = "http://localhost:3000/home";
         }
-    }
-    const closeDialog = () => setIsDialogOpen(false)
-
-    const setSuccessDialog = (msg) => {
-        setIsDialogOpen(true)
-        setDialogTitle('Success')
-        setDialogMsg(msg)
-    }
-
-    const setErrorDialog = (msg) => {
-        setIsDialogOpen(true)
-        setDialogTitle('Error')
-        setDialogMsg(msg)
     }
 
     const createCookieInHour = (cookieValue, username) => {
@@ -62,51 +49,57 @@ function LoginPage() {
         document.cookie = "user=" + username + ";expires=" + date.toGMTString();
     }
 
-    const routeToHome = () => {
-        window.location.href = "http://localhost:3000/home"
-            // navigate("/home")
-    }
-
     return (
-        <Box display={"flex"} flexDirection={"column"} width={"30%"}>
-            <Typography variant={"h3"} marginBottom={"2rem"}>Login</Typography>
-            <TextField
-                label="Username"
-                variant="standard"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                sx={{ marginBottom: "1rem" }}
-                autoFocus
-            />
-            <TextField
-                label="Password"
-                variant="standard"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                sx={{ marginBottom: "2rem" }}
-            />
-            <Box display={"flex"} flexDirection={"row"} justifyContent={"flex-end"}>
-                <Button variant={"outlined"} onClick={handleLogin}>Login</Button>
-            </Box>
-
-            <Dialog
-                open={isDialogOpen}
-                onClose={closeDialog}
+        <Container component="main" maxWidth="xs">
+            <Box
+                sx={{
+                    marginTop: 8,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                }}
             >
-                <DialogTitle>{dialogTitle}</DialogTitle>
-                <DialogContent>
-                    <DialogContentText>{dialogMsg}</DialogContentText>
-                </DialogContent>
-                <DialogActions>
-                    {isLoginSuccess
-
-                        ? <Button onClick={routeToHome}>Proceed</Button>
-                        : <Button onClick={closeDialog}>Done</Button>
-                    }
-                </DialogActions>
-            </Dialog>
-        </Box>
+                <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
+                    {/* <LockOutlinedIcon /> */}
+                </Avatar>
+                <Typography component={"h1"} variant={"h3"} marginBottom={"1rem"}>Login</Typography>
+                {(hasSubmit && !isLoginSuccess && errMessage) && <Alert severity="error">{errMessage}</Alert>}
+                <TextField
+                    margin="normal"
+                    label="Username"
+                    variant="standard"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    autoFocus
+                    fullWidth
+                    required
+                />
+                <TextField
+                    margin="normal"
+                    label="Password"
+                    variant="standard"
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    fullWidth
+                    required
+                />
+                <Button
+                    type="submit"
+                    variant="contained"
+                    sx={{ mt: 3, mb: 2 }}
+                    onClick={handleLogin}
+                    fullWidth
+                    >
+                    Submit
+                </Button>
+                <Grid container>
+                    <Link href="/signup" variant="body2">
+                        {"Don't have an account? Sign Up"}
+                    </Link>
+                </Grid>
+            </Box>
+        </Container>
     )
 }
 

@@ -7,18 +7,28 @@ import { PrivateRoute } from './components/PrivateRoute';
 import ChangepwPage from './components/ChangepwPage'
 import HomePage from './components/HomePage'
 import { Box } from "@mui/material";
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { useLocation } from "react-router-dom";
 
+const theme = createTheme();
 
 function App() {
     return (
-
+        <ThemeProvider theme={theme}>
         <div className="App">
-            <Header />
             <div className='container'>
-                <Box display={"flex"} flexDirection={"column"} padding={"4rem"}>
+                <Box display={"flex"} flexDirection={"column"}>
                     <Router>
+                        <Header/>
+                        <br></br>
                         <Routes>
-                            <Route exact path="/" element={<Navigate replace to="/signup" />}></Route>
+                            
+                            {/* <Route exact path="/" element={<Navigate replace to="/login" />}></Route> */}
+                            <Route exact path="/" element={
+                                <PrivateRoute>
+                                    <HomePage />
+                                </PrivateRoute>} />
+                            
                             <Route path="/signup" element={<SignupPage />} />
                             <Route path="/login" element={<LoginPage />} />
 
@@ -53,6 +63,7 @@ function App() {
                 </Box>
             </div>
         </div>
+        </ThemeProvider>
     );
 }
 

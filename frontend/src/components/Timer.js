@@ -1,10 +1,31 @@
 import React from "react";
+import { CountdownCircleTimer } from "react-countdown-circle-timer"
 import './Timer.css'
 
-// Maybe should use this react-countdown-circle-timer package instead of css
-// https://www.npmjs.com/package/react-countdown-circle-timer
+// export function Timer() {
+//     return (
+//         <div
+//             style={{
+//                 display: 'flex',
+//                 alignItems: 'center',
+//                 justifyContent: 'center',
+//                 margin: '20px'
+//             }}
+//         >
+//             <CountdownCircleTimer
+//                 isPlaying
+//                 duration={30}
+//                 colors={['#004777', '#F7B801', '#A30000', '#A30000']}
+//                 colorsTime={[25, 15, 5, 0]}
+//             >
+//                 {({ remainingTime }) => remainingTime}
+//             </CountdownCircleTimer>
+//         </div>
+//     )
+// }
 
-// https://stackoverflow.com/questions/40885923/countdown-timer-in-react
+
+//https://stackoverflow.com/questions/40885923/countdown-timer-in-react
 export class Timer extends React.Component {
     constructor() {
         super();
@@ -47,9 +68,9 @@ export class Timer extends React.Component {
                 <div className="countdown-timer__circle">
                     <svg>
                         <circle
-                            r="24"
-                            cx="26"
-                            cy="26"
+                            r="75"
+                            cx="150"
+                            cy="150"
                             style={{
                                 animation: `countdown-animation 30s linear`
                             }}
