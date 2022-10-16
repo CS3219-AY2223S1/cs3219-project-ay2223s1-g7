@@ -11,12 +11,15 @@ import { receiveUpdates, sendableUpdates, collab, getSyncedVersion } from "@code
 
 import { getCookie } from "../utils/cookies"
 import { Editor } from "./Editor";
-import { URL_COLLAB_SVC } from "../configs";
+import { URL_COLLAB_SVC, URL_QUESTION_SVC } from "../configs";
+import axios from "axios";
 
 // codemirror collaboration implementation (operational transformation)
 // https://github.com/codemirror/website/blob/master/site/examples/collab/collab.ts
 function QuestionPage(props) {
     const [collaboratorName, setCollaboratorName] = useState("")
+    const [question, setQuestion] = useState("")
+    const [title, setTitle] = useState("")
     const [collabSocket, setCollabSocket] = useState(io())
     const [initDoc, setInitDoc] = useState("")
     const [initVersion, setInitVersion] = useState(0)
@@ -42,13 +45,21 @@ function QuestionPage(props) {
             setInitVersion(version)
         })
 
-        collabSocket.on("joinRoomSuccess", (data) => {
+        collabSocket.on("joinRoomSuccess",async (data) => {
             let users = data.users
             console.log(users)
             let username = getCookie("user")
+            let resp = await getQuestion()
+
+            
             if (users.length === 2) {
                 let collaboratorName = users.filter(name => name !== username)[0]
                 setCollaboratorName(collaboratorName)
+                setTitle(resp.data.question.title)
+                setQuestion(resp.data.question.question)
+                console.log("QUESTION IS" ,resp.data)
+                
+                
             }
         })
 
@@ -94,6 +105,13 @@ function QuestionPage(props) {
                     doc: Text.of(response.doc.split("\n"))
                 })
             })
+        })
+    }
+    
+    async function getQuestion() {
+        let difficulty = props.difficulty
+        return axios.post(URL_QUESTION_SVC + "get", {
+            difficulty
         })
     }
 
@@ -148,7 +166,8 @@ function QuestionPage(props) {
     return (
         <Box display={"flex"} flexDirection={"column"} alignSelf={"center"} width={"50%"} sx={{ 'button': { m: 1 } }}>
             <Typography variant={"h5"} textAlign={"center"} marginBottom={"2rem"}>friend: {collaboratorName}</Typography>
-            <Typography variant={"h3"} textAlign={"center"} marginBottom={"2rem"}>Question</Typography>
+            <Typography variant={"h3"} textAlign={"center"} marginBottom={"2rem"}>Title: {title}</Typography>
+            <Typography variant={"h5"} textAlign={"center"} marginBottom={"2rem"}>Question: {question}</Typography>
             <Editor peerExtension={peerExtension} initVersion={initVersion} initDoc={initDoc} />
             <Button variant={"contained"} color={"error"} onClick={() => { collabSocket.disconnect(); props.handleExit() }}>Exit</Button>
         </Box>

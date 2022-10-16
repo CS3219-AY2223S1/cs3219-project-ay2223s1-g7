@@ -15,12 +15,11 @@ const router = express.Router()
 router.get('/ping', (_, res) => res.send('Hello World from question-service'))
 router.post('/', addQuestion)
 router.post('/delete', deleteQuestion)
-router.get('/', getQuestion)
+router.post('/get', getQuestion)
 router.get('/all', getAllQuestions)
 
 app.use('/api/question', router).all((_, res) => {
     res.setHeader('content-type', 'application/json')
     res.setHeader('Access-Control-Allow-Origin', '*')
 })
-
-app.listen(8000, () => console.log('question-service listening on port 8000'));
+app.listen(8003, () => console.log('question-service listening on port 8003'));

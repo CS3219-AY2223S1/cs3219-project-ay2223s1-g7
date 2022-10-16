@@ -43,6 +43,7 @@ export async function getQuestion(req, res) {
     try {
         
         const {difficulty}= req.body
+        console.log("DIFFICULTY IS: " + difficulty)
         const resp = await _searchQuestionByDifficulty(difficulty);
         if (resp.err) {
             return res.status(409).json({message: 'Could not find question!'});
