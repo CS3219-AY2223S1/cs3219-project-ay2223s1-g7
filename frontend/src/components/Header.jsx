@@ -210,7 +210,7 @@ const Header = () => {
             <Button
                 key={"home"}
                 onClick={toHome}
-                sx={{ my: 2, color: 'white', display: 'block' }}
+                sx={{ ml: 1, my: 1, color: 'white', display: 'block', fontSize: 16 }}
               >
                 {"home"}
               </Button>
