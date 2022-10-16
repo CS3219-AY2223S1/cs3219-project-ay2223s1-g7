@@ -5,6 +5,7 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-image: linear-gradient(to right, #c2e59c , #64b3f4);
 }
 
 code {
@@ -61,3 +62,8 @@ code {
 .settings-button {
   width: fit-content;
 }
+
+.blob {
+  cursor: pointer;
+}
+
