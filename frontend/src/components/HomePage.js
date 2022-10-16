@@ -80,7 +80,7 @@ function HomePage(props) {
     }
 
     return (
-        route === "/home"
+        (route === "/home" || route === "/")
             ? <QuestionSelectionPage handleMatching={handleMatching} handleTextChange={handleTextChange} />
             : (route === "/loading"
                 ? <LoadingPage handleExit={handleExitToHome} />
