@@ -42,7 +42,7 @@ export const Editor = (props) => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [props.peerExtension, props.initDoc]);
 
-    return <div style={{ border: '1px solid black', minHeight: "40vh", maxHeight: "40vh" }} ref={editor} />;
+    return <div style={{ border: '1px solid black', minHeight: "40vh", maxHeight: "40vh", backgroundColor: "white" }} ref={editor} />;
 };
 
 

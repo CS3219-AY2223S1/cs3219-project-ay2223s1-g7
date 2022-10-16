@@ -7,13 +7,18 @@ import {
     DialogContentText,
     DialogTitle,
     TextField,
-    Typography
+    Typography,
+    Avatar,
+    Link,
+    Grid,
+    Container,
+    Alert,
 } from "@mui/material";
 import {useState} from "react";
 import axios from "axios";
 import {URL_USER_SVC} from "../configs";
 import {STATUS_CODE_CONFLICT, STATUS_CODE_CREATED} from "../constants";
-import {Link, useNavigate} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 
 
 function ChangepwPage() {
@@ -33,18 +38,18 @@ function ChangepwPage() {
 
         const res = await axios.post(URL_USER_SVC + '/changepw', { username, oldPassword, newPassword, token })
             .catch((err) => {
-                setErrorDialog('Please try again later')
+                setErrorDialog('Please check your old/new password and try again')
             })
         if (res && res.status === STATUS_CODE_CREATED) {
             document.cookie = "jwt_token= ; expires = Thu, 01 Jan 1970 00:00:00 GMT"
             document.cookie = "user= ; expires = Thu, 01 Jan 1970 00:00:00 GMT"
-            setSuccessDialog('Password successfully changed, pleast log in again')
+            setSuccessDialog('Password successfully changed, please log in again')
             setIsChangeSuccess(true)
             setTimeout(toLogin, 2000);
         }
     }
 
-    const toLogin = () => window.location.href="http://localhost:3000/login"
+    const toLogin = () => navigate("/login")
 
     const closeDialog = () => setIsDialogOpen(false)
 
@@ -61,28 +66,53 @@ function ChangepwPage() {
     }
 
     return (
-        <Box display={"flex"} flexDirection={"column"} width={"30%"}>
-            <Typography variant={"h3"} marginBottom={"2rem"}>Change Password</Typography>
+        <Container component="main" maxWidth="xs">
+            <Box
+                sx={{
+                    marginTop: 8,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                }}
+            >
+            <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
+                {/* <LockOutlinedIcon /> */}
+            </Avatar>
+            <Typography component={"h1"} variant={"h3"} marginBottom={"1rem"}>Change Password</Typography>
+            <TextField
+            margin="normal"
+            label="Old Password"
+            variant="standard"
+            type="password"
+            value={oldPassword}
+            onChange={(e) => setOldPassword(e.target.value)}
+            sx={{marginBottom: "1rem"}}
+            autoFocus
+            fullWidth
+            required
+            />
 
             <TextField
-                label="Old Password"
-                variant="standard"
-                type="password"
-                value={oldPassword}
-                onChange={(e) => setOldPassword(e.target.value)}
-                sx={{marginBottom: "1rem"}}
+            margin="normal"
+            label="New Password"
+            variant="standard"
+            type="new password"
+            value={newPassword}
+            onChange={(e) => setNewPassword(e.target.value)}
+            sx={{marginBottom: "2rem"}}
+            fullWidth
+            required
             />
-            <TextField
-                label="New Password"
-                variant="standard"
-                type="new password"
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-                sx={{marginBottom: "2rem"}}
-            />
-            <Box display={"flex"} flexDirection={"row"} justifyContent={"flex-end"}>
-                <Button variant={"outlined"} onClick={handleChangePassword}>Change Password</Button>
-            </Box>
+
+                <Button
+                    type="submit"
+                    variant="contained"
+                    sx={{ mt: 3, mb: 2 }}
+                    onClick={handleChangePassword}
+                    fullWidth
+                    >
+                    Change Password
+                </Button>
 
             <Dialog
                 open={isDialogOpen}
@@ -99,7 +129,8 @@ function ChangepwPage() {
                     }
                 </DialogActions>
             </Dialog>
-        </Box>
+            </Box>
+        </Container>
     )
 }
 

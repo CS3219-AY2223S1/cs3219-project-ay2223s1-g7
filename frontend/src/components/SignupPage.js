@@ -1,97 +1,102 @@
 import {
     Box,
     Button,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogContentText,
-    DialogTitle,
     TextField,
-    Typography
+    Typography,
+    Avatar,
+    Link,
+    Grid,
+    Container,
+    Alert,
 } from "@mui/material";
 import {useState} from "react";
 import axios from "axios";
 import {URL_USER_SVC} from "../configs";
 import {STATUS_CODE_CONFLICT, STATUS_CODE_CREATED} from "../constants";
-import {Link} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 
 function SignupPage() {
+    const navigate = useNavigate();
     const [username, setUsername] = useState("")
     const [password, setPassword] = useState("")
-    const [isDialogOpen, setIsDialogOpen] = useState(false)
-    const [dialogTitle, setDialogTitle] = useState("")
-    const [dialogMsg, setDialogMsg] = useState("")
     const [isSignupSuccess, setIsSignupSuccess] = useState(false)
+    const [hasSubmit, setHasSubmit] = useState(false);
+    const [errMessage, setErrMessage] = useState("")
+    const [succMessage, setSuccessMsg] = useState("")
 
     const handleSignup = async () => {
+        setHasSubmit(true);
         setIsSignupSuccess(false)
         const res = await axios.post(URL_USER_SVC, { username, password })
             .catch((err) => {
                 if (err.response.status === STATUS_CODE_CONFLICT) {
-                    setErrorDialog('This username already exists')
+                    setErrMessage('This username already exists. Please try again with another username')
                 } else {
-                    setErrorDialog('Please try again later')
+                    setErrMessage('Please try again later')
                 }
             })
         if (res && res.status === STATUS_CODE_CREATED) {
-            setSuccessDialog('Account successfully created')
+            setSuccessMsg('Congratulations! Your account has been successfully created')
             setIsSignupSuccess(true)
+            setTimeout(toLogin, 2000);
         }
     }
+    const toLogin = () => navigate("/login")
 
-    const closeDialog = () => setIsDialogOpen(false)
-
-    const setSuccessDialog = (msg) => {
-        setIsDialogOpen(true)
-        setDialogTitle('Success')
-        setDialogMsg(msg)
-    }
-
-    const setErrorDialog = (msg) => {
-        setIsDialogOpen(true)
-        setDialogTitle('Error')
-        setDialogMsg(msg)
-    }
 
     return (
-        <Box display={"flex"} flexDirection={"column"} width={"30%"}>
-            <Typography variant={"h3"} marginBottom={"2rem"}>Sign Up</Typography>
-            <TextField
-                label="Username"
-                variant="standard"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                sx={{marginBottom: "1rem"}}
-                autoFocus
-            />
-            <TextField
-                label="Password"
-                variant="standard"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                sx={{marginBottom: "2rem"}}
-            />
-            <Box display={"flex"} flexDirection={"row"} justifyContent={"flex-end"}>
-                <Button variant={"outlined"} onClick={handleSignup}>Sign up</Button>
-            </Box>
-
-            <Dialog
-                open={isDialogOpen}
-                onClose={closeDialog}
+        <Container component="main" maxWidth="xs">
+            <Box
+                sx={{
+                    marginTop: 8,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                }}
             >
-                <DialogTitle>{dialogTitle}</DialogTitle>
-                <DialogContent>
-                    <DialogContentText>{dialogMsg}</DialogContentText>
-                </DialogContent>
-                <DialogActions>
-                    {isSignupSuccess
-                        ? <Button component={Link} to="/login">Log in</Button>
-                        : <Button onClick={closeDialog}>Done</Button>
-                    }
-                </DialogActions>
-            </Dialog>
-        </Box>
+                <Avatar sx={{ m: 1, bgcolor: 'primary.main' }}>
+                    {/* <LockOutlinedIcon /> */}
+                </Avatar>
+                <Typography component={"h1"} variant={"h3"} marginBottom={"1rem"}>Sign Up</Typography>
+                {(hasSubmit && !isSignupSuccess && errMessage) && <Alert severity="error">{errMessage}</Alert>}
+                {(hasSubmit && isSignupSuccess && succMessage) && <Alert severity="success">{succMessage}</Alert>}
+                <TextField
+                    margin="normal"
+                    label="Username"
+                    variant="standard"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    autoFocus
+                    fullWidth
+                    required
+                />
+                <TextField
+                    margin="normal"
+                    label="Password"
+                    variant="standard"
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    fullWidth
+                    required
+                />
+
+                <Button
+                    type="submit"
+                    variant="contained"
+                    sx={{ mt: 3, mb: 2 }}
+                    onClick={handleSignup}
+                    fullWidth
+                    >
+                    Sign up
+                </Button>
+                <Grid container>
+                    <Link href="/login" variant="body2">
+                        {"Already have an account? Login"}
+                    </Link>
+                </Grid>
+            </Box>
+        </Container>
     )
 }
 
