@@ -1,4 +1,4 @@
-import QuestionModel from './question-model';
+import QuestionModel from './question-model.js';
 
 import 'dotenv/config'
 
@@ -39,8 +39,9 @@ export async function findQuestionByDifficulty(inputDifficulty) {
 }
 
 export async function findAllQuestionByDifficulty(inputDifficulty) {
+  
     return db.collection("questionmodels")
-    .find( { difficulty: inputDifficulty } );
+    .find( { difficulty: inputDifficulty } ).toArray();
 }
 
 export async function deleteQuestion(inputTitle) { 

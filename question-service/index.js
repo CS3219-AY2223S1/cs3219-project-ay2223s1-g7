@@ -6,7 +6,7 @@ app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
 app.use(cors()) // config cors so that front-end can use
 app.options('*', cors())
-import { getAllQuestions,getQuestion,addQuestion, deleteQuestion} from './controller/question-controller';
+import { getAllQuestions,getQuestion,addQuestion, deleteQuestion} from './controller/question-controller.js';
 
 const router = express.Router()
 
