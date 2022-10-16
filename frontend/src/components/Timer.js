@@ -47,9 +47,9 @@ export class Timer extends React.Component {
                 <div className="countdown-timer__circle">
                     <svg>
                         <circle
-                            r="24"
-                            cx="26"
-                            cy="26"
+                            r="75"
+                            cx="150"
+                            cy="150"
                             style={{
                                 animation: `countdown-animation 30s linear`
                             }}
