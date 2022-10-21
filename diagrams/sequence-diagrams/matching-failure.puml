@@ -1,0 +1,36 @@
+@startuml matching-failure
+
+participant "user1:Frontend" as user1
+participant MatchingService
+database mongodb
+
+activate user1
+user1 -> MatchingService: connect(username, difficulty)
+activate MatchingService
+
+MatchingService -> mongodb: query(difficulty)
+mongodb --> MatchingService: undefined
+
+note over MatchingService
+    No users with the same difficulty to match with user1. 
+    roomId generated using uuid package.
+end note
+
+MatchingService -> mongodb: create(username, difficulty, roomId)
+mongodb --> MatchingService
+
+note over MatchingService
+    user1 joins socket io room using roomId.
+    Timeout of 30 sec starts.
+    Timeout triggers after 30 sec.
+end note
+
+MatchingService -> mongodb: delete(difficulty)
+mongodb --> MatchingService
+
+MatchingService --> user1: matchFail()
+user1 -> MatchingService : disconnect()
+deactivate MatchingService
+
+@enduml
+

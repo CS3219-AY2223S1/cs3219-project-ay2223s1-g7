@@ -1,0 +1,51 @@
+@startuml matching-success
+
+participant "user1:Frontend" as user1
+participant "user2:Frontend" as user2
+participant MatchingService
+database mongodb
+
+activate user1
+user1 -> MatchingService: connect(username, difficulty)
+activate MatchingService
+
+MatchingService -> mongodb: query(difficulty)
+mongodb --> MatchingService: undefined
+
+note over MatchingService
+    No users with the same difficulty to match with user1. 
+    roomId generated using uuid package.
+end note
+
+MatchingService -> mongodb: create(username, difficulty, roomId)
+mongodb --> MatchingService
+
+note over MatchingService
+    user1 joins socket io room using roomId.
+    Timeout of 30 sec starts
+end note
+
+activate user2
+user2 -> MatchingService: connect(username, difficulty)
+
+MatchingService -> mongodb: query(difficulty)
+mongodb --> MatchingService: user1, difficulty, roomId
+
+MatchingService -> mongodb: delete(difficulty)
+mongodb --> MatchingService
+
+note over MatchingService
+    user2 joins the same socket io
+    room as user1 who has the
+    same difficulty.
+    Timeout is cleared.
+end note
+
+MatchingService --> user1: matchSuccess(roomId)
+MatchingService --> user2: matchSuccess(roomId)
+user1 -> MatchingService : disconnect()
+user2 -> MatchingService : disconnect()
+deactivate MatchingService
+
+@enduml
+
