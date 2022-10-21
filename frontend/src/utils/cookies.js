@@ -1,3 +1,5 @@
+// https://www.w3schools.com/js/js_cookies.asp
+
 export function setCookie(cname, cvalue, hoursExpire) {
     const d = new Date();
     d.setTime(d.getTime() + (hoursExpire * 60 * 60 * 1000));
@@ -19,4 +21,8 @@ export function getCookie(cname) {
         }
     }
     return "";
+}
+
+export function deleteCookie(cname) {
+    document.cookie = cname + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
 }

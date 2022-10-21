@@ -9,7 +9,7 @@ import { ChangeSet, Text } from '@codemirror/state';
 import { ViewPlugin } from '@codemirror/view';
 import { receiveUpdates, sendableUpdates, collab, getSyncedVersion } from "@codemirror/collab"
 
-import { getCookie } from "../utils/cookies"
+import { deleteCookie, getCookie } from "../utils/cookies"
 import { Editor } from "./Editor";
 import { URL_COLLAB_SVC, URL_QUESTION_SVC } from "../configs";
 import axios from "axios";
@@ -45,26 +45,26 @@ function QuestionPage(props) {
             setInitVersion(version)
         })
 
-        collabSocket.on("joinRoomSuccess",async (data) => {
+        collabSocket.on("joinRoomSuccess", async (data) => {
             let users = data.users
             console.log(users)
             let username = getCookie("user")
             let resp = await getQuestion()
 
-            
+
             if (users.length === 2) {
                 let collaboratorName = users.filter(name => name !== username)[0]
                 setCollaboratorName(collaboratorName)
                 setTitle(resp.data.question.title)
                 setQuestion(resp.data.question.question)
-                console.log("QUESTION IS" ,resp.data)
-                
-                
+                console.log("QUESTION IS", resp.data)
+
+
             }
         })
 
         collabSocket.on("collaborator_left", () => {
-            setCollaboratorName("")
+            handleFinish()
         })
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [collabSocket])
@@ -107,7 +107,7 @@ function QuestionPage(props) {
             })
         })
     }
-    
+
     async function getQuestion() {
         let difficulty = props.difficulty
         return axios.post(URL_QUESTION_SVC + "get", {
@@ -163,13 +163,26 @@ function QuestionPage(props) {
         return [collab({ startVersion }), plugin]
     }
 
+    function handleFinish() {
+        collabSocket.disconnect()
+        deleteCookie("room_name")
+        props.handleExit()
+    }
+
     return (
-        <Box display={"flex"} flexDirection={"column"} alignSelf={"center"} width={"50%"} sx={{ 'button': { m: 1 } }}>
-            <Typography variant={"h5"} textAlign={"center"} marginBottom={"2rem"}>friend: {collaboratorName}</Typography>
-            <Typography variant={"h3"} textAlign={"center"} marginBottom={"2rem"}>Title: {title}</Typography>
-            <Typography variant={"h5"} textAlign={"center"} marginBottom={"2rem"}>Question: {question}</Typography>
-            <Editor peerExtension={peerExtension} initVersion={initVersion} initDoc={initDoc} />
-            <Button variant={"contained"} color={"error"} onClick={() => { collabSocket.disconnect(); props.handleExit() }}>Exit</Button>
+        <Box display={"flex"} flexDirection={"column"} sx={{margin:"1rem"}}>
+            <Box display={"flex"} gap="4px">
+                <Box display={"flex"} flexDirection={"column"} flexGrow={1} minWidth={"300px"} maxWidth={"50%"}>
+                    <Typography variant={"h4"} textAlign={"center"} >Title: {title}</Typography>
+                    <Typography variant={"h5"} textAlign={"center"} >Question: {question}</Typography>
+                    <Typography variant={"h5"} textAlign={"center"} >Peer: {collaboratorName}</Typography>
+                    <Box width={"100%"} height={"100%"} sx={{background:"white"}}>
+                        webcam stuff goes here?
+                    </Box>
+                </Box>
+                <Editor peerExtension={peerExtension} initVersion={initVersion} initDoc={initDoc} />
+            </Box>
+            <Button variant={"contained"} color={"error"} onClick={handleFinish} sx={{marginTop:"1rem"}}>Finish</Button>
         </Box>
     )
 }
