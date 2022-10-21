@@ -17,7 +17,7 @@ function App() {
         <ThemeProvider theme={theme}>
         <div className="App">
             <div className='container'>
-                <Box display={"flex"} flexDirection={"column"}>
+                <Box display={"flex"} flexDirection={"column"} minWidth={"632px"}>
                     <Router>
                         <Header/>
                         <Routes>

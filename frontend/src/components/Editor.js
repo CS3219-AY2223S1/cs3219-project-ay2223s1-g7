@@ -17,7 +17,7 @@ export const Editor = (props) => {
     });
 
     const editorStyle = EditorView.theme({
-        "&": { height: "100%" },
+        "&": { height: "80vh", minHeight:"500px" },
         ".cm-scroller": { overflow: "auto" }
     })
 
@@ -42,7 +42,7 @@ export const Editor = (props) => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [props.peerExtension, props.initDoc]);
 
-    return <div style={{ backgroundColor: "white", width: "60vw", maxHeight:"70vh" }} ref={editor} />;
+    return <div style={{ backgroundColor: "white", width: "50vw", minWidth:"300px", minHeight:"500px", border:"1px solid black" }} ref={editor} />;
 };
 
 
