@@ -64,7 +64,7 @@ function QuestionPage(props) {
         })
 
         collabSocket.on("collaborator_left", () => {
-            setCollaboratorName("")
+            handleFinish()
         })
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [collabSocket])
