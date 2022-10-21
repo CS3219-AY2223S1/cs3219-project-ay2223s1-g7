@@ -8,11 +8,13 @@ import { io } from "socket.io-client"
 import { ChangeSet, Text } from '@codemirror/state';
 import { ViewPlugin } from '@codemirror/view';
 import { receiveUpdates, sendableUpdates, collab, getSyncedVersion } from "@codemirror/collab"
+import Modal from '@mui/material/Modal';
 
-import { getCookie } from "../utils/cookies"
+import { deleteCookie, getCookie } from "../utils/cookies"
 import { Editor } from "./Editor";
 import { URL_COLLAB_SVC, URL_QUESTION_SVC } from "../configs";
 import axios from "axios";
+import "./QuestionPage.css"
 
 // codemirror collaboration implementation (operational transformation)
 // https://github.com/codemirror/website/blob/master/site/examples/collab/collab.ts
@@ -45,21 +47,21 @@ function QuestionPage(props) {
             setInitVersion(version)
         })
 
-        collabSocket.on("joinRoomSuccess",async (data) => {
+        collabSocket.on("joinRoomSuccess", async (data) => {
             let users = data.users
             console.log(users)
             let username = getCookie("user")
             let resp = await getQuestion()
 
-            
+
             if (users.length === 2) {
                 let collaboratorName = users.filter(name => name !== username)[0]
                 setCollaboratorName(collaboratorName)
                 setTitle(resp.data.question.title)
                 setQuestion(resp.data.question.question)
-                console.log("QUESTION IS" ,resp.data)
-                
-                
+                console.log("QUESTION IS", resp.data)
+
+
             }
         })
 
@@ -107,7 +109,7 @@ function QuestionPage(props) {
             })
         })
     }
-    
+
     async function getQuestion() {
         let difficulty = props.difficulty
         return axios.post(URL_QUESTION_SVC + "get", {
@@ -163,13 +165,28 @@ function QuestionPage(props) {
         return [collab({ startVersion }), plugin]
     }
 
+    function handleFinish() {
+        collabSocket.disconnect()
+        deleteCookie("room_name")
+        props.handleExit()
+    }
+
     return (
-        <Box display={"flex"} flexDirection={"column"} alignSelf={"center"} width={"50%"} sx={{ 'button': { m: 1 } }}>
-            <Typography variant={"h5"} textAlign={"center"} marginBottom={"2rem"}>friend: {collaboratorName}</Typography>
-            <Typography variant={"h3"} textAlign={"center"} marginBottom={"2rem"}>Title: {title}</Typography>
-            <Typography variant={"h5"} textAlign={"center"} marginBottom={"2rem"}>Question: {question}</Typography>
-            <Editor peerExtension={peerExtension} initVersion={initVersion} initDoc={initDoc} />
-            <Button variant={"contained"} color={"error"} onClick={() => { collabSocket.disconnect(); props.handleExit() }}>Exit</Button>
+        <Box className={"question-page-wrapper"}>
+            <Box className="question-wrapper">
+                <Box>
+                    <Typography variant={"h4"} textAlign={"center"} >Title: {title}</Typography>
+                    <Typography variant={"h5"} textAlign={"center"} >Question: {question}</Typography>
+                </Box>
+                <Typography variant={"h5"} textAlign={"center"} >Peer: {collaboratorName}</Typography>
+            </Box>
+            <Box className="editor-space">
+                <Editor peerExtension={peerExtension} initVersion={initVersion} initDoc={initDoc} />
+                <Box width={"40%"} height={"100%"}>
+
+                </Box>
+            </Box>
+            <Button variant={"contained"} color={"error"} onClick={handleFinish}>Finish</Button>
         </Box>
     )
 }

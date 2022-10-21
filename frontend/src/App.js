@@ -20,7 +20,6 @@ function App() {
                 <Box display={"flex"} flexDirection={"column"}>
                     <Router>
                         <Header/>
-                        <br></br>
                         <Routes>
                             
                             {/* <Route exact path="/" element={<Navigate replace to="/login" />}></Route> */}

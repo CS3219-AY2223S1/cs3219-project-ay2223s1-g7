@@ -16,8 +16,8 @@ export const Editor = (props) => {
         setCode(v.state.doc.toString());
     });
 
-    const fixedHeightEditor = EditorView.theme({
-        "&": { height: "40vh" },
+    const editorStyle = EditorView.theme({
+        "&": { height: "100%" },
         ".cm-scroller": { overflow: "auto" }
     })
 
@@ -28,7 +28,7 @@ export const Editor = (props) => {
                 basicSetup,
                 keymap.of([defaultKeymap, indentWithTab]),
                 props.peerExtension(props.initVersion),
-                fixedHeightEditor,
+                editorStyle,
                 indentUnit.of("    "),
                 onUpdate,
             ],
@@ -42,7 +42,7 @@ export const Editor = (props) => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [props.peerExtension, props.initDoc]);
 
-    return <div style={{ border: '1px solid black', minHeight: "40vh", maxHeight: "40vh", backgroundColor: "white" }} ref={editor} />;
+    return <div style={{ backgroundColor: "white", width: "60vw", maxHeight:"70vh" }} ref={editor} />;
 };
 
 
