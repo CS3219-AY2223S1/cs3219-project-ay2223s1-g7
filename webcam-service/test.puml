@@ -1,0 +1,39 @@
+@startuml matching-disconnect
+
+participant "user1:Frontend" as user1
+participant UserService
+database mongodb
+
+activate user1
+user1 -> UserService: connect(username, difficulty)
+activate UserService
+
+UserService -> mongodb: query(difficulty)
+mongodb --> UserService: undefined
+
+note over UserService
+    No users with the same difficulty to match with user1. 
+    roomId generated using uuid package.
+end note
+
+UserService -> mongodb: create(username, difficulty, roomId)
+mongodb --> UserService
+
+note over UserService
+    user1 joins socket io room using roomId.
+    Timeout of 30 sec starts.
+end note
+
+user1 -> UserService : disconnect()
+
+note right
+    user1 disconnects from matching service
+    before matching and timeout.
+end note
+
+UserService -> mongodb: delete(difficulty)
+mongodb --> UserService
+
+deactivate UserService
+
+@enduml

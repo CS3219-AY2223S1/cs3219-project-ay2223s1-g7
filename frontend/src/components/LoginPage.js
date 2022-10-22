@@ -10,50 +10,17 @@ import {
     Alert,
 } from "@mui/material";
 // import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import { AppBar } from "@mui/material";
 import { useState } from "react";
 import axios from "axios";
 import { URL_USER_SVC } from "../configs";
 import { STATUS_CODE_CONFLICT, STATUS_CODE_CREATED, STATUS_CODE_OK } from "../constants";
-import {VideoPlayer} from './VideoPlayer';
-import {Notifications} from './Notifications';
-import {Options} from './Options';
-import { styled } from "@mui/system";
 
-const useStyles = styled((theme) => ({
-    appBar: {
-      borderRadius: 15,
-      margin: '30px 100px',
-      display: 'flex',
-      flexDirection: 'row',
-      justifyContent: 'center',
-      alignItems: 'center',
-      width: '600px',
-      border: '2px solid black',
-  
-      [theme.breakpoints.down('xs')]: {
-        width: '90%',
-      },
-    },
-    image: {
-      marginLeft: '15px',
-    },
-    wrapper: {
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      width: '100%',
-    },
-  }));
 function LoginPage() {
     const [username, setUsername] = useState("")
     const [password, setPassword] = useState("")
     const [isLoginSuccess, setIsLoginSuccess] = useState(false)
     const [hasSubmit, setHasSubmit] = useState(false);
     const [errMessage, setErrMessage] = useState("")
-    const [joined, setJoined] = useState(false)
-
-    const classes = useStyles()
 
     const handleLogin = async () => {
         setHasSubmit(true);
@@ -130,31 +97,6 @@ function LoginPage() {
                         {"Don't have an account? Sign Up"}
                     </Link>
                 </Grid>
-
-
-                 {!joined && (
-                    <div className={classes.wrapper}>
-
-                    <AppBar className={classes.appBar} position="static" color = "inherit">
-                        <Typography variant="h2" align="center">Video Chat</Typography>
-                    </AppBar>
-
-                    <VideoPlayer />
-                    <Options>
-                        <Notifications />
-                    </Options>
-                    <button onClick= {() => setJoined(true)}>
-                        Join Room
-                    </button>
-                    </div>
-
-                 )
-                 }
-
-                {joined && (
-                    <VideoPlayer />
-                 )
-                }
             </Box>
         </Container>
     )

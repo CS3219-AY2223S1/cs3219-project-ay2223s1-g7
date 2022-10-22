@@ -3,7 +3,7 @@ import {
     Button,
     Typography
 } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext} from "react";
 import { io } from "socket.io-client"
 import { ChangeSet, Text } from '@codemirror/state';
 import { ViewPlugin } from '@codemirror/view';
@@ -12,6 +12,10 @@ import { receiveUpdates, sendableUpdates, collab, getSyncedVersion } from "@code
 import { getCookie } from "../utils/cookies"
 import { Editor } from "./Editor";
 import { URL_COLLAB_SVC } from "../configs";
+import VideoPlayer from './VideoPlayer';
+import Notifications from './Notifications';
+import {Options} from './Options';
+import { SocketContext } from "../SocketContext";
 
 // codemirror collaboration implementation (operational transformation)
 // https://github.com/codemirror/website/blob/master/site/examples/collab/collab.ts
@@ -20,6 +24,7 @@ function QuestionPage(props) {
     const [collabSocket, setCollabSocket] = useState(io())
     const [initDoc, setInitDoc] = useState("")
     const [initVersion, setInitVersion] = useState(0)
+    const {leaveCall} = useContext(SocketContext);
 
 
     useEffect(() => {
@@ -145,12 +150,31 @@ function QuestionPage(props) {
         return [collab({ startVersion }), plugin]
     }
 
+    // div below is the webcam stuff/ Feel free to rearrange the layout, can modify the layout within the individual component
     return (
         <Box display={"flex"} flexDirection={"column"} alignSelf={"center"} width={"50%"} sx={{ 'button': { m: 1 } }}>
             <Typography variant={"h5"} textAlign={"center"} marginBottom={"2rem"}>friend: {collaboratorName}</Typography>
             <Typography variant={"h3"} textAlign={"center"} marginBottom={"2rem"}>Question</Typography>
             <Editor peerExtension={peerExtension} initVersion={initVersion} initDoc={initDoc} />
-            <Button variant={"contained"} color={"error"} onClick={() => { collabSocket.disconnect(); props.handleExit() }}>Exit</Button>
+            <Button variant={"contained"} color={"error"} onClick={() => { collabSocket.disconnect(); props.handleExit(); leaveCall()}}>Exit</Button>
+        
+
+        
+            <div 
+                sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    width: '100%',
+                }}                
+            >
+                <VideoPlayer />
+                <Options>
+                    <Notifications />
+                </Options>
+            </div>
+
+        
         </Box>
     )
 }
