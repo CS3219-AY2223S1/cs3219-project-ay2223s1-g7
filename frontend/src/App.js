@@ -17,10 +17,9 @@ function App() {
         <ThemeProvider theme={theme}>
         <div className="App">
             <div className='container'>
-                <Box display={"flex"} flexDirection={"column"}>
+                <Box display={"flex"} flexDirection={"column"} minWidth={"632px"}>
                     <Router>
                         <Header/>
-                        <br></br>
                         <Routes>
                             
                             {/* <Route exact path="/" element={<Navigate replace to="/login" />}></Route> */}

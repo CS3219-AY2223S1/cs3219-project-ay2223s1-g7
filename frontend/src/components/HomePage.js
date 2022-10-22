@@ -65,7 +65,8 @@ function HomePage(props) {
                 ? <LoadingPage handleExit={handleExitToHome} />
                 : <QuestionPage
                     text={text}
-                    handleExit={handleExitToHome} />
+                    handleExit={handleExitToHome} 
+                    difficulty={difficulty}/>
             )
     )
 }
