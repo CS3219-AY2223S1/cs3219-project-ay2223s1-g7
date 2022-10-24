@@ -36,7 +36,7 @@ describe("Matching service test", function () {
         client2.on('matchSuccess', function (data) {
             done();
         });
-    }).timeout(5000);
+    });
     it('should fail match in 30s', function (done) {
         client4 = io(SOCKET_URL, {
             query: {

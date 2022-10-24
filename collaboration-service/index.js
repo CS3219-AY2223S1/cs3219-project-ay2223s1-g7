@@ -35,7 +35,7 @@ io.on('connection', async (socket) => {
     let query = socket.handshake.query
 
     // TODO: possible to use uuid to validate room name 
-    if (query.username.length === 0 || query.roomName.length === 0) {
+    if (typeof query.username === "undefined" || typeof query.roomName === "undefined" || query.username.length === 0 || query.roomName.length === 0) {
         console.log("missing username and/or roomName")
         socket.disconnect()
         return
@@ -81,3 +81,6 @@ io.on('connection', async (socket) => {
 })
 
 httpServer.listen(8002);
+
+// Export our app for testing purposes
+export default io;
