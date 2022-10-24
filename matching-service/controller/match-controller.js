@@ -1,25 +1,24 @@
 import { v4 as uuidv4 } from 'uuid';
 
-import { storePendingMatch, getPendingMatch, deletePendingMatch } from '../model/new-match-model.js'
+import { ormQueryPendingMatch, ormRemoveMatch, ormStorePendingMatch } from '../model/match-orm.js'
 
-
-export function connectMatch(joinRoom, setUpMessage, username, difficulty) {
+export async function connectMatch(joinRoom, setUpMessage, username, difficulty) {
     try {
-        const pendingMatchUser = getPendingMatch(difficulty);
-        if (typeof pendingMatchUser === 'undefined') {
+        const pendingMatchUser = await ormQueryPendingMatch(difficulty);
+        // if (typeof pendingMatchUser === 'undefined') {
+        if (pendingMatchUser.length === 0) {
             let roomId = uuidv4()
             console.log(`roomId = ${roomId}`)
             let roomName = "room-" + roomId
-            storePendingMatch(username, difficulty, roomId);
+            await ormStorePendingMatch(username, difficulty, roomId);
             joinRoom(roomName)
-            setUpMessage(roomName)
         } else {
             // matching
-            let pendingUser = pendingMatchUser.username
-            console.log(`joining ${pendingMatchUser.roomId}`)
-            let roomName = "room-" + pendingMatchUser.roomId
+            let pendingUser = pendingMatchUser[0].username
+            console.log(`joining ${pendingMatchUser[0].roomId}`)
+            let roomName = "room-" + pendingMatchUser[0].roomId
             console.log("matching", pendingUser, username)
-            deletePendingMatch(difficulty)
+            await ormRemoveMatch(difficulty)
             joinRoom(roomName)
             setUpMessage(roomName)
         }
@@ -28,12 +27,9 @@ export function connectMatch(joinRoom, setUpMessage, username, difficulty) {
     }
 }
 
-export function removeMatch(username, difficulty) {
+export async function removeMatch(username, difficulty) {
     try {
-        let pendingMatchUser = getPendingMatch(difficulty)
-        if (typeof pendingMatchUser !== "undefined" && pendingMatchUser.username === username) {
-            deletePendingMatch(difficulty)
-        }
+        await ormRemoveMatch(username, difficulty)
     } catch (err) {
         console.error(err)
         return err

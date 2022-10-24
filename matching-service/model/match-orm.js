@@ -1,9 +1,9 @@
 import { storePendingMatch, queryPendingMatches, removeMatch} from './repository.js';
 
 //need to separate orm functions from repository to decouple business logic from persistence
-export async function ormStorePendingMatch(username, difficulty) {
+export async function ormStorePendingMatch(username, difficulty, roomId) {
     try {
-        const pendingMatch = await storePendingMatch({username, difficulty});
+        const pendingMatch = await storePendingMatch({username, difficulty, roomId});
         pendingMatch.save();
         return true;
     } catch (err) {
