@@ -82,7 +82,7 @@ jobs:
         REACT_APP_URI_MATCH_SVC: ${{ secrets.REACT_APP_URI_MATCH_SVC }}
         REACT_APP_URI_COLLAB_SVC: ${{ secrets.REACT_APP_URI_COLLAB_SVC }}
         REACT_APP_URI_QUESTION_SVC: ${{ secrets.REACT_APP_URI_QUESTION_SVC }}
-      run: npm run build
+      run: CI=false npm run build
 
     - name: Share artifact inside workflow
       uses: actions/upload-artifact@v3
