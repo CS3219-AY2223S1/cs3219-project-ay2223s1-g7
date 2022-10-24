@@ -10,7 +10,25 @@ import { Box } from "@mui/material";
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useLocation } from "react-router-dom";
 
-const theme = createTheme();
+const theme = createTheme({
+    typography: {
+      fontFamily: [
+        '-apple-system',
+        'BlinkMacSystemFont',
+        '"Segoe UI"',
+        'Roboto',
+        '"Helvetica Neue"',
+        'Arial',
+        'sans-serif',
+        '"Apple Color Emoji"',
+        '"Segoe UI Emoji"',
+        '"Segoe UI Symbol"',
+      ].join(','),
+    },
+    button: {
+        textTransform: 'none'
+    },
+  });
 
 function App() {
     return (
