@@ -14,7 +14,8 @@ app.get('/', (req, res) => {
     res.send('Hello World from collaboration-service');
 });
 
-// TODO: add cookie parser to get roomname and some other info
+
+const port = process.env.ENV === "PROD" ? process.env.API_ENDPOINT : 8002
 
 const httpServer = createServer(app)
 
@@ -80,7 +81,7 @@ io.on('connection', async (socket) => {
     })
 })
 
-httpServer.listen(8002);
+httpServer.listen(port, () => console.log(`collaboration-service listening on port ${port}`));
 
 // Export our app for testing purposes
 export default io;

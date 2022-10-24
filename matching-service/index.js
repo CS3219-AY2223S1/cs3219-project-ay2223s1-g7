@@ -26,6 +26,7 @@ const io = new Server(
     }
 );
 
+const port = process.env.ENV === "PROD" ? process.env.API_ENDPOINT : 8001
 
 io.on('connection', (socket) => {
     let query = socket.handshake.query
@@ -74,7 +75,7 @@ io.on('connection', (socket) => {
     })
 })
 
-httpServer.listen(8001);
+httpServer.listen(port, () => console.log(`matching-service listening on port ${port}`));
 
 // Export our app for testing purposes
 export default io;
