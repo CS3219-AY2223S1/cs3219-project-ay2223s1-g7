@@ -16,8 +16,10 @@ function LoadingPage(props) {
             flexDirection={"column"} 
             alignSelf={"center"} 
             width={"50%"}
-            sx={{ 'button': { m: 1 } }}>
-            <Typography fontFamily={"Segoe UI"} variant={"h3"} textAlign={"center"} marginBottom={"2rem"}>Matching...</Typography>
+            sx={{ 'button': { m: 1 }, padding: '1rem' }}>
+            <Typography variant={"h4"} textAlign={"center"} marginBottom={"2rem"} marginTop={"2rem"}>
+                Finding you a match...
+            </Typography>
             <br></br>
             <Timer/>
             <br></br>

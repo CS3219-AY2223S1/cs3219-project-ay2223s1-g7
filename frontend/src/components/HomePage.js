@@ -62,7 +62,10 @@ function HomePage(props) {
         (route === "/home" || route === "/")
             ? <QuestionSelectionPage handleMatching={handleMatching} />
             : (route === "/loading"
-                ? <LoadingPage handleExit={handleExitToHome} />
+                ? <LoadingPage 
+                    handleExit={handleExitToHome} 
+                    difficulty={difficulty} 
+                    />
                 : <QuestionPage
                     text={text}
                     handleExit={handleExitToHome} 

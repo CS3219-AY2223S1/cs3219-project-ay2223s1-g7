@@ -66,10 +66,11 @@ function ChangepwPage() {
     }
 
     return (
-        <Container component="main" maxWidth="xs">
+        <Container component="main" maxWidth="xs" className="box-container">
             <Box
                 sx={{
                     marginTop: 8,
+                    marginBottom: 8,
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
@@ -78,7 +79,7 @@ function ChangepwPage() {
             <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
                 {/* <LockOutlinedIcon /> */}
             </Avatar>
-            <Typography component={"h1"} variant={"h3"} marginBottom={"1rem"}>Change Password</Typography>
+            <Typography variant={"h4"} marginBottom={"1rem"}>Change Password</Typography>
             <TextField
             margin="normal"
             label="Old Password"
@@ -111,7 +112,7 @@ function ChangepwPage() {
                     onClick={handleChangePassword}
                     fullWidth
                     >
-                    Change Password
+                    Confirm
                 </Button>
 
             <Dialog
