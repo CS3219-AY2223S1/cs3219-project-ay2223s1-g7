@@ -70,26 +70,6 @@ jobs:
         DB_LOCAL_URI: ${{ secrets.DB_LOCAL_URI }}
       run: npm run test
 
-    # https://ljmocic.medium.com/deploying-react-application-to-aws-s3-using-github-actions-85addacaeace
-    - name: Install frontend dependencies
-      working-directory: ./frontend
-      run: npm install --production
-    
-    - name: Generate frontend build
-      working-directory: ./frontend
-      env:
-        REACT_APP_URI_USER_SVC: ${{ secrets.REACT_APP_URI_USER_SVC }}
-        REACT_APP_URI_MATCH_SVC: ${{ secrets.REACT_APP_URI_MATCH_SVC }}
-        REACT_APP_URI_COLLAB_SVC: ${{ secrets.REACT_APP_URI_COLLAB_SVC }}
-        REACT_APP_URI_QUESTION_SVC: ${{ secrets.REACT_APP_URI_QUESTION_SVC }}
-      run: CI=false npm run build
-
-    - name: Share artifact inside workflow
-      uses: actions/upload-artifact@v3
-      with:
-        name: frontend-build
-        path: frontend/build
-
   deploy:
     needs: [test]
     
@@ -177,10 +157,19 @@ jobs:
         version_label: "question-service-${{ steps.format-time.outputs.replaced }}"
         deployment_package: question-service-deploy.zip
 
-    - name: Get frontend build
-      uses: actions/download-artifact@v3
-      with:
-        name: frontend-build
+    # https://ljmocic.medium.com/deploying-react-application-to-aws-s3-using-github-actions-85addacaeace
+    - name: Install frontend dependencies
+      working-directory: ./frontend
+      run: npm install --production
+    
+    - name: Generate frontend build
+      working-directory: ./frontend
+      env:
+        REACT_APP_URI_USER_SVC: ${{ secrets.REACT_APP_URI_USER_SVC }}
+        REACT_APP_URI_MATCH_SVC: ${{ secrets.REACT_APP_URI_MATCH_SVC }}
+        REACT_APP_URI_COLLAB_SVC: ${{ secrets.REACT_APP_URI_COLLAB_SVC }}
+        REACT_APP_URI_QUESTION_SVC: ${{ secrets.REACT_APP_URI_QUESTION_SVC }}
+      run: CI=false npm run build
     
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
@@ -191,4 +180,4 @@ jobs:
 
     - name: Deploy to S3
       run: aws s3 sync . s3://peerprep-g7 --acl public-read
-      working-directory: frontend-build
+      working-directory: ./frontend/build

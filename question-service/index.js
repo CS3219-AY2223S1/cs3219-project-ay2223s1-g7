@@ -12,6 +12,10 @@ const router = express.Router()
 
 const port = process.env.ENV === "PROD" ? process.env.API_ENDPOINT : 8003
 
+app.get('/', (req, res) => {
+    res.send('Hello World from question-service');
+});
+
 // Controller will contain all the Question-defined Routes
 router.get('/ping', (_, res) => res.send('Hello World from question-service'))
 router.post('/', addQuestion)
