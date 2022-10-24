@@ -28,3 +28,6 @@ app.use('/api/user', router).all((_, res) => {
 })
 
 app.listen(8000, () => console.log('user-service listening on port 8000'));
+
+// Export our app for testing purposes
+export default app;
