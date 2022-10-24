@@ -27,12 +27,16 @@ describe("Matching service test", function () {
                 "difficulty": "HARD"
             }
         });
-        client3 = io(SOCKET_URL, {
-            query: {
-                "username": "username3",
-                "difficulty": "HARD"
-            }
-        });
+        setTimeout(
+            () => {
+                client3 = io(SOCKET_URL, {
+                    query: {
+                        "username": "username3",
+                        "difficulty": "HARD"
+                    }
+                });
+            }, 40
+        )
         client2.on('matchSuccess', function (data) {
             done();
         });
