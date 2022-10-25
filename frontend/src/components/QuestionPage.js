@@ -4,7 +4,7 @@ import {
     Chip,
     Typography
 } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext} from "react";
 import { io } from "socket.io-client"
 import { ChangeSet, Text } from '@codemirror/state';
 import { ViewPlugin } from '@codemirror/view';
@@ -13,6 +13,10 @@ import { receiveUpdates, sendableUpdates, collab, getSyncedVersion } from "@code
 import { deleteCookie, getCookie } from "../utils/cookies"
 import { Editor } from "./Editor";
 import { URL_COLLAB_SVC, URL_QUESTION_SVC } from "../configs";
+import VideoPlayer from './VideoPlayer';
+import Notifications from './Notifications';
+import {Options} from './Options';
+import { SocketContext } from "../SocketContext";
 import axios from "axios";
 
 // codemirror collaboration implementation (operational transformation)
@@ -24,6 +28,7 @@ function QuestionPage(props) {
     const [collabSocket, setCollabSocket] = useState(io())
     const [initDoc, setInitDoc] = useState("")
     const [initVersion, setInitVersion] = useState(0)
+    const {leaveCall} = useContext(SocketContext);
 
 
     useEffect(() => {
@@ -168,6 +173,9 @@ function QuestionPage(props) {
         collabSocket.disconnect()
         deleteCookie("room_name")
         props.handleExit()
+
+        // For webcam service
+        leaveCall();
     }
 
     function getDifficultyTag() {
@@ -200,7 +208,21 @@ function QuestionPage(props) {
                 </Box>
                 <Editor peerExtension={peerExtension} initVersion={initVersion} initDoc={initDoc} />
             </Box>
-            <Button variant={"contained"} onClick={handleFinish} sx={{marginTop:"1rem"}}>Finish</Button>
+            <Button variant={"contained"} color={"error"} onClick={handleFinish} sx={{marginTop:"1rem"}}>Finish</Button>
+            <div 
+                sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    width: '100%',
+                }}                
+            >
+                <VideoPlayer />
+                <Options>
+                    <Notifications />
+                </Options>
+            </div>
+
         </Box>
     )
 }
