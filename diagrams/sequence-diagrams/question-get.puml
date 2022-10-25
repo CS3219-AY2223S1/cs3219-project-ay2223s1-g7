@@ -1,0 +1,30 @@
+@startuml matching-disconnect
+
+participant "user1:Frontend" as user1
+participant QuestionService
+database mongodb
+
+activate user1
+user1 -> QuestionService: getQuestion(difficulty)
+activate QuestionService
+
+
+QuestionService -> mongodb: getQuestion(difficulty)
+
+note over QuestionService
+    Returns the first question 
+    that has not been attempted
+    by both users in the DB.
+end note
+
+mongodb --> QuestionService: question
+
+
+
+QuestionService -> user1: question
+
+
+deactivate QuestionService
+
+@enduml
+

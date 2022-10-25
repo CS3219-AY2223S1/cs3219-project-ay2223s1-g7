@@ -45,10 +45,11 @@ function SignupPage() {
 
 
     return (
-        <Container component="main" maxWidth="xs">
+        <Container component="main" maxWidth="xs" className="box-container">
             <Box
                 sx={{
                     marginTop: 8,
+                    marginBottom: 8,
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
@@ -57,7 +58,7 @@ function SignupPage() {
                 <Avatar sx={{ m: 1, bgcolor: 'primary.main' }}>
                     {/* <LockOutlinedIcon /> */}
                 </Avatar>
-                <Typography component={"h1"} variant={"h3"} marginBottom={"1rem"}>Sign Up</Typography>
+                <Typography variant={"h4"} marginBottom={"1rem"}>Sign Up</Typography>
                 {(hasSubmit && !isSignupSuccess && errMessage) && <Alert severity="error">{errMessage}</Alert>}
                 {(hasSubmit && isSignupSuccess && succMessage) && <Alert severity="success">{succMessage}</Alert>}
                 <TextField
