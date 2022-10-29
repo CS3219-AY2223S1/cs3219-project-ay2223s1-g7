@@ -8,7 +8,7 @@ import { URL_WEBCAM_SVC } from '../configs.js'
 import { getCookie } from "../utils/cookies.js";
 
 const VideoPlayer = () => {
-    const { inCall, myVideo, peerVideo, stream, toggleVideo, initiateWebcam, videoOn, toggleAudio, audioOn, setSocket } = useContext(SocketContext);
+    const { inCall, myVideo, peerVideo, peerName, stream, toggleVideo, initiateWebcam, videoOn, toggleAudio, audioOn, setSocket } = useContext(SocketContext);
 
     useEffect(() => {
         let roomName = getCookie("room_name")
@@ -89,7 +89,7 @@ const VideoPlayer = () => {
                 }}
                 >
                     <Box>
-                        <Typography variant="h5" gutterBottom> Name </Typography>
+                        <Typography variant="h5" gutterBottom>{peerName}</Typography>
                         <video id="peerVideo" style={{ width: '100%', maxHeight: 'min(30vh, 18vw)', minHeight:'200px', }} playsInline ref={peerVideo} autoPlay onClick={getResolution} />
                     </Box>
                 </Paper>
