@@ -28,7 +28,7 @@ function QuestionPage(props) {
     const [collabSocket, setCollabSocket] = useState(io())
     const [initDoc, setInitDoc] = useState("")
     const [initVersion, setInitVersion] = useState(0)
-    const {leaveCall} = useContext(SocketContext);
+    const { handleExit } = useContext(SocketContext);
 
 
     useEffect(() => {
@@ -62,15 +62,12 @@ function QuestionPage(props) {
             let username = getCookie("user")
             let resp = await getQuestion()
 
-
             if (users.length === 2) {
                 let collaboratorName = users.filter(name => name !== username)[0]
                 setCollaboratorName(collaboratorName)
                 setTitle(resp.data.question.title)
                 setQuestion(resp.data.question.question)
                 console.log("QUESTION IS", resp.data)
-
-
             }
         })
 
@@ -78,7 +75,7 @@ function QuestionPage(props) {
             handleFinish()
         })
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [collabSocket])
+    }, [collabSocket, handleExit])
 
     function pushUpdates(version, fullUpdates) {
         // Strip off transaction data
@@ -174,17 +171,14 @@ function QuestionPage(props) {
         return [collab({ startVersion }), plugin]
     }
 
-    function handleFinish() {
+    async function handleFinish() {
+        await handleExit();
         collabSocket.disconnect()
         deleteCookie("room_name")
         props.handleExit()
-
-        // For webcam service
-        leaveCall();
     }
 
     function getDifficultyTag() {
-        console.log(props.difficulty)
         if (props.difficulty === 'EASY') {
             return <Chip color="success" variant="filled" label="Easy" />
         } else if (props.difficulty === 'MEDIUM') {
@@ -198,27 +192,27 @@ function QuestionPage(props) {
         <Box display={"flex"} flexDirection={"column"} sx={{ margin: "1rem" }} >
             <Box display={"flex"} gap="1rem">
                 <Box display={"flex"} flexDirection={"column"} flexGrow={1} minWidth={"300px"} maxWidth={"50%"}>
-                <Box display={"flex"} flexDirection={"row"} alignItems="center" marginBottom="1rem">
-                    <Typography marginRight="1rem" variant={"h6"}><strong>{title}</strong></Typography>
-                    {getDifficultyTag()}
-                </Box>
-                        
+                    <Box display={"flex"} flexDirection={"row"} alignItems="center" marginBottom="1rem">
+                        <Typography marginRight="1rem" variant={"h6"}><strong>{title}</strong></Typography>
+                        {getDifficultyTag()}
+                    </Box>
+
                     <Typography variant={"h7"} marginBottom="1rem">{question}</Typography>
                     <Box width={"100%"} height={"100%"} sx={{ border: '1px solid', borderRadius: '3px' }}>
                         <Typography variant={"h6"} textAlign="center" >You're matched with {collaboratorName}!</Typography>
-            <div 
-                sx={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    width: '100%',
-                }}                
-            >
-                <VideoPlayer />
-                <Options>
-                    <Notifications />
-                </Options>
-            </div>
+                        <div
+                            sx={{
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                width: '100%',
+                            }}
+                        >
+                            <VideoPlayer />
+                            <Options>
+                                <Notifications />
+                            </Options>
+                        </div>
                     </Box>
                 </Box>
                 <Editor peerExtension={peerExtension} initVersion={initVersion} initDoc={initDoc} />
