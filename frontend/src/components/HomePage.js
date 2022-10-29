@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { URL_USER_SVC, URL_MATCH_SVC } from "../configs";
-import { STATUS_CODE_CONFLICT, STATUS_CODE_CREATED } from "../constants";
 import { useNavigate, useLocation } from "react-router-dom";
 import { io } from "socket.io-client"
+
 import { getCookie, setCookie } from "../utils/cookies"
 import QuestionSelectionPage from "./QuestionSelectionPage";
 import LoadingPage from "./LoadingPage";
 import QuestionPage from "./QuestionPage";
+import { URL_USER_SVC, URL_MATCH_SVC } from "../configs";
+import { STATUS_CODE_CONFLICT, STATUS_CODE_CREATED } from "../constants";
 
 
 function HomePage(props) {
@@ -14,7 +15,12 @@ function HomePage(props) {
     const [difficulty, setDifficulty] = useState("")
     const [matchSocket, setMatchSocket] = useState(io())
     const [text, setText] = useState("")
-    const [route, setRoute] = useState(useLocation().pathname)
+    const [route, setRoute] = useState("/home")
+
+    useEffect(() => {
+        navigate(route)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
 
     useEffect(() => {
         // maybe add navigation to this listener instead

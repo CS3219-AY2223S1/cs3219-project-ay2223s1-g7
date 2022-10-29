@@ -22,24 +22,49 @@ const io = new Server(
     }
 );
 
-io.on('connection', (socket) => {
-    socket.emit('me', socket.id);
+io.on('connection', async (socket) => {
 
-    socket.on('disconnect', () => {
-        console.log("DISCONNECT");
+    let query = socket.handshake.query
+    if (query.username.length === 0 || query.roomName.length === 0) {
+        console.log("missing username and/or roomName")
+        socket.disconnect()
+        return
+    }
 
-        socket.broadcast.emit("callended");
+    let roomName = query.roomName
+    console.log(`A user connected ${socket.id} ${query.username} ${roomName}`)
+
+    socket.join(roomName)
+
+    // send everyone's usernames in the room
+    let sockets = await io.in(roomName).fetchSockets();
+    let users = sockets.map(socket => ({ name: socket.handshake.query.username }))
+    if (users.length == 2) {
+        io.to(roomName).emit("joinRoomSuccess", { users })
+    }
+
+    socket.on('endCall', () => {
+        console.log(`${query.username} ending call`)
+        io.to(roomName).emit("callended")
     });
-
-    socket.on("calluser", ({userToCall, signalData, from, name}) => {
-        io.to(userToCall).emit("calluser", {signal: signalData, from, name});
-        console.log("CALLING");
+    
+    socket.on("calluser", ({ signalData }) => {
+        console.log(`${query.username} calling`)
+        socket.to(roomName).emit("calluser", { signal: signalData });
     })
 
     socket.on("answercall", (data) => {
-        io.to(data.to).emit("callaccepted", data.signal);
-        console.log("ANSWERING");
+        console.log(`${query.username} answering`)
+        socket.to(roomName).emit("callaccepted", data.signal);
+    })
 
+    socket.on("rejectCall", () => {
+        socket.to(roomName).emit("rejectCall");
+    })
+
+    socket.on("disconnect", (data) => {
+        console.log(`A user disconnected ${socket.id} ${query.username} ${roomName}`)
     })
 });
+
 httpServer.listen(PORT, () => console.log("user-service listening on port " + PORT));
