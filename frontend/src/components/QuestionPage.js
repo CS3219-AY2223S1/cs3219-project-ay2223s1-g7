@@ -4,27 +4,27 @@ import {
     Chip,
     Typography
 } from "@mui/material";
-import React, { useEffect, useState, useContext} from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { io } from "socket.io-client"
 import { ChangeSet, Text } from '@codemirror/state';
 import { ViewPlugin } from '@codemirror/view';
 import { receiveUpdates, sendableUpdates, collab, getSyncedVersion } from "@codemirror/collab"
+import axios from "axios";
 
 import { deleteCookie, getCookie } from "../utils/cookies"
 import { Editor } from "./Editor";
 import { URL_COLLAB_SVC, URL_QUESTION_SVC } from "../configs";
 import VideoPlayer from './VideoPlayer';
 import Notifications from './Notifications';
-import {Options} from './Options';
+import { Options } from './Options';
 import { SocketContext } from "../SocketContext";
-import axios from "axios";
 
 // codemirror collaboration implementation (operational transformation)
 // https://github.com/codemirror/website/blob/master/site/examples/collab/collab.ts
 function QuestionPage(props) {
-    const [collaboratorName, setCollaboratorName] = useState("Kenneth")
-    const [question, setQuestion] = useState("Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target. \nYou may assume that each input would have exactly one solution, and you may not use the same element twice.\nYou can return the answer in any order.")
-    const [title, setTitle] = useState("Two Sum")
+    const [collaboratorName, setCollaboratorName] = useState("")
+    const [question, setQuestion] = useState("")
+    const [title, setTitle] = useState("")
     const [collabSocket, setCollabSocket] = useState(io())
     const [initDoc, setInitDoc] = useState("")
     const [initVersion, setInitVersion] = useState(0)
@@ -45,6 +45,11 @@ function QuestionPage(props) {
     }, [])
 
     useEffect(() => {
+        // remove old listeners
+        collabSocket.removeListener("connectSuccess")
+        collabSocket.removeListener("joinRoomSuccess")
+        collabSocket.removeListener("collaborator_left")
+
         collabSocket.on("connectSuccess", async () => {
             let { version, doc } = await getDocument()
             setInitDoc(doc)
@@ -190,8 +195,8 @@ function QuestionPage(props) {
     }
 
     return (
-        <Box display={"flex"} flexDirection={"column"} sx={{margin:"1rem"}}>
-            <Box display={"flex"} gap="4px">
+        <Box display={"flex"} flexDirection={"column"} sx={{ margin: "1rem" }} >
+            <Box display={"flex"} gap="1rem">
                 <Box display={"flex"} flexDirection={"column"} flexGrow={1} minWidth={"300px"} maxWidth={"50%"}>
                 <Box display={"flex"} flexDirection={"row"} alignItems="center" marginBottom="1rem">
                     <Typography marginRight="1rem" variant={"h6"}><strong>{title}</strong></Typography>
@@ -199,16 +204,8 @@ function QuestionPage(props) {
                 </Box>
                         
                     <Typography variant={"h7"} marginBottom="1rem">{question}</Typography>
-                    <Box width={"100%"} height={"100%"} sx={{ border: '1px solid', borderRadius:'3px' }}>
-                        <Typography variant={"h6"} textAlign="center" marginBottom="4rem">You're matched with {collaboratorName}!</Typography>
-                        <Typography variant={"h7"} textAlign="center">
-                            Replace this with webcam stuff
-                        </Typography>
-                    </Box>
-                </Box>
-                <Editor peerExtension={peerExtension} initVersion={initVersion} initDoc={initDoc} />
-            </Box>
-            <Button variant={"contained"} color={"error"} onClick={handleFinish} sx={{marginTop:"1rem"}}>Finish</Button>
+                    <Box width={"100%"} height={"100%"} sx={{ border: '1px solid', borderRadius: '3px' }}>
+                        <Typography variant={"h6"} textAlign="center" >You're matched with {collaboratorName}!</Typography>
             <div 
                 sx={{
                     display: 'flex',
@@ -222,7 +219,11 @@ function QuestionPage(props) {
                     <Notifications />
                 </Options>
             </div>
-
+                    </Box>
+                </Box>
+                <Editor peerExtension={peerExtension} initVersion={initVersion} initDoc={initDoc} />
+            </Box>
+            <Button variant={"contained"} color={"error"} onClick={handleFinish} sx={{ marginTop: "1rem" }}>Finish</Button>
         </Box>
     )
 }
