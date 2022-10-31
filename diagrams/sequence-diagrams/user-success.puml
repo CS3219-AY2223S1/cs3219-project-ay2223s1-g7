@@ -23,8 +23,11 @@ note over mongodb
     if valid, generate and return JWT
     return 201 if success
 end note
-mongodb --> UserService: 201, Login successfully
-UserService --> user1: loginSuccess
+mongodb --> UserService: 201, Login successfully, JWT
+UserService --> user1: loginSuccess, JWT
+note over user1
+    store JWT as cookie
+end note
 
 user1 -> UserService: ChangePassword(username, oldPassword, newPassword, token)
 UserService -> mongodb: changePassword(username, oldPassword, newPassword, token)
