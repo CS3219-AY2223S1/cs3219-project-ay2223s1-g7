@@ -103,7 +103,8 @@ export async function ormSearchAllQuestionsAttempted(user) {
 
 export async function ormAttemptQuestion(title, user) {
     try {
-        
+        console.log("Title: " + title)
+        console.log("User: " + user)
         const questions = await addQuestionAttempt(title, user)
         console.log("Question: ", questions)
         if (questions) {

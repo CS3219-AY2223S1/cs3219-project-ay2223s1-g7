@@ -97,8 +97,6 @@ export async function attemptQuestion(req, res) {
     try {
         
         const {title, user}= req.body
-        console.log(title)
-        console.log(user)
         const resp = await _attemptQuestion(title, user);
         console.log(resp)
         if (resp.err) {

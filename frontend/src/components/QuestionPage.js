@@ -60,18 +60,21 @@ function QuestionPage(props) {
             let users = data.users
             console.log(users)
             let username = getCookie("user")
-            let resp = await getQuestion()
+            
 
             if (users.length === 2) {
                 let collaboratorName = users.filter(name => name !== username)[0]
                 setCollaboratorName(collaboratorName)
+                let resp = await getQuestion()
                 setTitle(resp.data.question.title)
                 setQuestion(resp.data.question.question)
                 console.log("QUESTION IS", resp.data)
+                attemptQuestion(resp.data.question.title)
             }
         })
 
         collabSocket.on("collaborator_left", () => {
+           
             handleFinish()
         })
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -119,7 +122,17 @@ function QuestionPage(props) {
     async function getQuestion() {
         let difficulty = props.difficulty
         return axios.post(URL_QUESTION_SVC + "get", {
+            userOne: getCookie("user"),
+            userTwo: collaboratorName,
             difficulty
+        })
+    }
+    
+    async function attemptQuestion(title) {
+        console.log("Title is" + title)
+        return axios.post(URL_QUESTION_SVC + "attemptQuestion", {
+            title: title,
+            user: getCookie("user")
         })
     }
 
