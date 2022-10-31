@@ -6,6 +6,7 @@ import SettingsPage from './components/SettingsPage'
 import { PrivateRoute } from './components/PrivateRoute';
 import ChangepwPage from './components/ChangepwPage'
 import HomePage from './components/HomePage'
+import HistoryPage from './components/HistoryPage'
 import { Box } from "@mui/material";
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useLocation } from "react-router-dom";
@@ -71,6 +72,11 @@ function App() {
                                 <PrivateRoute>
                                     <HomePage />
                                 </PrivateRoute>} />
+                            <Route path="/history" element = {
+                                <PrivateRoute>
+                                    <HistoryPage />
+                                </PrivateRoute>
+                            } />
                             <Route path="*" element={<div>
                                 <h2>404 Page not found</h2>
                             </div>} />

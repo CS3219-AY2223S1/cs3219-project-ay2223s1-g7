@@ -6,6 +6,7 @@ import { getCookie, setCookie } from "../utils/cookies"
 import QuestionSelectionPage from "./QuestionSelectionPage";
 import LoadingPage from "./LoadingPage";
 import QuestionPage from "./QuestionPage";
+import HistoryPage from "./HistoryPage"
 import { URL_USER_SVC, URL_MATCH_SVC } from "../configs";
 import { STATUS_CODE_CONFLICT, STATUS_CODE_CREATED } from "../constants";
 
@@ -72,10 +73,11 @@ function HomePage(props) {
                     handleExit={handleExitToHome} 
                     difficulty={difficulty} 
                     />
-                : <QuestionPage
+                : (route === "/history" ? 
+                <HistoryPage/> : <QuestionPage
                     text={text}
                     handleExit={handleExitToHome} 
-                    difficulty={difficulty}/>
+                    difficulty={difficulty}/> )
             )
     )
 }

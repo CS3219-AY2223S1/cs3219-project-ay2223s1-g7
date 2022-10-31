@@ -107,6 +107,7 @@ const Header = () => {
   };
 
   const toHome = () => window.location.href = "http://localhost:3000/home"
+  const toHistory = () => window.location.href = "http://localhost:3000/history"
   const toLogin = () => window.location.href = "http://localhost:3000/login"
 
   const handleLogout = async () => {
@@ -202,6 +203,15 @@ const Header = () => {
               >
                 <Typography>
                   {"Home"}
+                </Typography>
+              </Button>
+              <Button
+                key={"history"}
+                onClick={toHistory}
+                sx={{ ml: 1, my: 1, color: 'white', display: 'block', textTransform: 'none' }}
+              >
+                <Typography>
+                  {"History"}
                 </Typography>
               </Button>
               {/* insert new buttons here */}
