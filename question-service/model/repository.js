@@ -33,9 +33,10 @@ export async function findQuestionByTitle(inputTitle) {
     .findOne( { title: inputTitle } );
 }
 
-export async function findQuestionByDifficulty(inputDifficulty) {
+export async function findQuestionByDifficulty(inputDifficulty, userOne, userTwo) {
     return db.collection("questionmodels")
-    .findOne( { difficulty: inputDifficulty } );
+    .findOne( { difficulty: inputDifficulty , 
+      attempts: {$nin: [userOne, userTwo]} });
 }
 
 export async function findAllQuestionByDifficulty(inputDifficulty) {
@@ -48,6 +49,16 @@ export async function deleteQuestion(inputTitle) {
   return db.collection("questionmodels")
     .findOneAndDelete( { title: inputTitle } );
 }
+
+export async function findAllQuestionAttempted(user) {
+  
+  return db.collection("questionmodels")
+  .find( { attempts: user } ).toArray();
+}
+
+
+
+
 
 
 

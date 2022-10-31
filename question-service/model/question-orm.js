@@ -1,4 +1,4 @@
-import {createQuestion, checkQuestionInDatabase, findQuestionByTitle, findQuestionByDifficulty, findAllQuestionByDifficulty,deleteQuestion} from './repository.js';
+import {createQuestion, checkQuestionInDatabase, findQuestionByTitle, findQuestionByDifficulty, findAllQuestionByDifficulty,deleteQuestion, findAllQuestionAttempted} from './repository.js';
 
 export async function ormCreateQuestion(title, question, difficulty) {
 
@@ -33,9 +33,9 @@ export async function ormSearchQuestionByTitle(title) {
 }
 
 
-export async function ormSearchQuestionByDifficulty(difficulty) {
+export async function ormSearchQuestionByDifficulty(difficulty, userOne, userTwo) {
     try {
-        const question = await findQuestionByDifficulty(difficulty) 
+        const question = await findQuestionByDifficulty(difficulty, userOne, userTwo) 
         console.log("Question: ", question)
         if (question) {
             return question;
@@ -80,4 +80,21 @@ export async function ormDeleteQuestion(title) {
         console.log('ERROR: Could not delete');
         return { err };
     }
+}
+
+export async function ormSearchAllQuestionsAttempted(user) {
+    try {
+        const questions = await findAllQuestionAttempted(user) 
+        console.log("Question: ", questions)
+        if (questions) {
+            return questions;
+        } else {
+            throw new Error("Missing question")
+        }
+     
+    } catch (err) {
+        console.log('ERROR: Could not find question');
+        return { err };
+    }
+
 }

@@ -1,5 +1,5 @@
 import { ormCreateQuestion as _createQuestion, ormSearchAllQuestionsByDifficulty as _searchAllQuestionsByDifficulty, 
-    ormSearchQuestionByDifficulty as _searchQuestionByDifficulty, ormDeleteQuestion as _deleteQuestion, ormSearchQuestionByTitle as _searchQuestionByTitle} from '../model/question-orm.js'
+    ormSearchQuestionByDifficulty as _searchQuestionByDifficulty, ormDeleteQuestion as _deleteQuestion, ormSearchQuestionByTitle as _searchQuestionByTitle, ormSearchAllQuestionsAttempted as _searchAllQuestionsAttempted} from '../model/question-orm.js'
 
 
 export async function addQuestion(req, res) {
@@ -42,9 +42,9 @@ export async function deleteQuestion(req, res) {
 export async function getQuestion(req, res) {
     try {
         
-        const {difficulty}= req.body
+        const {difficulty, userOne , userTwo}= req.body
         console.log("DIFFICULTY IS: " + difficulty)
-        const resp = await _searchQuestionByDifficulty(difficulty);
+        const resp = await _searchQuestionByDifficulty(difficulty, userOne, userTwo);
         if (resp.err) {
             return res.status(409).json({message: 'Could not find question!'});
         } else {
@@ -72,4 +72,23 @@ export async function getAllQuestions(req, res) {
     } catch (err) {
         return res.status(500).json({message: 'Database failure when finding question!'})
     }
+}
+
+
+export async function getAllQuestionsAttempted(req, res) {
+    try {
+        
+        const {user}= req.body
+        const resp = await _searchAllQuestionsAttempted(user);
+        console.log(resp)
+        if (resp.err) {
+            return res.status(409).json({message: 'Could not find question!'});
+        } else {
+            return res.status(201).json({question: resp});
+        } 
+        
+    } catch (err) {
+        return res.status(500).json({message: 'Database failure when finding question!'})
+    }
+
 }

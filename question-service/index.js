@@ -6,7 +6,7 @@ app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
 app.use(cors()) // config cors so that front-end can use
 app.options('*', cors())
-import { getAllQuestions,getQuestion,addQuestion, deleteQuestion} from './controller/question-controller.js';
+import { getAllQuestions,getQuestion,addQuestion, deleteQuestion, getAllQuestionsAttempted} from './controller/question-controller.js';
 
 const router = express.Router()
 
@@ -16,6 +16,7 @@ router.get('/ping', (_, res) => res.send('Hello World from question-service'))
 router.post('/', addQuestion)
 router.post('/delete', deleteQuestion)
 router.post('/get', getQuestion)
+router.post('/attempts', getAllQuestionsAttempted)
 router.get('/all', getAllQuestions)
 
 app.use('/api/question', router).all((_, res) => {
