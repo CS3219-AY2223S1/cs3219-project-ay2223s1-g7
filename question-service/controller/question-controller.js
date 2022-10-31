@@ -1,5 +1,5 @@
 import { ormCreateQuestion as _createQuestion, ormSearchAllQuestionsByDifficulty as _searchAllQuestionsByDifficulty, 
-    ormSearchQuestionByDifficulty as _searchQuestionByDifficulty, ormDeleteQuestion as _deleteQuestion, ormSearchQuestionByTitle as _searchQuestionByTitle, ormSearchAllQuestionsAttempted as _searchAllQuestionsAttempted} from '../model/question-orm.js'
+    ormSearchQuestionByDifficulty as _searchQuestionByDifficulty, ormDeleteQuestion as _deleteQuestion, ormSearchQuestionByTitle as _searchQuestionByTitle, ormSearchAllQuestionsAttempted as _searchAllQuestionsAttempted, ormAttemptQuestion as _attemptQuestion} from '../model/question-orm.js'
 
 
 export async function addQuestion(req, res) {
@@ -92,3 +92,26 @@ export async function getAllQuestionsAttempted(req, res) {
     }
 
 }
+
+export async function attemptQuestion(req, res) {
+    try {
+        
+        const {title, user}= req.body
+        console.log(title)
+        console.log(user)
+        const resp = await _attemptQuestion(title, user);
+        console.log(resp)
+        if (resp.err) {
+            return res.status(409).json({message: 'Could not find question!'});
+        } else {
+            return res.status(201).json({question: resp});
+        } 
+        
+    } catch (err) {
+        return res.status(500).json({message: 'Database failure when finding question!'})
+    }
+
+}
+
+
+

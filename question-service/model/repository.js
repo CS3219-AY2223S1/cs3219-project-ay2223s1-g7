@@ -56,10 +56,14 @@ export async function findAllQuestionAttempted(user) {
   .find( { attempts: user } ).toArray();
 }
 
-
-
-
-
-
-
-
+export async function addQuestionAttempt(inputTitle, user) {
+  console.log(inputTitle)
+  console.log(user)
+  return db.collection("questionmodels").updateOne( {
+    title: inputTitle
+  }, {
+    $push : {
+      attempts : user
+    }
+  })
+}

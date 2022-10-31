@@ -1,4 +1,4 @@
-import {createQuestion, checkQuestionInDatabase, findQuestionByTitle, findQuestionByDifficulty, findAllQuestionByDifficulty,deleteQuestion, findAllQuestionAttempted} from './repository.js';
+import {createQuestion, checkQuestionInDatabase, findQuestionByTitle, findQuestionByDifficulty, findAllQuestionByDifficulty,deleteQuestion, findAllQuestionAttempted, addQuestionAttempt} from './repository.js';
 
 export async function ormCreateQuestion(title, question, difficulty) {
 
@@ -84,7 +84,27 @@ export async function ormDeleteQuestion(title) {
 
 export async function ormSearchAllQuestionsAttempted(user) {
     try {
+        
         const questions = await findAllQuestionAttempted(user) 
+        console.log("Question: ", questions)
+        if (questions) {
+            return questions;
+        } else {
+            throw new Error("Missing question")
+        }
+     
+    } catch (err) {
+        console.log('ERROR: Could not find question');
+        return { err };
+    }
+
+}
+
+
+export async function ormAttemptQuestion(title, user) {
+    try {
+        
+        const questions = await addQuestionAttempt(title, user)
         console.log("Question: ", questions)
         if (questions) {
             return questions;
