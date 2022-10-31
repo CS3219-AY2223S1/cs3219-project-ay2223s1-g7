@@ -1,7 +1,13 @@
 import { ormCreateQuestion as _createQuestion, ormSearchAllQuestionsByDifficulty as _searchAllQuestionsByDifficulty, 
     ormSearchQuestionByDifficulty as _searchQuestionByDifficulty, ormDeleteQuestion as _deleteQuestion, ormSearchQuestionByTitle as _searchQuestionByTitle, ormSearchAllQuestionsAttempted as _searchAllQuestionsAttempted, ormAttemptQuestion as _attemptQuestion} from '../model/question-orm.js'
-
-
+import redis from "redis"
+const redisClient = redis.createClient()
+if (!redisClient) {
+    console.log("cannot connect to redis");
+  } else {
+    console.log("connected to redis");
+  }
+  
 export async function addQuestion(req, res) {
     try {
         const { title, question, difficulty } = req.body;
@@ -77,15 +83,31 @@ export async function getAllQuestions(req, res) {
 
 export async function getAllQuestionsAttempted(req, res) {
     try {
-        
         const {user}= req.body
-        const resp = await _searchAllQuestionsAttempted(user);
-        console.log(resp)
-        if (resp.err) {
-            return res.status(409).json({message: 'Could not find question!'});
-        } else {
-            return res.status(201).json({question: resp});
-        } 
+
+        redisClient.get(`questions`, async (error, questions) => {
+            if (error) console.error(error);
+            if (questions != null) {
+                console.log("Hit")
+                return res.status(201).json({question: JSON.parse(questions)});
+            } else {
+                console.log("Miss")
+                const resp = await _searchAllQuestionsAttempted(user);
+                console.log(resp)
+                if (resp.err) {
+                    return res.status(409).json({message: 'Could not find question!'});
+                } else {
+                    redisClient.setex(
+                        `questions`,
+                        1000,
+                        JSON.stringify(resp)
+                    )
+                    return res.status(201).json({question: resp});
+                } 
+            }
+        }
+        )
+        
         
     } catch (err) {
         return res.status(500).json({message: 'Database failure when finding question!'})
