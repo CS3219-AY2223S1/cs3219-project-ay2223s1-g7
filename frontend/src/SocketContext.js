@@ -183,9 +183,10 @@ const ContextProvider = ({ children }) => {
         }).then((currentStream) => {
             if(inCall) {
                 peerRef.current.replaceTrack(stream.getAudioTracks()[0], currentStream.getAudioTracks()[0], stream);
+                setPastStream(currentStream);
+
             }
     
-            setPastStream(currentStream);
 
             return true
         }).catch(error => {
@@ -235,8 +236,6 @@ const ContextProvider = ({ children }) => {
                     return false
                 })
                 if (!isVideoAvailable) {
-                    console.log("NOW")
-
                     continue
                 }
                 setVideoOn(true);
@@ -267,6 +266,16 @@ const ContextProvider = ({ children }) => {
                 }
             });
         }
+
+        else if (myVideo.current.srcObject !== null) {
+            myVideo.current.srcObject.getTracks().forEach(function (track) {
+                if (track.readyState === "live" && track.kind === "audio") {
+                    track.enabled = !audioOn;
+                    setVideoOn(!audioOn);
+                }
+            })
+        };
+
     }
 
     return (

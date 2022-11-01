@@ -66,7 +66,7 @@ const VideoPlayer = () => {
                                 <Tooltip title={videoOn ? "Turn off video" : "Turn on video"}>
                                     <Button variant="contained" color="primary"
                                         onClick={toggleVideo}
-                                        startIcon={videoOn ? <VideocamOff /> : <Videocam />}>
+                                        startIcon={videoOn ? <Videocam /> : <VideocamOff />}>
                                     </Button>
                                 </Tooltip>
 
@@ -85,7 +85,7 @@ const VideoPlayer = () => {
                                 <Tooltip title={audioOn ? "Turn off audio" : "Turn on audio"}>
                                     <Button variant="contained" color="primary"
                                         onClick={toggleAudio}
-                                        startIcon={audioOn ? <MicOff /> : <Mic />}>
+                                        startIcon={audioOn ? <Mic /> : <MicOff />}>
                                     </Button>
                                 </Tooltip>
 
