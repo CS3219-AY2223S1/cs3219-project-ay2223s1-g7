@@ -67,4 +67,4 @@ io.on('connection', async (socket) => {
     })
 });
 
-httpServer.listen(PORT, () => console.log("user-service listening on port " + PORT));
+httpServer.listen(PORT, () => console.log("webcam-service listening on port " + PORT));
