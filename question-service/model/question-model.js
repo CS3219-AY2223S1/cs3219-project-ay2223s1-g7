@@ -13,6 +13,10 @@ let QuestionModelSchema = new Schema({
     difficulty: {
         type: String,
         required: true,
+    },
+    attempts: {
+        type: Array,
+        default: []
     }
 })
 

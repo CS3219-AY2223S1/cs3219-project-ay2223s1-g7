@@ -1,0 +1,62 @@
+@startuml
+participant "user:Frontend" as user1
+participant UserService
+database mongodb
+
+activate user1
+user1 -> UserService: signup(username, password)
+activate UserService
+
+UserService -> mongodb: createUser(username, password)
+note over mongodb
+    Query username and password, 
+    return 201 if no duplicate username 
+end note
+mongodb --> UserService: 201, Created new user successfully
+UserService --> user1: signupSuccess
+
+
+user1 -> UserService: login(username, password)
+UserService -> mongodb: loginUser(username, password)
+note over mongodb
+    Query username and password,
+    if valid, generate and return JWT
+    return 201 if success
+end note
+mongodb --> UserService: 201, Login successfully, JWT
+UserService --> user1: loginSuccess, JWT
+note over user1
+    store JWT as cookie
+end note
+
+user1 -> UserService: ChangePassword(username, oldPassword, newPassword, token)
+UserService -> mongodb: changePassword(username, oldPassword, newPassword, token)
+note over mongodb
+    Verify username and old password, 
+    after verified, add token to blacklist,
+    return 201 if username and new password are valid
+end note
+mongodb --> UserService: 201, Change password successfully
+UserService --> user1: changePasswordSuccess
+
+user1 -> UserService: Logout(token)
+UserService -> mongodb: logoutUser(token)
+note over mongodb
+    Add token to blacklist,
+    return 200 if success
+end note
+mongodb --> UserService: 200, Logout successfully
+UserService --> user1: logoutSuccess
+
+user1 -> UserService: DeleteUser(username, token)
+UserService -> mongodb: deleteUser(username, token)
+note over mongodb
+    Add token to blacklist,
+    Delete user from db,
+    return 200 if success
+end note
+mongodb --> UserService: 200, Delete user successfully
+UserService --> user1: deleteUserSuccess
+
+deactivate UserService
+@enduml

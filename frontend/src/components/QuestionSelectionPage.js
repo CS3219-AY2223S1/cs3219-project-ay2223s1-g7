@@ -15,8 +15,8 @@ function QuestionSelectionPage(props) {
 
     return (
         <Box padding={"1rem"}>
-            <Typography variant={"h3"} textAlign={"center"} marginBottom={"2rem"}>Choose difficulty</Typography>
-            <Box display={"flex"} flexDirection={"row"} justifyContent={"center"} alignItems={"center"} sx={{ 'button': { m: 1 } }} style={{ "flex-wrap": "wrap" }}>
+            <Typography variant={"h4"} textAlign={"center"} marginTop={"2rem"} marginBottom={"2rem"}>Select your difficulty level</Typography>
+            <Box display={"flex"} flexDirection={"row"} justifyContent={"center"} alignItems={"center"} sx={{ 'button': { m: 1 }, flexWrap: 'wrap' }} >
 
                 {/* https://stackoverflow.com/questions/67222758/react-transition-group-card-flip-animation */}
                 <div className="card-container">
@@ -46,7 +46,9 @@ function QuestionSelectionPage(props) {
                                     <Typography variant="h5" textAlign={"center"} marginTop={"1rem"} marginLeft={"1rem"} marginBottom={"1rem"}>
                                         Easy
                                     </Typography>
-                                    <Rating size="large" value={1} max={3} readOnly />
+                                    <Typography variant="h5" textAlign={"center"} marginTop={"1rem"} marginRight={"1rem"}>
+                                        <Rating size="large" value={1} max={3} readOnly />
+                                    </Typography>
                                 </Box>
                             </div>
                         </CSSTransition>
@@ -56,13 +58,29 @@ function QuestionSelectionPage(props) {
                             classNames="back-face-transition"
                             unmountOnExit
                         >
-                            <div className="card-back" style={{ backgroundColor: '#b3ffcc' }}>
-                                <h2 style={{ textAlign: "center" }}>Preview of an easy question:</h2>
-                                <h3>Given an array of integers and an integer target, return indices of the
+                            <div className="card-back" style={{ backgroundColor: '#b3ffcc', paddingLeft: '1rem', paddingRight: '1rem' }}>
+                                <Typography variant="h5" marginBottom="2rem" textAlign={"center"}>
+                                    <strong>Preview of an easy question:</strong>
+                                </Typography>
+                                <Typography variant="h6" marginBottom="1rem" textAlign={"center"}>
+                                    Given an array of integers and an integer target, return indices of the
                                     two numbers such that they add up to target.
-                                </h3>
-                                <h4 style={{ textAlign: "center" }}>Ready to start? Click me:)
-                                </h4>
+                                </Typography>
+                                <Box
+                                    sx={{
+                                        mt: 3,
+                                        mb: 2,
+                                        color: 'black',
+                                        borderColor: 'black',
+                                        padding: 1,
+                                        border: 1,
+                                        borderRadius: 2
+                                    }}
+                                >
+                                    <Typography variant="h6" textAlign={"center"}>Click to start
+                                    </Typography>
+
+                                </Box>
                             </div>
                         </CSSTransition>
                     </button>
@@ -95,7 +113,9 @@ function QuestionSelectionPage(props) {
                                     <Typography variant="h5" textAlign={"center"} marginTop={"1rem"} marginLeft={"1rem"} marginBottom={"1rem"}>
                                         Medium
                                     </Typography>
-                                    <Rating size="large" value={2} max={3} readOnly />
+                                    <Typography variant="h5" textAlign={"center"} marginTop={"1rem"} marginRight={"1rem"}>
+                                        <Rating size="large" value={2} max={3} readOnly />
+                                    </Typography>
                                 </Box>
                             </div>
                         </CSSTransition>
@@ -105,13 +125,28 @@ function QuestionSelectionPage(props) {
                             classNames="back-face-transition"
                             unmountOnExit
                         >
-                            <div className="card-back" style={{ backgroundColor: '#ffbf80' }}>
-                                <h2 style={{ textAlign: "center" }}>Preview of a medium question:</h2>
-                                <h3>
+                            <div className="card-back" style={{ backgroundColor: '#ffbf80', paddingLeft: '1rem', paddingRight: '1rem' }}>
+                                <Typography variant="h5" marginBottom="2rem" textAlign={"center"}>
+                                    <strong>Preview of a medium question:</strong>
+                                </Typography>
+                                <Typography variant="h6" marginBottom="1rem" textAlign={"center"}>
                                     Given two integers a and b, return all possible combinations of b numbers chosen from the range [1, a].
-                                </h3>
-                                <h4 style={{ textAlign: "center" }}>Ready to start? Click me:)
-                                </h4>
+                                </Typography>
+                                <Box
+                                    sx={{
+                                        mt: 3,
+                                        mb: 2,
+                                        color: 'black',
+                                        borderColor: 'black',
+                                        padding: 1,
+                                        border: 1,
+                                        borderRadius: 2
+                                    }}
+                                >
+                                    <Typography variant="h6" textAlign={"center"}>Click to start
+                                    </Typography>
+
+                                </Box>
                             </div>
                         </CSSTransition>
                     </button>
@@ -143,7 +178,10 @@ function QuestionSelectionPage(props) {
                                     <Typography variant="h5" textAlign={"center"} marginTop={"1rem"} marginLeft={"1rem"} marginBottom={"1rem"}>
                                         Hard
                                     </Typography>
-                                    <Rating size="large" value={3} max={3} readOnly />
+                                    <Typography variant="h5" textAlign={"center"} marginTop={"1rem"} marginRight={"1rem"}>
+
+                                        <Rating size="large" value={3} max={3} readOnly />
+                                    </Typography>
                                 </Box>
                             </div>
                         </CSSTransition>
@@ -153,14 +191,29 @@ function QuestionSelectionPage(props) {
                             classNames="back-face-transition"
                             unmountOnExit
                         >
-                            <div className="card-back" style={{ backgroundColor: '#ff8080' }}>
-                                <h2 style={{ textAlign: "center" }}>Preview of a hard question:</h2>
-                                <h3>
+                            <div className="card-back" style={{ backgroundColor: '#ff8080', paddingLeft: '1rem', paddingRight: '1rem' }}>
+                                <Typography variant="h5" marginBottom="2rem" textAlign={"center"}>
+                                    <strong>Preview of a hard question:</strong>
+                                </Typography>
+                                <Typography variant="h6" marginBottom="1rem" textAlign={"center"}>
                                     Given a string s representing a valid expression, implement a basic calculator(without using any built in function) to evaluate it,
                                     and return the result of the evaluation.
-                                </h3>
-                                <h4 style={{ textAlign: "center" }}>Ready to start? Click me:)
-                                </h4>
+                                </Typography>
+                                <Box
+                                    sx={{
+                                        mt: 3,
+                                        mb: 2,
+                                        color: 'black',
+                                        borderColor: 'black',
+                                        padding: 1,
+                                        border: 1,
+                                        borderRadius: 2
+                                    }}
+                                >
+                                    <Typography variant="h6" textAlign={"center"}>Click to start
+                                    </Typography>
+
+                                </Box>
                             </div>
                         </CSSTransition>
                     </button>

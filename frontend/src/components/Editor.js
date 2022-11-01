@@ -37,7 +37,7 @@ export const Editor = (props) => {
     });
 
     const editorStyle = EditorView.theme({
-        "&": { height: "70vh", minHeight: "500px" },
+        "&": { height: "70vh", minHeight: '100%' },
         ".cm-scroller": { overflow: "auto" }
     })
 
@@ -73,7 +73,7 @@ export const Editor = (props) => {
             >
                 {languages.map(x => <MenuItem key={x.key} value={x.value}>{x.key}</MenuItem>)}
             </TextField>
-            <div style={{ backgroundColor: "white", width: "50vw", minWidth: "300px", minHeight: "500px", border: "1px solid black" }} ref={editor} />
+            <div style={{ backgroundColor: "white", width: "50vw", minWidth: "300px", minHeight: 'calc(100% - 58px)', border: "1px solid black", borderRadius: '3px'}} ref={editor} />
         </div>
     );
 };

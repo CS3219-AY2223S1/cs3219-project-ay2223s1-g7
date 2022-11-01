@@ -107,6 +107,7 @@ const Header = () => {
   };
 
   const toHome = () => window.location.href = "http://localhost:3000/home"
+  const toHistory = () => window.location.href = "http://localhost:3000/history"
   const toLogin = () => window.location.href = "http://localhost:3000/login"
 
   const handleLogout = async () => {
@@ -133,21 +134,15 @@ const Header = () => {
   }
   return (
     <div className="home">
-      <AppBar position="static">
-        <Container maxWidth="xl">
+      <AppBar position="static" sx={{ bgcolor: "#686868"}}>
+        <Container maxWidth="false">
           <Toolbar disableGutters>
             <GroupIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
             <Typography
-              variant="h6"
               noWrap
               sx={{
                 mr: 1,
                 display: { xs: 'none', md: 'flex' },
-                fontFamily: 'monospace',
-                fontWeight: 700,
-                letterSpacing: '.3rem',
-                color: 'inherit',
-                textDecoration: 'none',
               }}
             >
               PeerPrep
@@ -184,24 +179,18 @@ const Header = () => {
               >
 
                 <MenuItem key={'Home'} onClick={handleCloseNavMenuAndHome}>
-                  <Typography textAlign="center">{'Home'}</Typography>
+                  <Typography textAlign="center" textTransform='none'>{'Home'}</Typography>
                 </MenuItem>
 
               </Menu>
             </Box>
             <GroupIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
             <Typography
-              variant="h5"
               noWrap
               sx={{
                 mr: 4,
                 display: { xs: 'flex', md: 'none' },
                 flexGrow: 1,
-                fontFamily: 'monospace',
-                fontWeight: 700,
-                letterSpacing: '.3rem',
-                color: 'inherit',
-                textDecoration: 'none',
               }}
             >
               PeerPrep
@@ -210,9 +199,20 @@ const Header = () => {
               <Button
                 key={"home"}
                 onClick={toHome}
-                sx={{ ml: 1, my: 1, color: 'white', display: 'block', fontSize: 16 }}
+                sx={{ ml: 1, my: 1, color: 'white', display: 'block', textTransform: 'none' }}
               >
-                {"home"}
+                <Typography>
+                  {"Home"}
+                </Typography>
+              </Button>
+              <Button
+                key={"history"}
+                onClick={toHistory}
+                sx={{ ml: 1, my: 1, color: 'white', display: 'block', textTransform: 'none' }}
+              >
+                <Typography>
+                  {"History"}
+                </Typography>
               </Button>
               {/* insert new buttons here */}
             </Box>

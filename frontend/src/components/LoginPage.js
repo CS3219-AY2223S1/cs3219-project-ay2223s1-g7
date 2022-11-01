@@ -10,7 +10,6 @@ import {
     Alert,
 } from "@mui/material";
 // import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-
 import { useState } from "react";
 import axios from "axios";
 import { URL_USER_SVC } from "../configs";
@@ -50,10 +49,11 @@ function LoginPage() {
     }
 
     return (
-        <Container component="main" maxWidth="xs">
+        <Container component="main" maxWidth="xs" className="box-container">
             <Box
                 sx={{
                     marginTop: 8,
+                    marginBottom: 8,
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
@@ -62,7 +62,7 @@ function LoginPage() {
                 <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
                     {/* <LockOutlinedIcon /> */}
                 </Avatar>
-                <Typography component={"h1"} variant={"h3"} marginBottom={"1rem"}>Login</Typography>
+                <Typography variant={"h4"} marginBottom={"1rem"}>Login</Typography>
                 {(hasSubmit && !isLoginSuccess && errMessage) && <Alert severity="error">{errMessage}</Alert>}
                 <TextField
                     margin="normal"

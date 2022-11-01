@@ -1,18 +1,23 @@
 import {
     Box,
     Button,
+    Chip,
     Typography
 } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { io } from "socket.io-client"
 import { ChangeSet, Text } from '@codemirror/state';
 import { ViewPlugin } from '@codemirror/view';
 import { receiveUpdates, sendableUpdates, collab, getSyncedVersion } from "@codemirror/collab"
+import axios from "axios";
 
 import { deleteCookie, getCookie } from "../utils/cookies"
 import { Editor } from "./Editor";
 import { URL_COLLAB_SVC, URL_QUESTION_SVC } from "../configs";
-import axios from "axios";
+import VideoPlayer from './VideoPlayer';
+import Notifications from './Notifications';
+import { Options } from './Options';
+import { SocketContext } from "../SocketContext";
 
 // codemirror collaboration implementation (operational transformation)
 // https://github.com/codemirror/website/blob/master/site/examples/collab/collab.ts
@@ -23,6 +28,7 @@ function QuestionPage(props) {
     const [collabSocket, setCollabSocket] = useState(io())
     const [initDoc, setInitDoc] = useState("")
     const [initVersion, setInitVersion] = useState(0)
+    const { handleExit } = useContext(SocketContext);
 
 
     useEffect(() => {
@@ -39,6 +45,11 @@ function QuestionPage(props) {
     }, [])
 
     useEffect(() => {
+        // remove old listeners
+        collabSocket.removeListener("connectSuccess")
+        collabSocket.removeListener("joinRoomSuccess")
+        collabSocket.removeListener("collaborator_left")
+
         collabSocket.on("connectSuccess", async () => {
             let { version, doc } = await getDocument()
             setInitDoc(doc)
@@ -49,25 +60,25 @@ function QuestionPage(props) {
             let users = data.users
             console.log(users)
             let username = getCookie("user")
-            let resp = await getQuestion()
-
+            
 
             if (users.length === 2) {
                 let collaboratorName = users.filter(name => name !== username)[0]
                 setCollaboratorName(collaboratorName)
+                let resp = await getQuestion()
                 setTitle(resp.data.question.title)
                 setQuestion(resp.data.question.question)
                 console.log("QUESTION IS", resp.data)
-
-
+                attemptQuestion(resp.data.question.title)
             }
         })
 
         collabSocket.on("collaborator_left", () => {
+           
             handleFinish()
         })
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [collabSocket])
+    }, [collabSocket, handleExit])
 
     function pushUpdates(version, fullUpdates) {
         // Strip off transaction data
@@ -111,7 +122,17 @@ function QuestionPage(props) {
     async function getQuestion() {
         let difficulty = props.difficulty
         return axios.post(URL_QUESTION_SVC + "get", {
+            userOne: getCookie("user"),
+            userTwo: collaboratorName,
             difficulty
+        })
+    }
+    
+    async function attemptQuestion(title) {
+        console.log("Title is" + title)
+        return axios.post(URL_QUESTION_SVC + "attemptQuestion", {
+            title: title,
+            user: getCookie("user")
         })
     }
 
@@ -163,26 +184,53 @@ function QuestionPage(props) {
         return [collab({ startVersion }), plugin]
     }
 
-    function handleFinish() {
+    async function handleFinish() {
+        await handleExit();
         collabSocket.disconnect()
         deleteCookie("room_name")
         props.handleExit()
     }
 
+    function getDifficultyTag() {
+        if (props.difficulty === 'EASY') {
+            return <Chip color="success" variant="filled" label="Easy" />
+        } else if (props.difficulty === 'MEDIUM') {
+            return <Chip color="warning" variant="filled" label="Medium" />
+        } else {
+            return <Chip color="error" variant="filled" label="Hard" />
+        }
+    }
+
     return (
-        <Box display={"flex"} flexDirection={"column"} sx={{margin:"1rem"}}>
-            <Box display={"flex"} gap="4px">
+        <Box display={"flex"} flexDirection={"column"} sx={{ margin: "1rem" }} >
+            <Box display={"flex"} gap="1rem">
                 <Box display={"flex"} flexDirection={"column"} flexGrow={1} minWidth={"300px"} maxWidth={"50%"}>
-                    <Typography variant={"h4"} textAlign={"center"} >Title: {title}</Typography>
-                    <Typography variant={"h5"} textAlign={"center"} >Question: {question}</Typography>
-                    <Typography variant={"h5"} textAlign={"center"} >Peer: {collaboratorName}</Typography>
-                    <Box width={"100%"} height={"100%"} sx={{background:"white"}}>
-                        webcam stuff goes here?
+                    <Box display={"flex"} flexDirection={"row"} alignItems="center" marginBottom="1rem">
+                        <Typography marginRight="1rem" variant={"h6"}><strong>{title}</strong></Typography>
+                        {getDifficultyTag()}
+                    </Box>
+
+                    <Typography variant={"h7"} marginBottom="1rem">{question}</Typography>
+                    <Box width={"100%"} height={"100%"} sx={{ border: '1px solid', borderRadius: '3px' }}>
+                        <Typography variant={"h6"} textAlign="center" >You're matched with {collaboratorName}!</Typography>
+                        <div
+                            sx={{
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                width: '100%',
+                            }}
+                        >
+                            <VideoPlayer />
+                            <Options>
+                                <Notifications />
+                            </Options>
+                        </div>
                     </Box>
                 </Box>
                 <Editor peerExtension={peerExtension} initVersion={initVersion} initDoc={initDoc} />
             </Box>
-            <Button variant={"contained"} color={"error"} onClick={handleFinish} sx={{marginTop:"1rem"}}>Finish</Button>
+            <Button variant={"contained"} color={"error"} onClick={handleFinish} sx={{ marginTop: "1rem" }}>Finish</Button>
         </Box>
     )
 }
