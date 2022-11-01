@@ -26,7 +26,7 @@ const io = new Server(
     }
 );
 
-const port = process.env.ENV === "PROD" ? process.env.API_ENDPOINT : 8001
+const port = process.env.ENV === "PROD" ? process.env.PORT : 8001
 
 io.on('connection', (socket) => {
     let query = socket.handshake.query

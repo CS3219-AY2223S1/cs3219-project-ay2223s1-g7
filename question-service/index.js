@@ -10,7 +10,7 @@ import { getAllQuestions,getQuestion,addQuestion, deleteQuestion, getAllQuestion
 
 const router = express.Router()
 
-const port = process.env.ENV === "PROD" ? process.env.API_ENDPOINT : 8003
+const port = process.env.ENV === "PROD" ? process.env.PORT : 8003
 
 app.get('/', (req, res) => {
     res.send('Hello World from question-service');

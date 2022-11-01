@@ -1,7 +1,7 @@
 name: NodeJS CI/CD
 on: 
   push:
-    branches: [ cicd ]
+    branches: [  ]
 jobs:
   test:
     name: Test

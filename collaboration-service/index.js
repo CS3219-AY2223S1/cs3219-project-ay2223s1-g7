@@ -16,7 +16,7 @@ app.get('/', (req, res) => {
 });
 
 
-const port = process.env.ENV === "PROD" ? process.env.API_ENDPOINT : 8002
+const port = process.env.ENV === "PROD" ? process.env.PORT : 8002
 
 const httpServer = createServer(app)
 
