@@ -167,7 +167,7 @@ jobs:
     # https://ljmocic.medium.com/deploying-react-application-to-aws-s3-using-github-actions-85addacaeace
     - name: Install frontend dependencies
       working-directory: ./frontend
-      run: npm install --production
+      run: npm install --omit=dev
     
     - name: Generate frontend build
       working-directory: ./frontend
@@ -181,8 +181,8 @@ jobs:
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
       with:
-        aws-access-key-id: ${{ secrets.S3_AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.S3_AWS_SECRET_ACCESS_KEY }}
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_XR }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_XR }}
         aws-region: ap-southeast-1
 
     - name: Deploy to S3
