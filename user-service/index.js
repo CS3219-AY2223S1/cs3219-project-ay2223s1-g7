@@ -10,7 +10,7 @@ import { createUser, loginUser, logoutUser, authUser, deleteUser, changepwUser} 
 
 const router = express.Router()
 
-const port = process.env.ENV === "PROD" ? process.env.API_ENDPOINT : 8000
+const port = process.env.ENV === "PROD" ? process.env.PORT : 8000
 
 
 // Controller will contain all the User-defined Routes

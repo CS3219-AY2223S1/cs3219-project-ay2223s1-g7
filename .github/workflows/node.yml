@@ -11,6 +11,7 @@ jobs:
         node-version: [16.x]
         mongodb-version: ['6.0']
         platform: [ubuntu-latest]
+        redis-version: [6]
     
     runs-on: ${{ matrix.platform }}
 
@@ -27,6 +28,11 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
     
+    - name: Start Redis
+      uses: supercharge/redis-github-action@1.4.0
+      with:
+        redis-version: ${{ matrix.redis-version }}
+
     - name: Install user service dependencies
       working-directory: ./user-service
       run: npm install
@@ -71,6 +77,7 @@ jobs:
       run: npm run test
 
   deploy:
+    name: Deploy
     needs: [test]
     
     runs-on: ubuntu-latest
@@ -107,55 +114,55 @@ jobs:
     - name: Beanstalk Deploy for user-service
       uses: einaregilsson/beanstalk-deploy@v20
       with:
-        aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID_XR }}
+        aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY_XR }}
         application_name: ${{ secrets.AWS_APPLICATION_NAME_USER }}
         environment_name: ${{ secrets.AWS_APPLICATION_ENV_USER }}
         region: ap-southeast-1
         version_label: "user-service-${{ steps.format-time.outputs.replaced }}"
         deployment_package: user-service-deploy.zip
     
-    - name: Generate matching-service deployment package
-      run: ls && cd matching-service && zip -r ../matching-service-deploy.zip * -x "**node_modules**" && cd ..
+    # - name: Generate matching-service deployment package
+    #   run: ls && cd matching-service && zip -r ../matching-service-deploy.zip * -x "**node_modules**" && cd ..
 
-    - name: Beanstalk Deploy for matching-service
-      uses: einaregilsson/beanstalk-deploy@v20
-      with:
-        aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        application_name: ${{ secrets.AWS_APPLICATION_NAME_MATCH }}
-        environment_name: ${{ secrets.AWS_APPLICATION_ENV_MATCH }}
-        region: ap-southeast-1
-        version_label: "matching-service-${{ steps.format-time.outputs.replaced }}"
-        deployment_package: matching-service-deploy.zip
+    # - name: Beanstalk Deploy for matching-service
+    #   uses: einaregilsson/beanstalk-deploy@v20
+    #   with:
+    #     aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+    #     aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+    #     application_name: ${{ secrets.AWS_APPLICATION_NAME_MATCH }}
+    #     environment_name: ${{ secrets.AWS_APPLICATION_ENV_MATCH }}
+    #     region: ap-southeast-1
+    #     version_label: "matching-service-${{ steps.format-time.outputs.replaced }}"
+    #     deployment_package: matching-service-deploy.zip
 
-    - name: Generate collaboration-service deployment package
-      run: ls && cd collaboration-service && zip -r ../collaboration-service-deploy.zip * -x "**node_modules**" && cd ..
+    # - name: Generate collaboration-service deployment package
+    #   run: ls && cd collaboration-service && zip -r ../collaboration-service-deploy.zip * -x "**node_modules**" && cd ..
 
-    - name: Beanstalk Deploy for collaboration-service
-      uses: einaregilsson/beanstalk-deploy@v20
-      with:
-        aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        application_name: ${{ secrets.AWS_APPLICATION_NAME_COLLAB }}
-        environment_name: ${{ secrets.AWS_APPLICATION_ENV_COLLAB }}
-        region: ap-southeast-1
-        version_label: "collaboration-service-${{ steps.format-time.outputs.replaced }}"
-        deployment_package: collaboration-service-deploy.zip
+    # - name: Beanstalk Deploy for collaboration-service
+    #   uses: einaregilsson/beanstalk-deploy@v20
+    #   with:
+    #     aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+    #     aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+    #     application_name: ${{ secrets.AWS_APPLICATION_NAME_COLLAB }}
+    #     environment_name: ${{ secrets.AWS_APPLICATION_ENV_COLLAB }}
+    #     region: ap-southeast-1
+    #     version_label: "collaboration-service-${{ steps.format-time.outputs.replaced }}"
+    #     deployment_package: collaboration-service-deploy.zip
 
-    - name: Generate question-service deployment package
-      run: ls && cd question-service && zip -r ../question-service-deploy.zip * -x "**node_modules**" && cd ..
+    # - name: Generate question-service deployment package
+    #   run: ls && cd question-service && zip -r ../question-service-deploy.zip * -x "**node_modules**" && cd ..
 
-    - name: Beanstalk Deploy for question-service
-      uses: einaregilsson/beanstalk-deploy@v20
-      with:
-        aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        application_name: ${{ secrets.AWS_APPLICATION_NAME_QUESTION }}
-        environment_name: ${{ secrets.AWS_APPLICATION_ENV_QUESTION }}
-        region: ap-southeast-1
-        version_label: "question-service-${{ steps.format-time.outputs.replaced }}"
-        deployment_package: question-service-deploy.zip
+    # - name: Beanstalk Deploy for question-service
+    #   uses: einaregilsson/beanstalk-deploy@v20
+    #   with:
+    #     aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+    #     aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+    #     application_name: ${{ secrets.AWS_APPLICATION_NAME_QUESTION }}
+    #     environment_name: ${{ secrets.AWS_APPLICATION_ENV_QUESTION }}
+    #     region: ap-southeast-1
+    #     version_label: "question-service-${{ steps.format-time.outputs.replaced }}"
+    #     deployment_package: question-service-deploy.zip
 
     # https://ljmocic.medium.com/deploying-react-application-to-aws-s3-using-github-actions-85addacaeace
     - name: Install frontend dependencies
@@ -181,3 +188,6 @@ jobs:
     - name: Deploy to S3
       run: aws s3 sync . s3://peerprep-g7
       working-directory: ./frontend/build
+    
+    - name: Cloudfront
+      run: aws cloudfront create-invalidation --distribution-id ${{ secrets.CLOUDFRONT_DIST_ID }} --paths "/*"
