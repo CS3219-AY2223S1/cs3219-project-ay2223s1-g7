@@ -12,9 +12,9 @@ const router = express.Router()
 
 const port = process.env.ENV === "PROD" ? process.env.PORT : 8000
 
+app.get('/', (_, res) => res.send('Hello World from user-service'))
 
 // Controller will contain all the User-defined Routes
-router.get('/', (_, res) => res.send('Hello World from user-service'))
 router.post('/', createUser)
 router.post('/login', loginUser)
 router.post('/logout', logoutUser)
