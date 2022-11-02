@@ -79,6 +79,7 @@ jobs:
     - name: Install webcam service dependencies
       working-directory: ./webcam-service
       run: npm install
+      
     
 
   deploy:
@@ -183,7 +184,7 @@ jobs:
         version_label: "webcam-service-${{ steps.format-time.outputs.replaced }}"
         deployment_package: webcam-service-deploy.zip
 
-    # https://ljmocic.medium.com/deploying-react-application-to-aws-s3-using-github-actions-85addacaeace   lmao
+    # https://ljmocic.medium.com/deploying-react-application-to-aws-s3-using-github-actions-85addacaeace  
     - name: Install frontend dependencies
       working-directory: ./frontend
       run: npm install --omit=dev
