@@ -14,14 +14,13 @@ app.get('/', (req, res) => {
 });
 
 const httpServer = createServer(app)
-const PORT = process.env.PORT || 8004
 
 const io = new Server(
     httpServer,
     {
         cors: {
             origin: "*",
-            methods: ["GET", "POST"]
+            credentials: true
         }
     }
 );
@@ -71,4 +70,4 @@ io.on('connection', async (socket) => {
     })
 });
 
-httpServer.listen(PORT, () => console.log("user-service listening on port " + PORT));
+httpServer.listen(8004);
