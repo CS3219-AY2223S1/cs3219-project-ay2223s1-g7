@@ -13,6 +13,8 @@ app.get('/', (req, res) => {
     res.send('Hello World from webcam-service');
 });
 
+const port = process.env.ENV === "PROD" ? process.env.PORT : 8004
+
 const httpServer = createServer(app)
 
 const io = new Server(
@@ -70,4 +72,7 @@ io.on('connection', async (socket) => {
     })
 });
 
-httpServer.listen(8004);
+httpServer.listen(port, () => console.log(`webcam-service listening on port ${port}`));
+
+// Export our app for testing purposes
+export default io;
