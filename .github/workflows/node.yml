@@ -76,6 +76,11 @@ jobs:
         DB_LOCAL_URI: ${{ secrets.DB_LOCAL_URI }}
       run: npm run test
 
+    - name: Install webcam service dependencies
+      working-directory: ./webcam-service
+      run: npm install
+    
+
   deploy:
     name: Deploy
     needs: [test]
@@ -164,6 +169,17 @@ jobs:
     #     version_label: "question-service-${{ steps.format-time.outputs.replaced }}"
     #     deployment_package: question-service-deploy.zip
 
+    - name: Beanstalk Deploy for webcam-service
+      uses: einaregilsson/beanstalk-deploy@v20
+      with:
+        aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID_ZH }}
+        aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY_ZH }}
+        application_name: ${{ secrets.AWS_APPLICATION_NAME_WEBCAM }}
+        environment_name: ${{ secrets.AWS_APPLICATION_ENV_WEBCAM }}
+        region: ap-southeast-1
+        version_label: "webcam-service-${{ steps.format-time.outputs.replaced }}"
+        deployment_package: webcam-service-deploy.zip
+
     # https://ljmocic.medium.com/deploying-react-application-to-aws-s3-using-github-actions-85addacaeace   lmao
     - name: Install frontend dependencies
       working-directory: ./frontend
@@ -176,6 +192,8 @@ jobs:
         REACT_APP_URI_MATCH_SVC: ${{ secrets.REACT_APP_URI_MATCH_SVC }}
         REACT_APP_URI_COLLAB_SVC: ${{ secrets.REACT_APP_URI_COLLAB_SVC }}
         REACT_APP_URI_QUESTION_SVC: ${{ secrets.REACT_APP_URI_QUESTION_SVC }}
+        REACT_APP_URI_WEBCAM_SVC: ${{ secrets.REACT_APP_URI_WEBCAM_SVC }}
+
       run: CI=false npm run build
     
     - name: Configure AWS credentials
