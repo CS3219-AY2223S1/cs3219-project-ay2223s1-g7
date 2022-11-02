@@ -141,8 +141,8 @@ jobs:
         version_label: "matching-service-${{ steps.format-time.outputs.replaced }}"
         deployment_package: matching-service-deploy.zip
 
-     - name: Generate collaboration-service deployment package
-       run: ls && cd collaboration-service && zip -r ../collaboration-service-deploy.zip * -x "**node_modules**" && cd ..
+    - name: Generate collaboration-service deployment package
+      run: ls && cd collaboration-service && zip -r ../collaboration-service-deploy.zip * -x "**node_modules**" && cd ..
 
     - name: Beanstalk Deploy for collaboration-service
       uses: einaregilsson/beanstalk-deploy@v20
@@ -168,6 +168,9 @@ jobs:
     #     region: ap-southeast-1
     #     version_label: "question-service-${{ steps.format-time.outputs.replaced }}"
     #     deployment_package: question-service-deploy.zip
+
+    - name: Generate webcam-service deployment package
+      run: ls && cd webcam-service && zip -r ../webcam-service-deploy.zip * -x "**node_modules**" && cd ..
 
     - name: Beanstalk Deploy for webcam-service
       uses: einaregilsson/beanstalk-deploy@v20
