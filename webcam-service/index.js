@@ -9,6 +9,10 @@ app.use(express.json())
 app.use(cors());
 app.options('*', cors())
 
+app.get('/', (req, res) => {
+    res.send('Hello World from webcam-service');
+});
+
 const httpServer = createServer(app)
 const PORT = process.env.PORT || 8004
 
@@ -67,4 +71,4 @@ io.on('connection', async (socket) => {
     })
 });
 
-httpServer.listen(PORT, () => console.log("webcam-service listening on port " + PORT));
+httpServer.listen(PORT, () => console.log("user-service listening on port " + PORT));
