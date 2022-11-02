@@ -136,19 +136,19 @@ jobs:
         version_label: "matching-service-${{ steps.format-time.outputs.replaced }}"
         deployment_package: matching-service-deploy.zip
 
-    # - name: Generate collaboration-service deployment package
-    #   run: ls && cd collaboration-service && zip -r ../collaboration-service-deploy.zip * -x "**node_modules**" && cd ..
+     - name: Generate collaboration-service deployment package
+       run: ls && cd collaboration-service && zip -r ../collaboration-service-deploy.zip * -x "**node_modules**" && cd ..
 
-    # - name: Beanstalk Deploy for collaboration-service
-    #   uses: einaregilsson/beanstalk-deploy@v20
-    #   with:
-    #     aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
-    #     aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-    #     application_name: ${{ secrets.AWS_APPLICATION_NAME_COLLAB }}
-    #     environment_name: ${{ secrets.AWS_APPLICATION_ENV_COLLAB }}
-    #     region: ap-southeast-1
-    #     version_label: "collaboration-service-${{ steps.format-time.outputs.replaced }}"
-    #     deployment_package: collaboration-service-deploy.zip
+    - name: Beanstalk Deploy for collaboration-service
+      uses: einaregilsson/beanstalk-deploy@v20
+      with:
+        aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID_KE }}
+        aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY_KE }}
+        application_name: ${{ secrets.AWS_APPLICATION_NAME_COLLAB }}
+        environment_name: ${{ secrets.AWS_APPLICATION_ENV_COLLAB }}
+        region: ap-southeast-1
+        version_label: "collaboration-service-${{ steps.format-time.outputs.replaced }}"
+        deployment_package: collaboration-service-deploy.zip
 
     # - name: Generate question-service deployment package
     #   run: ls && cd question-service && zip -r ../question-service-deploy.zip * -x "**node_modules**" && cd ..
