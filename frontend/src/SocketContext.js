@@ -148,6 +148,7 @@ const ContextProvider = ({ children }) => {
         await stream.getTracks().forEach(async (track) => {
             await track.stop();
         });
+        myVideo.current.srcObject = null
         setVideoOn(false);
         setAudioOn(false);
         setStream(null)
@@ -184,10 +185,8 @@ const ContextProvider = ({ children }) => {
             if(inCall) {
                 peerRef.current.replaceTrack(stream.getAudioTracks()[0], currentStream.getAudioTracks()[0], stream);
                 setPastStream(currentStream);
-
             }
     
-
             return true
         }).catch(error => {
             return false
@@ -197,7 +196,17 @@ const ContextProvider = ({ children }) => {
     }
 
 
-    const initiateWebcam = () => {
+    const initiateWebcam = async() => {
+
+        await navigator.mediaDevices.getUserMedia({
+            video: true,
+            audio: true
+        }).then((currentStream) => {
+            return true
+        }).catch(error => {
+            return false
+        })
+
         navigator.mediaDevices.enumerateDevices().then(async (devices) => {
             let videoDevices = devices.filter(device => device.kind === "videoinput")
             let audioDevices = devices.filter(device => device.kind === "audioinput")
