@@ -10,6 +10,11 @@ import { getAllQuestions,getQuestion,addQuestion, deleteQuestion, getAllQuestion
 
 const router = express.Router()
 
+const port = process.env.ENV === "PROD" ? process.env.PORT : 8003
+
+app.get('/', (req, res) => {
+    res.send('Hello World from question-service');
+});
 
 // Controller will contain all the Question-defined Routes
 router.get('/ping', (_, res) => res.send('Hello World from question-service'))
@@ -24,4 +29,7 @@ app.use('/api/question', router).all((_, res) => {
     res.setHeader('content-type', 'application/json')
     res.setHeader('Access-Control-Allow-Origin', '*')
 })
-app.listen(8003, () => console.log('question-service listening on port 8003'));
+app.listen(port, () => console.log(`question-service listening on port ${port}`));
+
+// Export our app for testing purposes
+export default app;

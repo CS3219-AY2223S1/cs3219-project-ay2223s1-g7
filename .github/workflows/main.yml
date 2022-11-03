@@ -1,0 +1,220 @@
+name: NodeJS CI/CD
+on: 
+  push:
+    branches:
+      - main
+jobs:
+  test:
+    name: Test
+    
+    strategy:
+      matrix:
+        node-version: [16.x]
+        mongodb-version: ['6.0']
+        platform: [ubuntu-latest]
+        redis-version: [6]
+    
+    runs-on: ${{ matrix.platform }}
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Start MongoDB
+      uses: supercharge/mongodb-github-action@1.8.0
+      with:
+        mongodb-version: ${{ matrix.mongodb-version }}
+        mongodb-db: mydb
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+    
+    - name: Start Redis
+      uses: supercharge/redis-github-action@1.4.0
+      with:
+        redis-version: ${{ matrix.redis-version }}
+
+    - name: Install user service dependencies
+      working-directory: ./user-service
+      run: npm install
+    
+    - name: Run All User Service Tests
+      working-directory: ./user-service
+      env:
+        ENV: ${{ secrets.ENV }}
+        DB_LOCAL_URI: ${{ secrets.DB_LOCAL_URI }}
+      run: npm run test
+    
+    - name: Install matching service dependencies
+      working-directory: ./matching-service
+      run: npm install
+    
+    - name: Run All Matching Service Tests
+      working-directory: ./matching-service
+      env:
+        ENV: ${{ secrets.ENV }}
+        DB_LOCAL_URI: ${{ secrets.DB_LOCAL_URI }}
+      run: npm run test
+    
+    - name: Install collaboration service dependencies
+      working-directory: ./collaboration-service
+      run: npm install
+    
+    - name: Run All Collaboration Service Tests
+      working-directory: ./collaboration-service
+      env:
+        ENV: ${{ secrets.ENV }}
+      run: npm run test
+
+    - name: Install question service dependencies
+      working-directory: ./question-service
+      run: npm install
+    
+    - name: Run All Question Service Tests
+      working-directory: ./question-service
+      env:
+        ENV: ${{ secrets.ENV }}
+        DB_LOCAL_URI: ${{ secrets.DB_LOCAL_URI }}
+      run: npm run test
+
+    - name: Install webcam service dependencies
+      working-directory: ./webcam-service
+      run: npm install
+      
+    - name: Run All Webcam Service Tests
+      working-directory: ./webcam-service
+      env:
+        ENV: ${{ secrets.ENV }}
+      run: npm run test
+
+  deploy:
+    name: Deploy
+    needs: [test]
+    
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [16.x]
+
+    steps:
+    - name: Checkout the files
+      uses: actions/checkout@v3
+
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+
+    - name: Get timestamp
+      uses: gerred/actions/current-time@master
+      id: current-time
+
+    - name: Run string replace
+      uses: frabert/replace-string-action@master
+      id: format-time
+      with:
+        pattern: '[:\.]+'
+        string: "${{ steps.current-time.outputs.time }}"
+        replace-with: '-'
+        flags: 'g'
+      
+    - name: Generate user-service deployment package
+      run: ls && cd user-service && zip -r ../user-service-deploy.zip * -x "**node_modules**" && cd ..
+
+    - name: Beanstalk Deploy for user-service
+      uses: einaregilsson/beanstalk-deploy@v20
+      with:
+        aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID_XR }}
+        aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY_XR }}
+        application_name: ${{ secrets.AWS_APPLICATION_NAME_USER }}
+        environment_name: ${{ secrets.AWS_APPLICATION_ENV_USER }}
+        region: ap-southeast-1
+        version_label: "user-service-${{ steps.format-time.outputs.replaced }}"
+        deployment_package: user-service-deploy.zip
+    
+    - name: Generate matching-service deployment package
+      run: ls && cd matching-service && zip -r ../matching-service-deploy.zip * -x "**node_modules**" && cd ..
+
+    - name: Beanstalk Deploy for matching-service
+      uses: einaregilsson/beanstalk-deploy@v20
+      with:
+        aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID_ZH }}
+        aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY_ZH }}
+        application_name: ${{ secrets.AWS_APPLICATION_NAME_MATCH }}
+        environment_name: ${{ secrets.AWS_APPLICATION_ENV_MATCH }}
+        region: ap-southeast-1
+        version_label: "matching-service-${{ steps.format-time.outputs.replaced }}"
+        deployment_package: matching-service-deploy.zip
+
+    - name: Generate collaboration-service deployment package
+      run: ls && cd collaboration-service && zip -r ../collaboration-service-deploy.zip * -x "**node_modules**" && cd ..
+
+    - name: Beanstalk Deploy for collaboration-service
+      uses: einaregilsson/beanstalk-deploy@v20
+      with:
+        aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID_KE }}
+        aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY_KE }}
+        application_name: ${{ secrets.AWS_APPLICATION_NAME_COLLAB }}
+        environment_name: ${{ secrets.AWS_APPLICATION_ENV_COLLAB }}
+        region: ap-southeast-1
+        version_label: "collaboration-service-${{ steps.format-time.outputs.replaced }}"
+        deployment_package: collaboration-service-deploy.zip
+
+    - name: Generate question-service deployment package
+      run: ls && cd question-service && zip -r ../question-service-deploy.zip * -x "**node_modules**" && cd ..
+
+    - name: Beanstalk Deploy for question-service
+      uses: einaregilsson/beanstalk-deploy@v20
+      with:
+        aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID_XR }}
+        aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY_XR }}
+        application_name: ${{ secrets.AWS_APPLICATION_NAME_QUESTION }}
+        environment_name: ${{ secrets.AWS_APPLICATION_ENV_QUESTION }}
+        region: ap-southeast-1
+        version_label: "question-service-${{ steps.format-time.outputs.replaced }}"
+        deployment_package: question-service-deploy.zip
+
+    - name: Generate webcam-service deployment package
+      run: ls && cd webcam-service && zip -r ../webcam-service-deploy.zip * -x "**node_modules**" && cd ..
+
+    - name: Beanstalk Deploy for webcam-service
+      uses: einaregilsson/beanstalk-deploy@v20
+      with:
+        aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID_ZH }}
+        aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY_ZH }}
+        application_name: ${{ secrets.AWS_APPLICATION_NAME_WEBCAM }}
+        environment_name: ${{ secrets.AWS_APPLICATION_ENV_WEBCAM }}
+        region: ap-southeast-1
+        version_label: "webcam-service-${{ steps.format-time.outputs.replaced }}"
+        deployment_package: webcam-service-deploy.zip
+
+    # https://ljmocic.medium.com/deploying-react-application-to-aws-s3-using-github-actions-85addacaeace  
+    - name: Install frontend dependencies
+      working-directory: ./frontend
+      run: npm install --omit=dev
+    
+    - name: Generate frontend build
+      working-directory: ./frontend
+      env:
+        REACT_APP_URI_USER_SVC: ${{ secrets.REACT_APP_URI_USER_SVC }}
+        REACT_APP_URI_MATCH_SVC: ${{ secrets.REACT_APP_URI_MATCH_SVC }}
+        REACT_APP_URI_COLLAB_SVC: ${{ secrets.REACT_APP_URI_COLLAB_SVC }}
+        REACT_APP_URI_QUESTION_SVC: ${{ secrets.REACT_APP_URI_QUESTION_SVC }}
+        REACT_APP_URI_WEBCAM_SVC: ${{ secrets.REACT_APP_URI_WEBCAM_SVC }}
+
+      run: CI=false npm run build
+    
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_XR }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_XR }}
+        aws-region: ap-southeast-1
+
+    - name: Deploy to S3
+      run: aws s3 sync . s3://peerprep-g7
+      working-directory: ./frontend/build
+    
+    - name: Cloudfront
+      run: aws cloudfront create-invalidation --distribution-id ${{ secrets.CLOUDFRONT_DIST_ID }} --paths "/*"

@@ -12,12 +12,14 @@ import {
 import GroupIcon from '@mui/icons-material/Group';
 // import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { useState } from "react";
+import { useNavigate } from 'react-router-dom'
 import axios from "axios";
 import { URL_USER_SVC } from "../configs";
 import { STATUS_CODE_CONFLICT, STATUS_CODE_CREATED, STATUS_CODE_OK } from "../constants";
 import Typist from 'react-typist-component';
 
 function LoginPage() {
+    const navigate = useNavigate()
     const [username, setUsername] = useState("")
     const [password, setPassword] = useState("")
     const [isLoginSuccess, setIsLoginSuccess] = useState(false)
@@ -39,7 +41,7 @@ function LoginPage() {
             createCookieInHour(res.data.token, username);
             setIsLoginSuccess(true);
             // route to home
-            window.location.href = "http://localhost:3000/home";
+            navigate("/home")
         }
     }
 

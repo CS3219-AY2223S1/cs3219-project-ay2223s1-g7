@@ -15,7 +15,8 @@ app.get('/', (req, res) => {
     res.send('Hello World from collaboration-service');
 });
 
-// TODO: add cookie parser to get roomname and some other info
+
+const port = process.env.ENV === "PROD" ? process.env.PORT : 8002
 
 const httpServer = createServer(app)
 
@@ -36,7 +37,7 @@ io.on('connection', async (socket) => {
     let query = socket.handshake.query
 
     // TODO: possible to use uuid to validate room name 
-    if (query.username.length === 0 || query.roomName.length === 0) {
+    if (typeof query.username === "undefined" || typeof query.roomName === "undefined" || query.username.length === 0 || query.roomName.length === 0) {
         console.log("missing username and/or roomName")
         socket.disconnect()
         return
@@ -81,4 +82,7 @@ io.on('connection', async (socket) => {
     })
 })
 
-httpServer.listen(8002);
+httpServer.listen(port, () => console.log(`collaboration-service listening on port ${port}`));
+
+// Export our app for testing purposes
+export default io;

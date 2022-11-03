@@ -156,7 +156,7 @@ function QuestionSelectionPage(props) {
                     <button className="card-button"
                         onMouseEnter={() => setIsThirdRaised(true)}
                         onMouseLeave={() => setIsThirdRaised(false)}
-                        onClick={() => props.handleMatching("MEDIUM")}
+                        onClick={() => props.handleMatching("HARD")}
                     >
                         <CSSTransition
                             in={!isThirdRaised}

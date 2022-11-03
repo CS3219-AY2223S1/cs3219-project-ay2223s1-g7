@@ -1,0 +1,88 @@
+name: test
+on: 
+  push:
+    branches-ignore:
+      - main
+jobs:
+  test:
+    name: Test
+    
+    strategy:
+      matrix:
+        node-version: [16.x]
+        mongodb-version: ['6.0']
+        platform: [ubuntu-latest]
+        redis-version: [6]
+    
+    runs-on: ${{ matrix.platform }}
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Start MongoDB
+      uses: supercharge/mongodb-github-action@1.8.0
+      with:
+        mongodb-version: ${{ matrix.mongodb-version }}
+        mongodb-db: mydb
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+    
+    - name: Start Redis
+      uses: supercharge/redis-github-action@1.4.0
+      with:
+        redis-version: ${{ matrix.redis-version }}
+
+    - name: Install user service dependencies
+      working-directory: ./user-service
+      run: npm install
+    
+    - name: Run All User Service Tests
+      working-directory: ./user-service
+      env:
+        ENV: ${{ secrets.ENV }}
+        DB_LOCAL_URI: ${{ secrets.DB_LOCAL_URI }}
+      run: npm run test
+    
+    - name: Install matching service dependencies
+      working-directory: ./matching-service
+      run: npm install
+    
+    - name: Run All Matching Service Tests
+      working-directory: ./matching-service
+      env:
+        ENV: ${{ secrets.ENV }}
+        DB_LOCAL_URI: ${{ secrets.DB_LOCAL_URI }}
+      run: npm run test
+    
+    - name: Install collaboration service dependencies
+      working-directory: ./collaboration-service
+      run: npm install
+    
+    - name: Run All Collaboration Service Tests
+      working-directory: ./collaboration-service
+      env:
+        ENV: ${{ secrets.ENV }}
+      run: npm run test
+
+    - name: Install question service dependencies
+      working-directory: ./question-service
+      run: npm install
+    
+    - name: Run All Question Service Tests
+      working-directory: ./question-service
+      env:
+        ENV: ${{ secrets.ENV }}
+        DB_LOCAL_URI: ${{ secrets.DB_LOCAL_URI }}
+      run: npm run test
+
+    - name: Install webcam service dependencies
+      working-directory: ./webcam-service
+      run: npm install
+      
+    - name: Run All Webcam Service Tests
+      working-directory: ./webcam-service
+      env:
+        ENV: ${{ secrets.ENV }}
+      run: npm run test

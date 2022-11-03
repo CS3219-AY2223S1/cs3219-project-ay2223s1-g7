@@ -10,9 +10,11 @@ import { createUser, loginUser, logoutUser, authUser, deleteUser, changepwUser} 
 
 const router = express.Router()
 
+const port = process.env.ENV === "PROD" ? process.env.PORT : 8000
+
+app.get('/', (_, res) => res.send('Hello World from user-service'))
 
 // Controller will contain all the User-defined Routes
-router.get('/', (_, res) => res.send('Hello World from user-service'))
 router.post('/', createUser)
 router.post('/login', loginUser)
 router.post('/logout', logoutUser)
@@ -27,5 +29,7 @@ app.use('/api/user', router).all((_, res) => {
     res.setHeader('Access-Control-Allow-Origin', '*')
 })
 
+app.listen(port, () => console.log(`user-service listening on port ${port}`));
 
-app.listen(8000, () => console.log('user-service listening on port 8000'));
+// Export our app for testing purposes
+export default app;

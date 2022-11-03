@@ -70,7 +70,7 @@ const Header = () => {
       document.cookie = "jwt_token= ; expires = Thu, 01 Jan 1970 00:00:00 GMT"
       document.cookie = "user= ; expires = Thu, 01 Jan 1970 00:00:00 GMT"
 
-      window.location.href = "http://localhost:3000/login"
+      navigate("/login")
     }
   }
 
@@ -103,12 +103,12 @@ const Header = () => {
 
   const handleCloseNavMenuAndHome = () => {
     setAnchorElNav(null);
-    window.location.href = "http://localhost:3000/home"
+    navigate("/home")
   };
 
-  const toHome = () => window.location.href = "http://localhost:3000/home"
-  const toHistory = () => window.location.href = "http://localhost:3000/history"
-  const toLogin = () => window.location.href = "http://localhost:3000/login"
+  const toHome = () => navigate("/home")
+  const toHistory = () => navigate("/history")
+  const toLogin = () => navigate("/login")
 
   const handleLogout = async () => {
     const token = document.cookie.replace(/(?:(?:^|.*;\s*)jwt_token\s*\=\s*([^;]*).*$)|^.*$/, "$1");

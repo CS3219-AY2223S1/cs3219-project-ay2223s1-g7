@@ -26,10 +26,11 @@ const io = new Server(
     }
 );
 
+const port = process.env.ENV === "PROD" ? process.env.PORT : 8001
 
 io.on('connection', (socket) => {
     let query = socket.handshake.query
-    if (query.username.length === 0 || query.difficulty.length === 0) {
+    if (typeof query.username === "undefined" || typeof query.difficulty === "undefined" || query.username.length === 0 || query.difficulty.length === 0) {
         // can check for valid username or difficulty
         console.log("missing username and/or difficulty")
         socket.disconnect()
@@ -57,6 +58,7 @@ io.on('connection', (socket) => {
     }
 
     let setUpMessage = (roomName) => {
+        console.log("reach here")
         if (io.sockets.adapter.rooms.get(roomName)?.size === 2) {
             io.to(roomName).emit("matchSuccess", roomName)
         }
@@ -73,4 +75,7 @@ io.on('connection', (socket) => {
     })
 })
 
-httpServer.listen(8001);
+httpServer.listen(port, () => console.log(`matching-service listening on port ${port}`));
+
+// Export our app for testing purposes
+export default io;

@@ -9,15 +9,20 @@ app.use(express.json())
 app.use(cors());
 app.options('*', cors())
 
+app.get('/', (req, res) => {
+    res.send('Hello World from webcam-service');
+});
+
+const port = process.env.ENV === "PROD" ? process.env.PORT : 8004
+
 const httpServer = createServer(app)
-const PORT = process.env.PORT || 8004
 
 const io = new Server(
     httpServer,
     {
         cors: {
             origin: "*",
-            methods: ["GET", "POST"]
+            credentials: true
         }
     }
 );
@@ -67,4 +72,7 @@ io.on('connection', async (socket) => {
     })
 });
 
-httpServer.listen(PORT, () => console.log("user-service listening on port " + PORT));
+httpServer.listen(port, () => console.log(`webcam-service listening on port ${port}`));
+
+// Export our app for testing purposes
+export default io;

@@ -1,9 +1,8 @@
-const URI_USER_SVC = process.env.URI_USER_SVC || 'http://localhost:8000'
-const URI_MATCH_SVC = process.env.URI_MATCH_SVC || 'http://localhost:8001'
-const URI_COLLAB_SVC = process.env.URI_COLLAB_SVC || 'http://localhost:8002'
-const URI_QUESTION_SVC = process.env.URI_QUESTION_SVC || 'http://localhost:8003'
-const URI_WEBCAM_SVC = process.env.URI_WEBCAM_SVC || 'http://localhost:8004'
-
+const URI_USER_SVC = process.env.REACT_APP_URI_USER_SVC || 'http://localhost:8000'
+const URI_MATCH_SVC = process.env.REACT_APP_URI_MATCH_SVC || 'http://localhost:8001'
+const URI_COLLAB_SVC = process.env.REACT_APP_URI_COLLAB_SVC || 'http://localhost:8002'
+const URI_QUESTION_SVC = process.env.REACT_APP_URI_QUESTION_SVC || 'http://localhost:8003'
+const URI_WEBCAM_SVC = process.env.REACT_APP_URI_WEBCAM_SVC || 'http://localhost:8004'
 
 const PREFIX_USER_SVC = '/api/user'
 const PREFIX_MATCH_SVC = '/'
