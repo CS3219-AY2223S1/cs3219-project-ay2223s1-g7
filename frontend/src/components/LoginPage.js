@@ -15,7 +15,7 @@ import { useState } from "react";
 import axios from "axios";
 import { URL_USER_SVC } from "../configs";
 import { STATUS_CODE_CONFLICT, STATUS_CODE_CREATED, STATUS_CODE_OK } from "../constants";
-import Typist from 'react-typist';
+import Typist from 'react-typist-component';
 
 function LoginPage() {
     const [username, setUsername] = useState("")
@@ -63,10 +63,11 @@ function LoginPage() {
             >
                 <GroupIcon color="secondary" sx={{ fontSize: 80, marginBottom: -2, overflow: 'hidden'}} />
                 <Typography variant={"h4"} marginBottom={"0.3rem"}>PeerPrep</Typography>
-                <Typist cursor={{ show: false }}>
+                <Typist typingDelay={75}>
                     <Typography align="center" fontSize="15px" fontWeight="700" marginBottom={"0.1rem"}>
                     All-in-one collaborative platform to help you enhance your skills and prepare for technical interviews
                     </Typography>
+                    <br />      
                 </Typist>
                 {(hasSubmit && !isLoginSuccess && errMessage) && <Alert severity="error">{errMessage}</Alert>}
                 <TextField
