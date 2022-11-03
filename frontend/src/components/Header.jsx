@@ -129,7 +129,7 @@ const Header = () => {
       }
     }
   }
-  if (location.pathname === "/login" || location.pathname === "/signup") {
+  if (location.pathname === "/login" || location.pathname === "/signup" || location.pathname === "/question") {
     return null
   }
   return (
