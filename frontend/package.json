@@ -31,7 +31,6 @@
     "react-router-dom": "^6.3.0",
     "react-scripts": "5.0.1",
     "react-transition-group": "^4.4.5",
-    "react-typist": "^2.0.5",
     "react-typist-component": "^1.0.5",
     "simple-peer": "^9.11.1",
     "socket.io-client": "^4.5.3",
