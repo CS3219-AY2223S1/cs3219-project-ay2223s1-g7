@@ -90,7 +90,7 @@ export async function getAllQuestionsAttempted(req, res) {
     try {
         const { user } = req.body
 
-        redisClient.get(`questions`, async (error, questions) => {
+        redisClient.get(`questions-${user}`, async (error, questions) => {
             if (error) console.error(error);
             if (questions != null) {
                 console.log("Hit")
@@ -103,7 +103,7 @@ export async function getAllQuestionsAttempted(req, res) {
                     return res.status(409).json({ message: 'Could not find question!' });
                 } else {
                     redisClient.setex(
-                        `questions`,
+                        `questions-${user}`,
                         1000,
                         JSON.stringify(resp)
                     )
@@ -120,13 +120,13 @@ export async function getAllQuestionsAttempted(req, res) {
 
 export async function attemptQuestion(req, res) {
     try {
-
         const { title, user } = req.body
         const resp = await _attemptQuestion(title, user);
         console.log(resp)
         if (resp.err) {
             return res.status(409).json({ message: 'Could not find question!' });
         } else {
+            redisClient.del(`questions-${user}`)
             return res.status(201).json({ question: resp });
         }
 
