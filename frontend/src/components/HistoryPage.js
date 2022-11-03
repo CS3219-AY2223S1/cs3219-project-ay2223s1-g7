@@ -1,11 +1,10 @@
 import {
     List,ListItem, IconButton,CommentIcon,ListItemText, Container
 } from "@mui/material";
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState, } from "react";
 import axios from "axios";
 
-import { deleteCookie, getCookie } from "../utils/cookies"
-import { Editor } from "./Editor";
+import { getCookie } from "../utils/cookies"
 import {  URL_QUESTION_SVC } from "../configs";
 
 function HistoryPage(props) {
@@ -21,7 +20,6 @@ function HistoryPage(props) {
 
             setHistory(data.data.question)
         
-
         }
         fetchData().catch(console.error)
         

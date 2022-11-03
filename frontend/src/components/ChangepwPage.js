@@ -9,16 +9,13 @@ import {
     TextField,
     Typography,
     Avatar,
-    Link,
-    Grid,
     Container,
-    Alert,
 } from "@mui/material";
-import {useState} from "react";
+import { useState } from "react";
 import axios from "axios";
-import {URL_USER_SVC} from "../configs";
-import {STATUS_CODE_CONFLICT, STATUS_CODE_CREATED} from "../constants";
-import {useNavigate} from "react-router-dom";
+import { URL_USER_SVC } from "../configs";
+import { STATUS_CODE_CREATED } from "../constants";
+import { useNavigate } from "react-router-dom";
 
 
 function ChangepwPage() {
@@ -76,34 +73,34 @@ function ChangepwPage() {
                     alignItems: 'center',
                 }}
             >
-            <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-                {/* <LockOutlinedIcon /> */}
-            </Avatar>
-            <Typography variant={"h4"} marginBottom={"1rem"}>Change Password</Typography>
-            <TextField
-            margin="normal"
-            label="Old Password"
-            variant="standard"
-            type="password"
-            value={oldPassword}
-            onChange={(e) => setOldPassword(e.target.value)}
-            sx={{marginBottom: "1rem"}}
-            autoFocus
-            fullWidth
-            required
-            />
+                <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
+                    {/* <LockOutlinedIcon /> */}
+                </Avatar>
+                <Typography variant={"h4"} marginBottom={"1rem"}>Change Password</Typography>
+                <TextField
+                    margin="normal"
+                    label="Old Password"
+                    variant="standard"
+                    type="password"
+                    value={oldPassword}
+                    onChange={(e) => setOldPassword(e.target.value)}
+                    sx={{ marginBottom: "1rem" }}
+                    autoFocus
+                    fullWidth
+                    required
+                />
 
-            <TextField
-            margin="normal"
-            label="New Password"
-            variant="standard"
-            type="new password"
-            value={newPassword}
-            onChange={(e) => setNewPassword(e.target.value)}
-            sx={{marginBottom: "2rem"}}
-            fullWidth
-            required
-            />
+                <TextField
+                    margin="normal"
+                    label="New Password"
+                    variant="standard"
+                    type="password"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    sx={{ marginBottom: "2rem" }}
+                    fullWidth
+                    required
+                />
 
                 <Button
                     type="submit"
@@ -111,25 +108,25 @@ function ChangepwPage() {
                     sx={{ mt: 3, mb: 2 }}
                     onClick={handleChangePassword}
                     fullWidth
-                    >
+                >
                     Confirm
                 </Button>
 
-            <Dialog
-                open={isDialogOpen}
-                onClose={closeDialog}
-            >
-                <DialogTitle>{dialogTitle}</DialogTitle>
-                <DialogContent>
-                    <DialogContentText>{dialogMsg}</DialogContentText>
-                </DialogContent>
-                <DialogActions>
-                    {isChangeSuccess
-                        ? <></>
-                        : <Button onClick={closeDialog}>Done</Button>
-                    }
-                </DialogActions>
-            </Dialog>
+                <Dialog
+                    open={isDialogOpen}
+                    onClose={closeDialog}
+                >
+                    <DialogTitle>{dialogTitle}</DialogTitle>
+                    <DialogContent>
+                        <DialogContentText>{dialogMsg}</DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                        {isChangeSuccess
+                            ? <></>
+                            : <Button onClick={closeDialog}>Done</Button>
+                        }
+                    </DialogActions>
+                </Dialog>
             </Box>
         </Container>
     )
