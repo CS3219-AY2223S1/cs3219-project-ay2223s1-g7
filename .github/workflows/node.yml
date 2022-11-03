@@ -80,7 +80,11 @@ jobs:
       working-directory: ./webcam-service
       run: npm install
       
-    
+    - name: Run All Webcam Service Tests
+      working-directory: ./webcam-service
+      env:
+        ENV: ${{ secrets.ENV }}
+      run: npm run test
 
   deploy:
     name: Deploy
