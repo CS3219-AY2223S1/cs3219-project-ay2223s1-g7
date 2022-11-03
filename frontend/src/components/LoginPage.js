@@ -9,12 +9,14 @@ import {
     Container,
     Alert,
 } from "@mui/material";
+import GroupIcon from '@mui/icons-material/Group';
 // import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { useState } from "react";
 import { useNavigate } from 'react-router-dom'
 import axios from "axios";
 import { URL_USER_SVC } from "../configs";
 import { STATUS_CODE_CONFLICT, STATUS_CODE_CREATED, STATUS_CODE_OK } from "../constants";
+import Typist from 'react-typist-component';
 
 function LoginPage() {
     const navigate = useNavigate()
@@ -54,17 +56,21 @@ function LoginPage() {
         <Container component="main" maxWidth="xs" className="box-container">
             <Box
                 sx={{
-                    marginTop: 8,
-                    marginBottom: 8,
+                    marginTop: 6,
+                    marginBottom: 6,
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
                 }}
             >
-                <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-                    {/* <LockOutlinedIcon /> */}
-                </Avatar>
-                <Typography variant={"h4"} marginBottom={"1rem"}>Login</Typography>
+                <GroupIcon color="secondary" sx={{ fontSize: 80, marginBottom: -2, overflow: 'hidden'}} />
+                <Typography variant={"h4"} marginBottom={"0.3rem"}>PeerPrep</Typography>
+                <Typist typingDelay={75}>
+                    <Typography align="center" fontSize="15px" fontWeight="700" marginBottom={"0.1rem"}>
+                    All-in-one collaborative platform to help you enhance your skills and prepare for technical interviews
+                    </Typography>
+                    <br />      
+                </Typist>
                 {(hasSubmit && !isLoginSuccess && errMessage) && <Alert severity="error">{errMessage}</Alert>}
                 <TextField
                     margin="normal"
@@ -93,7 +99,7 @@ function LoginPage() {
                     onClick={handleLogin}
                     fullWidth
                     >
-                    Submit
+                    Login
                 </Button>
                 <Grid container>
                     <Link href="/signup" variant="body2">
