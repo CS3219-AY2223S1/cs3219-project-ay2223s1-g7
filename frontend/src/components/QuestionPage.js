@@ -29,6 +29,7 @@ function QuestionPage(props) {
     const [initDoc, setInitDoc] = useState("")
     const [initVersion, setInitVersion] = useState(0)
     const { handleExit } = useContext(SocketContext);
+    var collabName = "";
 
 
     useEffect(() => {
@@ -63,8 +64,8 @@ function QuestionPage(props) {
             
 
             if (users.length === 2) {
-                let collaboratorName = users.filter(name => name !== username)[0]
-                setCollaboratorName(collaboratorName)
+                collabName = users.filter(name => name !== username)[0]
+                setCollaboratorName(collabName)
                 let resp = await getQuestion()
                 setTitle(resp.data.question.title)
                 setQuestion(resp.data.question.question)
@@ -123,7 +124,7 @@ function QuestionPage(props) {
         let difficulty = props.difficulty
         return axios.post(URL_QUESTION_SVC + "get", {
             userOne: getCookie("user"),
-            userTwo: collaboratorName,
+            userTwo: collabName,
             difficulty
         })
     }
