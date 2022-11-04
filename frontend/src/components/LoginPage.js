@@ -13,10 +13,10 @@ import GroupIcon from '@mui/icons-material/Group';
 // import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { useState } from "react";
 import { useNavigate } from 'react-router-dom'
-import axios from "axios";
-import { URL_USER_SVC } from "../configs";
-import { STATUS_CODE_CONFLICT, STATUS_CODE_CREATED, STATUS_CODE_OK } from "../constants";
+import { STATUS_CODE_CONFLICT, STATUS_CODE_OK } from "../constants";
 import Typist from 'react-typist-component';
+import { setCookie } from '../utils/cookies.js'
+import { userApi } from '../apis/api.js'
 
 function LoginPage() {
     const navigate = useNavigate()
@@ -26,10 +26,11 @@ function LoginPage() {
     const [hasSubmit, setHasSubmit] = useState(false);
     const [errMessage, setErrMessage] = useState("")
 
-    const handleLogin = async () => {
+    const handleLogin = async (e) => {
+        e.preventDefault()
         setHasSubmit(true);
         setIsLoginSuccess(false)
-        const res = await axios.post(URL_USER_SVC + '/login', { username, password })
+        const res = await userApi.post('/login', { username, password })
             .catch((err) => {
                 if (err.response.status === STATUS_CODE_CONFLICT) {
                     setErrMessage('The username and password you entered did not match our records.');
@@ -37,19 +38,14 @@ function LoginPage() {
                     setErrMessage("Please double-check and try again later.");
                 }
             })
-        if (res && res.status === STATUS_CODE_CREATED) {
-            createCookieInHour(res.data.token, username);
+
+        console.log(res)
+        if (res && res.status === STATUS_CODE_OK) {
+            setCookie("user", username, 1)
             setIsLoginSuccess(true);
             // route to home
             navigate("/home")
         }
-    }
-
-    const createCookieInHour = (cookieValue, username) => {
-        let date = new Date();
-        date.setTime(date.getTime() + (60 * 60 * 1000));
-        document.cookie = "jwt_token=" + cookieValue + ";expires=" + date.toGMTString();
-        document.cookie = "user=" + username + ";expires=" + date.toGMTString();
     }
 
     return (
@@ -63,44 +59,46 @@ function LoginPage() {
                     alignItems: 'center',
                 }}
             >
-                <GroupIcon color="secondary" sx={{ fontSize: 80, marginBottom: -2, overflow: 'hidden'}} />
+                <GroupIcon color="secondary" sx={{ fontSize: 80, marginBottom: -2, overflow: 'hidden' }} />
                 <Typography variant={"h4"} marginBottom={"0.3rem"}>PeerPrep</Typography>
                 <Typist typingDelay={75}>
                     <Typography align="center" fontSize="15px" fontWeight="700" marginBottom={"0.1rem"}>
-                    All-in-one collaborative platform to help you enhance your skills and prepare for technical interviews
+                        All-in-one collaborative platform to help you enhance your skills and prepare for technical interviews
                     </Typography>
-                    <br />      
+                    <br />
                 </Typist>
                 {(hasSubmit && !isLoginSuccess && errMessage) && <Alert severity="error">{errMessage}</Alert>}
-                <TextField
-                    margin="normal"
-                    label="Username"
-                    variant="standard"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    autoFocus
-                    fullWidth
-                    required
-                />
-                <TextField
-                    margin="normal"
-                    label="Password"
-                    variant="standard"
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    fullWidth
-                    required
-                />
-                <Button
-                    type="submit"
-                    variant="contained"
-                    sx={{ mt: 3, mb: 2 }}
-                    onClick={handleLogin}
-                    fullWidth
+                <form>
+                    <TextField
+                        margin="normal"
+                        label="Username"
+                        variant="standard"
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
+                        autoFocus
+                        fullWidth
+                        required
+                    />
+                    <TextField
+                        margin="normal"
+                        label="Password"
+                        variant="standard"
+                        type="password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        fullWidth
+                        required
+                    />
+                    <Button
+                        type="submit"
+                        variant="contained"
+                        sx={{ mt: 3, mb: 2 }}
+                        onClick={handleLogin}
+                        fullWidth
                     >
-                    Login
-                </Button>
+                        Login
+                    </Button>
+                </form>
                 <Grid container>
                     <Link href="/signup" variant="body2">
                         {"Don't have an account? Sign Up"}

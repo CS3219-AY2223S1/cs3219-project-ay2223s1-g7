@@ -9,11 +9,10 @@ import {
     Container,
     Alert,
 } from "@mui/material";
-import {useState} from "react";
-import axios from "axios";
-import {URL_USER_SVC} from "../configs";
-import {STATUS_CODE_CONFLICT, STATUS_CODE_CREATED} from "../constants";
-import {useNavigate} from "react-router-dom";
+import { useState } from "react";
+import { STATUS_CODE_CONFLICT, STATUS_CODE_CREATED } from "../constants";
+import { useNavigate } from "react-router-dom";
+import { userApi } from '../apis/api.js'
 
 function SignupPage() {
     const navigate = useNavigate();
@@ -24,10 +23,11 @@ function SignupPage() {
     const [errMessage, setErrMessage] = useState("")
     const [succMessage, setSuccessMsg] = useState("")
 
-    const handleSignup = async () => {
+    const handleSignup = async (e) => {
+        e.preventDefault()
         setHasSubmit(true);
         setIsSignupSuccess(false)
-        const res = await axios.post(URL_USER_SVC, { username, password })
+        const res = await userApi.post('', { username, password })
             .catch((err) => {
                 if (err.response.status === STATUS_CODE_CONFLICT) {
                     setErrMessage('This username already exists. Please try again with another username')
@@ -56,41 +56,41 @@ function SignupPage() {
                 }}
             >
                 <Avatar sx={{ m: 1, bgcolor: 'primary.main' }}>
-                    {/* <LockOutlinedIcon /> */}
                 </Avatar>
                 <Typography variant={"h4"} marginBottom={"1rem"}>Sign Up</Typography>
                 {(hasSubmit && !isSignupSuccess && errMessage) && <Alert severity="error">{errMessage}</Alert>}
                 {(hasSubmit && isSignupSuccess && succMessage) && <Alert severity="success">{succMessage}</Alert>}
-                <TextField
-                    margin="normal"
-                    label="Username"
-                    variant="standard"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    autoFocus
-                    fullWidth
-                    required
-                />
-                <TextField
-                    margin="normal"
-                    label="Password"
-                    variant="standard"
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    fullWidth
-                    required
-                />
-
-                <Button
-                    type="submit"
-                    variant="contained"
-                    sx={{ mt: 3, mb: 2 }}
-                    onClick={handleSignup}
-                    fullWidth
+                <form>
+                    <TextField
+                        margin="normal"
+                        label="Username"
+                        variant="standard"
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
+                        autoFocus
+                        fullWidth
+                        required
+                    />
+                    <TextField
+                        margin="normal"
+                        label="Password"
+                        variant="standard"
+                        type="password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        fullWidth
+                        required
+                    />
+                    <Button
+                        type="submit"
+                        variant="contained"
+                        sx={{ mt: 3, mb: 2 }}
+                        onClick={handleSignup}
+                        fullWidth
                     >
-                    Sign up
-                </Button>
+                        Sign up
+                    </Button>
+                </form>
                 <Grid container>
                     <Link href="/login" variant="body2">
                         {"Already have an account? Login"}

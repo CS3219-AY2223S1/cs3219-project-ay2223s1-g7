@@ -12,10 +12,10 @@ import {
     Container,
 } from "@mui/material";
 import { useState } from "react";
-import axios from "axios";
-import { URL_USER_SVC } from "../configs";
-import { STATUS_CODE_CREATED } from "../constants";
+import { STATUS_CODE_OK } from "../constants";
 import { useNavigate } from "react-router-dom";
+import { deleteCookie, getCookie } from '../utils/cookies.js'
+import { userApi } from '../apis/api.js'
 
 
 function ChangepwPage() {
@@ -28,18 +28,18 @@ function ChangepwPage() {
     const [dialogMsg, setDialogMsg] = useState("")
     const [isChangeSuccess, setIsChangeSuccess] = useState(false)
 
-    const handleChangePassword = async () => {
+    const handleChangePassword = async (e) => {
+        e.preventDefault()
         setIsChangeSuccess(false)
-        const token = document.cookie.replace(/(?:(?:^|.*;\s*)jwt_token\s*\=\s*([^;]*).*$)|^.*$/, "$1");
-        const username = document.cookie.replace(/(?:(?:^|.*;\s*)user\s*\=\s*([^;]*).*$)|^.*$/, "$1");
+        const username = getCookie("user")
 
-        const res = await axios.post(URL_USER_SVC + '/changepw', { username, oldPassword, newPassword, token })
+        const res = await userApi.post('/changepw', { username, oldPassword, newPassword })
             .catch((err) => {
                 setErrorDialog('Please check your old/new password and try again')
             })
-        if (res && res.status === STATUS_CODE_CREATED) {
-            document.cookie = "jwt_token= ; expires = Thu, 01 Jan 1970 00:00:00 GMT"
-            document.cookie = "user= ; expires = Thu, 01 Jan 1970 00:00:00 GMT"
+        console.log(res)
+        if (res && res.status === STATUS_CODE_OK) {
+            deleteCookie("user")
             setSuccessDialog('Password successfully changed, please log in again')
             setIsChangeSuccess(true)
             setTimeout(toLogin, 2000);
@@ -77,40 +77,41 @@ function ChangepwPage() {
                     {/* <LockOutlinedIcon /> */}
                 </Avatar>
                 <Typography variant={"h4"} marginBottom={"1rem"}>Change Password</Typography>
-                <TextField
-                    margin="normal"
-                    label="Old Password"
-                    variant="standard"
-                    type="password"
-                    value={oldPassword}
-                    onChange={(e) => setOldPassword(e.target.value)}
-                    sx={{ marginBottom: "1rem" }}
-                    autoFocus
-                    fullWidth
-                    required
-                />
+                <form>
+                    <TextField
+                        margin="normal"
+                        label="Old Password"
+                        variant="standard"
+                        type="password"
+                        value={oldPassword}
+                        onChange={(e) => setOldPassword(e.target.value)}
+                        sx={{ marginBottom: "1rem" }}
+                        autoFocus
+                        fullWidth
+                        required
+                    />
 
-                <TextField
-                    margin="normal"
-                    label="New Password"
-                    variant="standard"
-                    type="password"
-                    value={newPassword}
-                    onChange={(e) => setNewPassword(e.target.value)}
-                    sx={{ marginBottom: "2rem" }}
-                    fullWidth
-                    required
-                />
-
-                <Button
-                    type="submit"
-                    variant="contained"
-                    sx={{ mt: 3, mb: 2 }}
-                    onClick={handleChangePassword}
-                    fullWidth
-                >
-                    Confirm
-                </Button>
+                    <TextField
+                        margin="normal"
+                        label="New Password"
+                        variant="standard"
+                        type="password"
+                        value={newPassword}
+                        onChange={(e) => setNewPassword(e.target.value)}
+                        sx={{ marginBottom: "2rem" }}
+                        fullWidth
+                        required
+                    />
+                    <Button
+                        type="submit"
+                        variant="contained"
+                        sx={{ mt: 3, mb: 2 }}
+                        onClick={handleChangePassword}
+                        fullWidth
+                    >
+                        Confirm
+                    </Button>
+                </form>
 
                 <Dialog
                     open={isDialogOpen}

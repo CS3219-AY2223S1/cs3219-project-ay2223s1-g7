@@ -1,4 +1,8 @@
 node_modules
 .env
 frontend/my-app/
+frontend/build
 user-service/.env.bak
+dump.rdb
+run.bat
+update.bat
