@@ -8,12 +8,12 @@ app.use(express.json())
 // app.use(cors()) // config cors so that front-end can use
 // app.options('*', cors())
 
-const whitelist = process.env.ORIGIN ? [process.env.ORIGIN] : ["http://localhost:3000", "http://127.0.0.1:3000"]
+const whitelist = process.env.ORIGIN ? [process.env.ORIGIN] : []
 
 const corsConfig = {
     credentials: true,
     origin: function (origin, callback) {
-        if (whitelist.indexOf(origin) !== -1) {
+        if (whitelist.length === 0 || whitelist.indexOf(origin) !== -1) {
             callback(null, true)
         } else {
             callback(new Error('Not allowed by CORS'))
