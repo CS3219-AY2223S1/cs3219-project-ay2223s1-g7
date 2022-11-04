@@ -5,7 +5,7 @@ import {
 } from '../model/question-orm.js'
 import redis from "redis"
 
-const REDIS_HOST = process.env.ENV == "PROD" ? { rootNodes: [{ url: process.env.REDIS_HOST }] } : '';
+const REDIS_HOST = process.env.ENV == "PROD" ? { url: process.env.REDIS_HOST } : '';
 const redisClient = redis.createClient(REDIS_HOST)
 if (!redisClient) {
     console.log("cannot connect to redis");
