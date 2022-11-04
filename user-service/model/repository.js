@@ -18,9 +18,9 @@ export async function createUser(params) {
     return new UserModel(params)
 }
 
-export async function checkUserInDatabase(inputUsername) {
+export async function checkUserInDatabase(username) {
     return UserModel
-        .countDocuments({ username: inputUsername })
+        .countDocuments({ username })
         .then(num => {
             if (num > 0) {
                 return true;
@@ -29,28 +29,28 @@ export async function checkUserInDatabase(inputUsername) {
         });
 }
 
-export async function findUser(inputUsername) {
+export async function findUser(params) {
     return UserModel
-        .findOne({ username: inputUsername });
+        .findOne(params);
 }
 
-export async function deleteUser(inputUsername) {
+export async function deleteUser(params) {
     return UserModel
-        .findOneAndDelete({ username: inputUsername });
+        .findOneAndDelete(params);
 }
 
-export async function changepwUser(inputUsername, newPassword) {
+export async function changepwUser(username, password) {
     return UserModel
-        .findOneAndUpdate({ username: inputUsername }, { $set: { password: newPassword } }, { returnNewDocument: true });
+        .findOneAndUpdate({ username }, { $set: { password } }, { returnNewDocument: true });
 }
 
 export async function createBlackList(params) {
     return new BlackListModel(params)
 }
 
-export async function checkBlackList(token) {
+export async function checkBlackList(params) {
     return BlackListModel
-        .countDocuments({ jwt_token: token }, { limit: 1 })
+        .countDocuments(params, { limit: 1 })
         .then(num => {
             if (num > 0) {
                 return true;

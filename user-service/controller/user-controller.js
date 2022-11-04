@@ -1,19 +1,18 @@
 import {
     ormCreateUser as _createUser, ormLoginUser as _loginUser, ormSearchUser as _searchUser, ormDeleteUser as _deleteUser,
-    ormIssueJWT as _issueJWT, ormAddBlacklist as _addBlackList, ormChangePwUser as _changepwUser, ormCheckValidToken as _checkValidToken
+    ormAddBlacklist as _addBlackList, ormChangePwUser as _changepwUser, ormCheckValidToken as _checkValidToken
 } from '../model/user-orm.js'
+import { generateJWT, verifyJWT } from '../utils/jwt.js'
+import {hashPassword} from '../utils/bcrypt.js'
 
 const ONE_HR_IN_MS = 60 * 60 * 1000
 
 export async function createUser(req, res) {
     try {
-        // for testing deployment
-        let userTest = req.cookies["user"];
-        console.log(`user cookie ${userTest}`)
-
         const { username, password } = req.body;
         if (username && password) {
-            const resp = await _createUser(username, password);
+            let hashedPassword = await hashPassword(password)
+            const resp = await _createUser(username, hashedPassword);
             if (resp.err) {
                 return res.status(409).json({ message: 'Could not create a new user!' });
             } else {
@@ -38,12 +37,10 @@ export async function loginUser(req, res) {
             if (resp.err) {
                 return res.status(409).json({ message: 'Invalid credentials!' });
             } else {
-
-                const token = await _issueJWT(username);
-
+                const token = generateJWT({ username });
 
                 if (token.err) {
-                    return res.status(409).json({ message: 'Token already exists' });
+                    return res.status(409).json({ message: 'Error generating token' });
                 } else {
                     console.log(`Login successfully!`, username);
                     res.cookie("token", token, { sameSite: "None", httpOnly: true, secure: true, maxAge: ONE_HR_IN_MS });
@@ -70,7 +67,7 @@ export async function logoutUser(req, res) {
         if (resp.err) {
             return res.status(409).json({ message: 'Unable to add to blacklist' });
         } else {
-            res.cookie("token", "", { httpOnly: true, maxAge: 0 })
+            res.cookie("token", "", { maxAge: 0 })
             return res.status(200).json({ message: `Logout successful` });
         }
 
@@ -93,7 +90,7 @@ export async function deleteUser(req, res) {
         if (deleteResp.err) {
             return res.status(409).json({ message: 'Unable to delete User' });
         }
-        res.cookie("token", "", { httpOnly: true, maxAge: 0 })
+        res.cookie("token", "", { maxAge: 0 })
         return res.status(200).json({ message: `Delete successful` });
 
     } catch (err) {
@@ -114,8 +111,10 @@ export async function changepwUser(req, res) {
                 if (blacklistResp.err) {
                     return res.status(409).json({ message: 'Unable to add to blacklist' });
                 }
-                res.cookie("token", "", { httpOnly: true, maxAge: 0 })
-                const changeResp = await _changepwUser(username, newPassword);
+                res.cookie("token", "", { maxAge: 0 })
+
+                let hashedPassword = await hashPassword(newPassword) 
+                const changeResp = await _changepwUser(username, hashedPassword);
                 if (changeResp.err) {
                     return res.status(409).json({ message: 'Unable to change password' });
                 } else {
@@ -137,19 +136,17 @@ export async function changepwUser(req, res) {
 export async function authUser(req, res) {
     try {
         let token = req.cookies["token"];
-        // for testing deployment
-        console.log(`token cookie ${token}`)
-        
-        if (!token) {
-            return res.status(400).json({ message: 'No token provided' });
-        }
-        await _checkValidToken(token);
-        return res.status(200).json({ message: `Login successful` });
+        if (!token) return res.status(400).json({ message: 'No token provided' });
 
+        let username = verifyJWT(token);
+        if (username.err) return res.status(401).json({ message: 'Invalid Token' });
+
+        let resp = _checkValidToken(token)
+        if (resp.err) return res.status(401).json({ message: 'Invalid Token' });
+
+        return res.status(200).json({ message: `Authentication successful` });
     } catch (err) {
-        console.log("Invalid Authentication")
-
-        return res.status(409).json({ message: 'Invalid Token' });
+        return res.status(500).json({ message: 'Server error' })
     }
 }
 
