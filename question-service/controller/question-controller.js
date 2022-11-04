@@ -1,11 +1,11 @@
 import {
     ormCreateQuestion as _createQuestion, ormSearchAllQuestionsByDifficulty as _searchAllQuestionsByDifficulty,
-    ormSearchQuestionByDifficulty as _searchQuestionByDifficulty, ormDeleteQuestion as _deleteQuestion, ormSearchQuestionByTitle as _searchQuestionByTitle, 
+    ormSearchQuestionByDifficulty as _searchQuestionByDifficulty, ormDeleteQuestion as _deleteQuestion, ormSearchQuestionByTitle as _searchQuestionByTitle,
     ormSearchAllQuestionsAttempted as _searchAllQuestionsAttempted, ormAttemptQuestion as _attemptQuestion
 } from '../model/question-orm.js'
 import redis from "redis"
 
-const REDIS_HOST = process.env.ENV == "PROD" ? { url: process.env.REDIS_HOST } : '';
+const REDIS_HOST = process.env.ENV == "PROD" ? { rootNodes: [{ url: process.env.REDIS_HOST }] } : '';
 const redisClient = redis.createClient(REDIS_HOST)
 if (!redisClient) {
     console.log("cannot connect to redis");
