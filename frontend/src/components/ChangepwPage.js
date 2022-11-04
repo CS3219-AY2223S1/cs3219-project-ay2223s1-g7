@@ -12,10 +12,10 @@ import {
     Container,
 } from "@mui/material";
 import { useState } from "react";
-import axios from "axios";
-import { URL_USER_SVC } from "../configs";
-import { STATUS_CODE_CREATED } from "../constants";
+import { STATUS_CODE_OK } from "../constants";
 import { useNavigate } from "react-router-dom";
+import { deleteCookie, getCookie } from '../utils/cookies.js'
+import { userApi } from '../apis/api.js'
 
 
 function ChangepwPage() {
@@ -30,16 +30,15 @@ function ChangepwPage() {
 
     const handleChangePassword = async () => {
         setIsChangeSuccess(false)
-        const token = document.cookie.replace(/(?:(?:^|.*;\s*)jwt_token\s*\=\s*([^;]*).*$)|^.*$/, "$1");
-        const username = document.cookie.replace(/(?:(?:^|.*;\s*)user\s*\=\s*([^;]*).*$)|^.*$/, "$1");
-
-        const res = await axios.post(URL_USER_SVC + '/changepw', { username, oldPassword, newPassword, token })
-            .catch((err) => {
-                setErrorDialog('Please check your old/new password and try again')
-            })
-        if (res && res.status === STATUS_CODE_CREATED) {
-            document.cookie = "jwt_token= ; expires = Thu, 01 Jan 1970 00:00:00 GMT"
-            document.cookie = "user= ; expires = Thu, 01 Jan 1970 00:00:00 GMT"
+        const username = getCookie("user")
+        
+        const res = await userApi.post('/changepw', { username, oldPassword, newPassword })
+        .catch((err) => {
+            setErrorDialog('Please check your old/new password and try again')
+        })
+        console.log(res)
+        if (res && res.status === STATUS_CODE_OK) {
+            deleteCookie("user")
             setSuccessDialog('Password successfully changed, please log in again')
             setIsChangeSuccess(true)
             setTimeout(toLogin, 2000);

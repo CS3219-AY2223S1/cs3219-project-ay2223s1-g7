@@ -9,11 +9,10 @@ import {
     Container,
     Alert,
 } from "@mui/material";
-import {useState} from "react";
-import axios from "axios";
-import {URL_USER_SVC} from "../configs";
-import {STATUS_CODE_CONFLICT, STATUS_CODE_CREATED} from "../constants";
-import {useNavigate} from "react-router-dom";
+import { useState } from "react";
+import { STATUS_CODE_CONFLICT, STATUS_CODE_CREATED } from "../constants";
+import { useNavigate } from "react-router-dom";
+import { userApi } from '../apis/api.js'
 
 function SignupPage() {
     const navigate = useNavigate();
@@ -27,7 +26,7 @@ function SignupPage() {
     const handleSignup = async () => {
         setHasSubmit(true);
         setIsSignupSuccess(false)
-        const res = await axios.post(URL_USER_SVC, { username, password })
+        const res = await userApi.post('', { username, password })
             .catch((err) => {
                 if (err.response.status === STATUS_CODE_CONFLICT) {
                     setErrMessage('This username already exists. Please try again with another username')
@@ -88,7 +87,7 @@ function SignupPage() {
                     sx={{ mt: 3, mb: 2 }}
                     onClick={handleSignup}
                     fullWidth
-                    >
+                >
                     Sign up
                 </Button>
                 <Grid container>
