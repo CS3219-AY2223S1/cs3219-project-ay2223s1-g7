@@ -60,7 +60,7 @@ function SignupPage() {
                 <Typography variant={"h4"} marginBottom={"1rem"}>Sign Up</Typography>
                 {(hasSubmit && !isSignupSuccess && errMessage) && <Alert severity="error">{errMessage}</Alert>}
                 {(hasSubmit && isSignupSuccess && succMessage) && <Alert severity="success">{succMessage}</Alert>}
-                <form>
+                <form onSubmit={handleSignup}>
                     <TextField
                         margin="normal"
                         label="Username"
@@ -85,7 +85,6 @@ function SignupPage() {
                         type="submit"
                         variant="contained"
                         sx={{ mt: 3, mb: 2 }}
-                        onClick={handleSignup}
                         fullWidth
                     >
                         Sign up

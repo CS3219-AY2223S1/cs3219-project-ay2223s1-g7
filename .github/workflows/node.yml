@@ -3,6 +3,7 @@ on:
   push:
     branches-ignore:
       - main
+      - testcors
 jobs:
   test:
     name: Test

@@ -77,7 +77,7 @@ function ChangepwPage() {
                     {/* <LockOutlinedIcon /> */}
                 </Avatar>
                 <Typography variant={"h4"} marginBottom={"1rem"}>Change Password</Typography>
-                <form>
+                <form onSubmit={handleChangePassword}>
                     <TextField
                         margin="normal"
                         label="Old Password"
@@ -106,7 +106,6 @@ function ChangepwPage() {
                         type="submit"
                         variant="contained"
                         sx={{ mt: 3, mb: 2 }}
-                        onClick={handleChangePassword}
                         fullWidth
                     >
                         Confirm

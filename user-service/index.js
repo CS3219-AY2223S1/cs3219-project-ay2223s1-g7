@@ -7,9 +7,12 @@ app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
 // app.use(cors()) // config cors so that front-end can use
 // app.options('*', cors())
+
+const origin = process.env.ORIGIN || "*"
+
 const corsConfig = {
     credentials: true,
-    origin: true,
+    origin: origin,
 };
 app.use(cors(corsConfig));
 app.use(cookieParser())
@@ -32,8 +35,8 @@ router.post('/authenticate', authUser)
 
 app.use('/api/user', router).all((_, res) => {
     res.setHeader('content-type', 'application/json')
-    res.setHeader('Access-Control-Allow-Origin', '*')
-    res.setHeader('Access-Control-Allow-Credentials', true)
+    // res.setHeader('Access-Control-Allow-Origin', '*')
+    // res.setHeader('Access-Control-Allow-Credentials', true)
 })
 
 
