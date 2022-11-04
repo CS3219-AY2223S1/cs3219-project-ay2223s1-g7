@@ -16,7 +16,7 @@ import { useNavigate } from 'react-router-dom'
 import { STATUS_CODE_CONFLICT, STATUS_CODE_OK } from "../constants";
 import Typist from 'react-typist-component';
 import { setCookie } from '../utils/cookies.js'
-import { userApi } from '../apis/api.js'
+import { userApi } from '../utils/api.js'
 
 function LoginPage() {
     const navigate = useNavigate()

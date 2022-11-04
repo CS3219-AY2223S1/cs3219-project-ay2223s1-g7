@@ -136,17 +136,18 @@ export async function changepwUser(req, res) {
 export async function authUser(req, res) {
     try {
         let token = req.cookies["token"];
-        if (!token) return res.status(400).json({ message: 'No token provided' });
+        if (!token) throw new Error("No token provided")
 
         let username = verifyJWT(token);
-        if (username.err) return res.status(401).json({ message: 'Invalid Token' });
+        if (username.err) throw new Error("Invalid Token")
 
         let resp = _checkValidToken(token)
-        if (resp.err) return res.status(401).json({ message: 'Invalid Token' });
+        if (resp.err) throw new Error("Invalid Token")
 
         return res.status(200).json({ message: `Authentication successful` });
     } catch (err) {
-        return res.status(500).json({ message: 'Server error' })
+        res.cookie("token", "", { maxAge: 0 })
+        return res.status(401).json({ message: 'Authentication failed' })
     }
 }
 

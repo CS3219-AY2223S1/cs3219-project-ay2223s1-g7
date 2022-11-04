@@ -8,8 +8,7 @@ import LoadingPage from "./LoadingPage";
 import QuestionPage from "./QuestionPage";
 import HistoryPage from "./HistoryPage"
 import { URL_USER_SVC, URL_MATCH_SVC } from "../configs";
-import { STATUS_CODE_CONFLICT, STATUS_CODE_CREATED } from "../constants";
-
+import { authenticate } from '../utils/authentication.js'
 
 function HomePage(props) {
     const navigate = useNavigate()
@@ -20,7 +19,7 @@ function HomePage(props) {
 
     useEffect(() => {
         navigate(route)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     useEffect(() => {
@@ -34,16 +33,18 @@ function HomePage(props) {
             navigate("/home")
         })
 
-        matchSocket.on('matchSuccess', (roomName) => {
+        matchSocket.on('matchSuccess', async (roomName) => {
             console.log("match Success")
             setCookie("room_name", roomName, 5)
             setRoute("/question")
+            let isAuth = await authenticate()
+            if (!isAuth) window.location.reload();
             navigate("/question")
             matchSocket.disconnect()
         })
     }, [navigate, matchSocket])
 
-    const handleMatching = (difficulty) => {
+    const handleMatching = async (difficulty) => {
         console.log(difficulty)
         setDifficulty(difficulty)
         let username = getCookie("user")
@@ -54,13 +55,17 @@ function HomePage(props) {
             },
             closeOnBeforeunload: false
         }))
+        let isAuth = await authenticate()
+        if (!isAuth) window.location.reload();
         setRoute("/loading")
         navigate("/loading")
     }
 
-    const handleExitToHome = () => {
+    const handleExitToHome = async () => {
         setText("")
         matchSocket.disconnect()
+        let isAuth = await authenticate()
+        if (!isAuth) window.location.reload();
         setRoute("/home")
         navigate("/home")
     }
@@ -69,15 +74,15 @@ function HomePage(props) {
         (route === "/home" || route === "/")
             ? <QuestionSelectionPage handleMatching={handleMatching} />
             : (route === "/loading"
-                ? <LoadingPage 
-                    handleExit={handleExitToHome} 
-                    difficulty={difficulty} 
-                    />
-                : (route === "/history" ? 
-                <HistoryPage/> : <QuestionPage
-                    text={text}
-                    handleExit={handleExitToHome} 
-                    difficulty={difficulty}/> )
+                ? <LoadingPage
+                    handleExit={handleExitToHome}
+                    difficulty={difficulty}
+                />
+                : (route === "/history" ?
+                    <HistoryPage /> : <QuestionPage
+                        text={text}
+                        handleExit={handleExitToHome}
+                        difficulty={difficulty} />)
             )
     )
 }

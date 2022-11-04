@@ -15,7 +15,7 @@ import { useState } from "react";
 import { STATUS_CODE_OK } from "../constants";
 import { useNavigate } from "react-router-dom";
 import { deleteCookie, getCookie } from '../utils/cookies.js'
-import { userApi } from '../apis/api.js'
+import { userApi } from '../utils/api.js'
 
 
 function ChangepwPage() {
