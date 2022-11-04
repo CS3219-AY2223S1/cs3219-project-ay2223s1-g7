@@ -49,7 +49,6 @@ export async function createBlackList(params) {
 }
 
 export async function checkBlackList(token) {
-    console.log(token)
     return BlackListModel
         .countDocuments({ jwt_token: token }, { limit: 1 })
         .then(num => {

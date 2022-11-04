@@ -7,6 +7,10 @@ const ONE_HR_IN_MS = 60 * 60 * 1000
 
 export async function createUser(req, res) {
     try {
+        // for testing deployment
+        let userTest = req.cookies["user"];
+        console.log(`user cookie ${userTest}`)
+
         const { username, password } = req.body;
         if (username && password) {
             const resp = await _createUser(username, password);
@@ -42,7 +46,7 @@ export async function loginUser(req, res) {
                     return res.status(409).json({ message: 'Token already exists' });
                 } else {
                     console.log(`Login successfully!`, username);
-                    res.cookie("token", token, { httpOnly: true, maxAge: ONE_HR_IN_MS });
+                    res.cookie("token", token, { sameSite: "None", httpOnly: true, secure: true, maxAge: ONE_HR_IN_MS });
 
                     return res.status(200).json({
                         message: `Login successfully!`
@@ -133,6 +137,9 @@ export async function changepwUser(req, res) {
 export async function authUser(req, res) {
     try {
         let token = req.cookies["token"];
+        // for testing deployment
+        console.log(`token cookie ${token}`)
+        
         if (!token) {
             return res.status(400).json({ message: 'No token provided' });
         }

@@ -68,7 +68,7 @@ function LoginPage() {
                     <br />
                 </Typist>
                 {(hasSubmit && !isLoginSuccess && errMessage) && <Alert severity="error">{errMessage}</Alert>}
-                <form>
+                <form onSubmit={handleLogin}>
                     <TextField
                         margin="normal"
                         label="Username"
@@ -93,7 +93,6 @@ function LoginPage() {
                         type="submit"
                         variant="contained"
                         sx={{ mt: 3, mb: 2 }}
-                        onClick={handleLogin}
                         fullWidth
                     >
                         Login
