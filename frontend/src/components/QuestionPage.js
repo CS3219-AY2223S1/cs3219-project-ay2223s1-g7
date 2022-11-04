@@ -30,7 +30,6 @@ function QuestionPage(props) {
     const [initVersion, setInitVersion] = useState(0)
     const { handleExit } = useContext(SocketContext);
 
-
     useEffect(() => {
         let username = getCookie("user")
         let roomName = getCookie("room_name")
@@ -63,8 +62,8 @@ function QuestionPage(props) {
             
 
             if (users.length === 2) {
-                let collaboratorName = users.filter(name => name !== username)[0]
-                setCollaboratorName(collaboratorName)
+                let collabName = users.filter(name => name !== username)[0]
+                setCollaboratorName(collabName)
                 let resp = await getQuestion()
                 setTitle(resp.data.question.title)
                 setQuestion(resp.data.question.question)

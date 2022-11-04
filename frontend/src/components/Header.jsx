@@ -82,16 +82,12 @@ const Header = () => {
         setDialogMsg(msg)
     }
 
-    const handleDel = () => {
-        setSuccessDialog('Are you sure you want to delete?')
-    }
-
     const handleCloseUserMenuAndRoute = (setting) => {
         setAnchorElUser(null);
         if (setting === 'Change Password') {
             navigate("/changepw")
         } else {
-            handleDel()
+            setSuccessDialog('Are you sure you want to delete?')
         }
     };
 
@@ -118,9 +114,11 @@ const Header = () => {
         }
     }
 
-    if (location.pathname === "/login" || location.pathname === "/signup") {
+
+    if (location.pathname === "/login" || location.pathname === "/signup" || location.pathname === "/question") {
         return null
     }
+
 
     return (
         <div className="home">
