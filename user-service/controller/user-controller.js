@@ -132,11 +132,7 @@ export async function changepwUser(req, res) {
 
 export async function authUser(req, res) {
     try {
-        console.log(req.body)
         let token = req.cookies["token"];
-        let user = req.cookies["user"];
-        console.log(token)
-        console.log(user)
         if (!token) {
             return res.status(400).json({ message: 'No token provided' });
         }

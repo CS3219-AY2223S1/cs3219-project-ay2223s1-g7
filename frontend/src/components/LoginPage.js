@@ -26,7 +26,8 @@ function LoginPage() {
     const [hasSubmit, setHasSubmit] = useState(false);
     const [errMessage, setErrMessage] = useState("")
 
-    const handleLogin = async () => {
+    const handleLogin = async (e) => {
+        e.preventDefault()
         setHasSubmit(true);
         setIsLoginSuccess(false)
         const res = await userApi.post('/login', { username, password })
@@ -67,35 +68,37 @@ function LoginPage() {
                     <br />
                 </Typist>
                 {(hasSubmit && !isLoginSuccess && errMessage) && <Alert severity="error">{errMessage}</Alert>}
-                <TextField
-                    margin="normal"
-                    label="Username"
-                    variant="standard"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    autoFocus
-                    fullWidth
-                    required
-                />
-                <TextField
-                    margin="normal"
-                    label="Password"
-                    variant="standard"
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    fullWidth
-                    required
-                />
-                <Button
-                    type="submit"
-                    variant="contained"
-                    sx={{ mt: 3, mb: 2 }}
-                    onClick={handleLogin}
-                    fullWidth
-                >
-                    Login
-                </Button>
+                <form>
+                    <TextField
+                        margin="normal"
+                        label="Username"
+                        variant="standard"
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
+                        autoFocus
+                        fullWidth
+                        required
+                    />
+                    <TextField
+                        margin="normal"
+                        label="Password"
+                        variant="standard"
+                        type="password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        fullWidth
+                        required
+                    />
+                    <Button
+                        type="submit"
+                        variant="contained"
+                        sx={{ mt: 3, mb: 2 }}
+                        onClick={handleLogin}
+                        fullWidth
+                    >
+                        Login
+                    </Button>
+                </form>
                 <Grid container>
                     <Link href="/signup" variant="body2">
                         {"Don't have an account? Sign Up"}

@@ -28,14 +28,15 @@ function ChangepwPage() {
     const [dialogMsg, setDialogMsg] = useState("")
     const [isChangeSuccess, setIsChangeSuccess] = useState(false)
 
-    const handleChangePassword = async () => {
+    const handleChangePassword = async (e) => {
+        e.preventDefault()
         setIsChangeSuccess(false)
         const username = getCookie("user")
-        
+
         const res = await userApi.post('/changepw', { username, oldPassword, newPassword })
-        .catch((err) => {
-            setErrorDialog('Please check your old/new password and try again')
-        })
+            .catch((err) => {
+                setErrorDialog('Please check your old/new password and try again')
+            })
         console.log(res)
         if (res && res.status === STATUS_CODE_OK) {
             deleteCookie("user")
@@ -76,40 +77,41 @@ function ChangepwPage() {
                     {/* <LockOutlinedIcon /> */}
                 </Avatar>
                 <Typography variant={"h4"} marginBottom={"1rem"}>Change Password</Typography>
-                <TextField
-                    margin="normal"
-                    label="Old Password"
-                    variant="standard"
-                    type="password"
-                    value={oldPassword}
-                    onChange={(e) => setOldPassword(e.target.value)}
-                    sx={{ marginBottom: "1rem" }}
-                    autoFocus
-                    fullWidth
-                    required
-                />
+                <form>
+                    <TextField
+                        margin="normal"
+                        label="Old Password"
+                        variant="standard"
+                        type="password"
+                        value={oldPassword}
+                        onChange={(e) => setOldPassword(e.target.value)}
+                        sx={{ marginBottom: "1rem" }}
+                        autoFocus
+                        fullWidth
+                        required
+                    />
 
-                <TextField
-                    margin="normal"
-                    label="New Password"
-                    variant="standard"
-                    type="password"
-                    value={newPassword}
-                    onChange={(e) => setNewPassword(e.target.value)}
-                    sx={{ marginBottom: "2rem" }}
-                    fullWidth
-                    required
-                />
-
-                <Button
-                    type="submit"
-                    variant="contained"
-                    sx={{ mt: 3, mb: 2 }}
-                    onClick={handleChangePassword}
-                    fullWidth
-                >
-                    Confirm
-                </Button>
+                    <TextField
+                        margin="normal"
+                        label="New Password"
+                        variant="standard"
+                        type="password"
+                        value={newPassword}
+                        onChange={(e) => setNewPassword(e.target.value)}
+                        sx={{ marginBottom: "2rem" }}
+                        fullWidth
+                        required
+                    />
+                    <Button
+                        type="submit"
+                        variant="contained"
+                        sx={{ mt: 3, mb: 2 }}
+                        onClick={handleChangePassword}
+                        fullWidth
+                    >
+                        Confirm
+                    </Button>
+                </form>
 
                 <Dialog
                     open={isDialogOpen}

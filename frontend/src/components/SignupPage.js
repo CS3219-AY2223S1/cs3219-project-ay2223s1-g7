@@ -23,7 +23,8 @@ function SignupPage() {
     const [errMessage, setErrMessage] = useState("")
     const [succMessage, setSuccessMsg] = useState("")
 
-    const handleSignup = async () => {
+    const handleSignup = async (e) => {
+        e.preventDefault()
         setHasSubmit(true);
         setIsSignupSuccess(false)
         const res = await userApi.post('', { username, password })
@@ -55,41 +56,41 @@ function SignupPage() {
                 }}
             >
                 <Avatar sx={{ m: 1, bgcolor: 'primary.main' }}>
-                    {/* <LockOutlinedIcon /> */}
                 </Avatar>
                 <Typography variant={"h4"} marginBottom={"1rem"}>Sign Up</Typography>
                 {(hasSubmit && !isSignupSuccess && errMessage) && <Alert severity="error">{errMessage}</Alert>}
                 {(hasSubmit && isSignupSuccess && succMessage) && <Alert severity="success">{succMessage}</Alert>}
-                <TextField
-                    margin="normal"
-                    label="Username"
-                    variant="standard"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    autoFocus
-                    fullWidth
-                    required
-                />
-                <TextField
-                    margin="normal"
-                    label="Password"
-                    variant="standard"
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    fullWidth
-                    required
-                />
-
-                <Button
-                    type="submit"
-                    variant="contained"
-                    sx={{ mt: 3, mb: 2 }}
-                    onClick={handleSignup}
-                    fullWidth
-                >
-                    Sign up
-                </Button>
+                <form>
+                    <TextField
+                        margin="normal"
+                        label="Username"
+                        variant="standard"
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
+                        autoFocus
+                        fullWidth
+                        required
+                    />
+                    <TextField
+                        margin="normal"
+                        label="Password"
+                        variant="standard"
+                        type="password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        fullWidth
+                        required
+                    />
+                    <Button
+                        type="submit"
+                        variant="contained"
+                        sx={{ mt: 3, mb: 2 }}
+                        onClick={handleSignup}
+                        fullWidth
+                    >
+                        Sign up
+                    </Button>
+                </form>
                 <Grid container>
                     <Link href="/login" variant="body2">
                         {"Already have an account? Login"}
