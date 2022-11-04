@@ -46,7 +46,7 @@ export async function loginUser(req, res) {
                     return res.status(409).json({ message: 'Token already exists' });
                 } else {
                     console.log(`Login successfully!`, username);
-                    res.cookie("token", token, { httpOnly: true, maxAge: ONE_HR_IN_MS });
+                    res.cookie("token", token, { sameSite: "None", httpOnly: true, secure: true, maxAge: ONE_HR_IN_MS });
 
                     return res.status(200).json({
                         message: `Login successfully!`

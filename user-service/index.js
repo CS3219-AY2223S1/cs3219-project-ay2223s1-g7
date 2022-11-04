@@ -8,11 +8,17 @@ app.use(express.json())
 // app.use(cors()) // config cors so that front-end can use
 // app.options('*', cors())
 
-const origin = process.env.ORIGIN || "*"
+const whitelist = process.env.ORIGIN ? [process.env.ORIGIN] : ["http://localhost:3000", "http://127.0.0.1:3000"]
 
 const corsConfig = {
     credentials: true,
-    origin: origin,
+    origin: function (origin, callback) {
+        if (whitelist.indexOf(origin) !== -1) {
+            callback(null, true)
+        } else {
+            callback(new Error('Not allowed by CORS'))
+        }
+    }
 };
 app.use(cors(corsConfig));
 app.use(cookieParser())
@@ -33,9 +39,10 @@ router.post('/delete', deleteUser)
 router.post('/changepw', changepwUser)
 router.post('/authenticate', authUser)
 
-app.use('/api/user', router).all((_, res) => {
+app.use('/api/user', router).all((req, res) => {
+    console.log(req.headers.origin)
     res.setHeader('content-type', 'application/json')
-    // res.setHeader('Access-Control-Allow-Origin', '*')
+    res.setHeader('Access-Control-Allow-Origin', req.headers.origin)
     // res.setHeader('Access-Control-Allow-Credentials', true)
 })
 
