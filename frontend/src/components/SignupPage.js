@@ -12,7 +12,7 @@ import {
 import { useState } from "react";
 import { STATUS_CODE_CONFLICT, STATUS_CODE_CREATED } from "../constants";
 import { useNavigate } from "react-router-dom";
-import { userApi } from '../apis/api.js'
+import { userApi } from '../utils/api.js'
 
 function SignupPage() {
     const navigate = useNavigate();

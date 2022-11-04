@@ -13,9 +13,7 @@ import { getCookie } from "../utils/cookies.js";
 
 
 const VideoPlayer = () => {
-    const { inCall, myVideo, peerVideo, peerName, stream, toggleVideo, initiateWebcam, videoOn, toggleAudio, audioOn, setSocket, updateWebcam, updateAudio, webcamList, audioList } = useContext(SocketContext);
-    const [currentWebcam, setcurrentWebcam] = useState('');
-    const [currentAudio, setcurrentAudio] = useState('');
+    const { inCall, myVideo, peerVideo, peerName, stream, toggleVideo, initiateWebcam, videoOn, toggleAudio, audioOn, setSocket, updateWebcam, updateAudio, webcamList, audioList, videoDeviceLabel, audioDeviceLabel } = useContext(SocketContext);
 
     useEffect(() => {
         let roomName = getCookie("room_name")
@@ -40,8 +38,6 @@ const VideoPlayer = () => {
             console.log("peerVideo height and width", peerVideo.videoHeight, peerVideo.videoWidth)
     }
 
-
-
     return (
         <Box sx={{
             display: 'flex',
@@ -56,12 +52,12 @@ const VideoPlayer = () => {
                 margin: '10px',
                 minWidth: '240px',
             }}>
-                <Box sx={{}}>
+                <Box>
                     <Typography variant="h5" gutterBottom> You </Typography>
                     <video id="myVideo" style={{ width: '100%', maxHeight: 'min(30vh, 18vw)', minHeight: '200px', }} playsInline muted ref={myVideo} autoPlay onClick={getResolution} />
                     {stream ? (
-                        <Box sx={{ display: 'flex', flexDirection: "column", justifyContent: "space-between", }}>
-                            <Box sx={{ display: 'flex', flexDirection: "row", justifyContent: "flex-start", maxWidth:'75%'}}>
+                        <Box sx={{ display: 'flex', flexDirection: "column"}}>
+                            <Box sx={{ display: 'flex', flexDirection: "row", justifyContent: "center", maxWidth:"200px" }}>
 
                                 <Tooltip title={videoOn ? "Turn off video" : "Turn on video"}>
                                     <Button variant="contained" color="primary"
@@ -72,15 +68,16 @@ const VideoPlayer = () => {
 
 
                                 <TextField
-                                    value={currentWebcam}
-                                    onChange={(event) => { updateWebcam(event.target.value); setcurrentWebcam(event.target.value) }}
+                                    defaultValue={''}
+                                    value={videoDeviceLabel}
+                                    onChange={(event) => { updateWebcam(event.target.value); }}
                                     select
                                 >
                                     {webcamList.map(x => <MenuItem key={x.key} value={x.value}>{x.key}</MenuItem>)}
                                 </TextField>
 
                             </Box>
-                            <Box sx={{ display: 'flex', flexDirection: "row", justifyContent: "flex-start", maxWidth:'75%'}}>
+                            <Box sx={{ display: 'flex', flexDirection: "row", justifyContent: "center" , maxWidth:"200px" }}>
 
                                 <Tooltip title={audioOn ? "Turn off audio" : "Turn on audio"}>
                                     <Button variant="contained" color="primary"
@@ -90,8 +87,9 @@ const VideoPlayer = () => {
                                 </Tooltip>
 
                                 <TextField
-                                    value={currentAudio}
-                                    onChange={(event) => { updateAudio(event.target.value); setcurrentAudio(event.target.value) }}
+                                    defaultValue={''}
+                                    value={audioDeviceLabel}
+                                    onChange={(event) => { updateAudio(event.target.value) }}
                                     select
                                 >
                                     {audioList.map(x => <MenuItem key={x.key} value={x.value}>{x.key}</MenuItem>)}

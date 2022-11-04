@@ -1,8 +1,8 @@
 import React from 'react';
-import { STATUS_CODE_OK } from "../constants";
 import { useState, useEffect } from "react";
 import { Navigate } from "react-router-dom";
-import { userApi } from '../apis/api.js'
+import {authenticate} from '../utils/authentication.js'
+
 
 export const PrivateRoute = ({ children }) => {
     const [authorized, setAuthorized] = useState();
@@ -10,7 +10,7 @@ export const PrivateRoute = ({ children }) => {
     useEffect(() => {
         const authorize = async () => {
             try {
-                const auth_result = await isAuth();
+                const auth_result = await authenticate();
                 setAuthorized(auth_result);
             } catch (err) {
                 console.log(err)
@@ -28,16 +28,4 @@ export const PrivateRoute = ({ children }) => {
 
     return authorized ? children : <Navigate to="/login" />;
 };
-
-async function isAuth() {
-    const res = await userApi.post('/authenticate', {})
-        .catch((err) => {
-            return false
-        })
-    console.log(res)
-    if (res && res.status === STATUS_CODE_OK) {
-        return true
-    }
-    return false
-}
 

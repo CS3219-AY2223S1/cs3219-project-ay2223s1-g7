@@ -24,14 +24,15 @@ const ContextProvider = ({ children }) => {
     const [videoOn, setVideoOn] = useState(false);
     const [audioOn, setAudioOn] = useState(false);
 
-    const [webcamList, setWebcamList] = useState(null);
-    const [audioList, setAudioList] = useState(null);
+    const [webcamList, setWebcamList] = useState([]);
+    const [audioList, setAudioList] = useState([]);
 
+    const [videoDeviceLabel, setVideoDeviceLabel] = useState('');
+    const [audioDeviceLabel, setAudioDeviceLabel] = useState('');
 
     const myVideo = useRef();
     const peerVideo = useRef();
     const peerRef = useRef();
-    const [pastStream, setPastStream] = useState(null);
 
     useEffect(() => {
         // remove old listeners
@@ -120,7 +121,6 @@ const ContextProvider = ({ children }) => {
 
     const handleExit = () => {
         leaveCall()
-        setWaitingCall(false)
         endCall()
         if (stream) {
             terminateWebcam()
@@ -138,6 +138,7 @@ const ContextProvider = ({ children }) => {
         if (inCall) {
             socket.removeListener("callaccepted")
             socket.removeListener("rejectCall")
+            setWaitingCall(false)
             setInCall(false);
             setCallSignal(null)
             await peerRef.current.destroy()
@@ -145,9 +146,11 @@ const ContextProvider = ({ children }) => {
     }
 
     const terminateWebcam = async () => {
+        console.log("terminating webcam")
         await stream.getTracks().forEach(async (track) => {
             await track.stop();
         });
+        console.log(stream.getTracks())
         myVideo.current.srcObject = null
         setVideoOn(false);
         setAudioOn(false);
@@ -159,14 +162,18 @@ const ContextProvider = ({ children }) => {
             video: {
                 deviceId: { exact: device}
             },
-            audio: true
+            audio: false
         }).then((currentStream) => {
             if(inCall) {
                 peerRef.current.replaceTrack(stream.getVideoTracks()[0], currentStream.getVideoTracks()[0], stream);
             }
-            
-            myVideo.current.srcObject = currentStream;
-
+            // https://github.com/feross/simple-peer/issues/634
+            stream.getAudioTracks().forEach(track => track.stop())
+            stream.removeTrack(stream.getVideoTracks()[0])
+            stream.addTrack(currentStream.getVideoTracks()[0])
+            myVideo.current.srcObject = stream;
+            let vLabel = webcamList.find(element => element.key == currentStream.getVideoTracks()[0].label)
+            setVideoDeviceLabel(vLabel.value)
             return true
         }).catch(error => {
             return false
@@ -181,12 +188,17 @@ const ContextProvider = ({ children }) => {
                 deviceId: { exact: device}
             },
             video: false
-        }).then((currentStream) => {
+        }).then(async (currentStream) => {
             if(inCall) {
                 peerRef.current.replaceTrack(stream.getAudioTracks()[0], currentStream.getAudioTracks()[0], stream);
-                setPastStream(currentStream);
             }
-    
+            stream.removeTrack(stream.getAudioTracks()[0])
+            stream.addTrack(currentStream.getAudioTracks()[0])
+            myVideo.current.srcObject = stream;
+
+            let aLabel = audioList.find(element => element.key == currentStream.getAudioTracks()[0].label)
+            console.log(aLabel)
+            setAudioDeviceLabel(aLabel.value)
             return true
         }).catch(error => {
             return false
@@ -198,16 +210,19 @@ const ContextProvider = ({ children }) => {
 
     const initiateWebcam = async() => {
 
-        await navigator.mediaDevices.getUserMedia({
+        let permissions = await navigator.mediaDevices.getUserMedia({
             video: true,
             audio: true
-        }).then((currentStream) => {
+        }).then((dummyStream) => {
             return true
-        }).catch(error => {
+        }).catch( (error) => {
             return false
         })
 
-        navigator.mediaDevices.enumerateDevices().then(async (devices) => {
+        console.log('permissions', permissions)
+
+        await navigator.mediaDevices.enumerateDevices().then(async (devices) => {
+            console.log(devices)
             let videoDevices = devices.filter(device => device.kind === "videoinput")
             let audioDevices = devices.filter(device => device.kind === "audioinput")
             let v_sources = [];
@@ -215,7 +230,7 @@ const ContextProvider = ({ children }) => {
                 v_sources.push({
                     key:   device.label,
                     value: device.deviceId,
-                });            
+                });
             }
             setWebcamList(v_sources)
 
@@ -238,12 +253,16 @@ const ContextProvider = ({ children }) => {
                 }).then((currentStream) => {
                     myVideo.current.srcObject = currentStream;
                     setStream(currentStream);
-                    setPastStream(currentStream);
+                    let v_label = v_sources.find(element => element.key === device.label)
+                    setVideoDeviceLabel(v_label.value)
+                    let a_label = a_sources.find(element => element.key === currentStream.getAudioTracks()[0].label)
+                    setAudioDeviceLabel(a_label.value)
 
                     return true
                 }).catch(error => {
                     return false
                 })
+                console.log('isVideoAvailable', isVideoAvailable)
                 if (!isVideoAvailable) {
                     continue
                 }
@@ -266,21 +285,11 @@ const ContextProvider = ({ children }) => {
     }
 
     const toggleAudio = () => {
-        if (pastStream !== null) {
-            pastStream.getTracks().forEach(function (track) {
-                if (track.readyState === "live" &&
-                    track.kind === "audio") {
-                    track.enabled = !audioOn;
-                    setAudioOn(!audioOn);
-                }
-            });
-        }
-
-        else if (myVideo.current.srcObject !== null) {
+        if (myVideo.current.srcObject !== null) {
             myVideo.current.srcObject.getTracks().forEach(function (track) {
                 if (track.readyState === "live" && track.kind === "audio") {
                     track.enabled = !audioOn;
-                    setVideoOn(!audioOn);
+                    setAudioOn(!audioOn);
                 }
             })
         };
@@ -292,7 +301,8 @@ const ContextProvider = ({ children }) => {
             value={{
                 callSignal, peerName, inCall, myVideo, peerVideo, stream, waitingCall,
                 callUser, leaveCall, answerCall, toggleVideo, videoOn, toggleAudio,
-                audioOn, setSocket, initiateWebcam, handleExit, rejectCall, webcamList, audioList, updateWebcam, updateAudio
+                audioOn, setSocket, initiateWebcam, handleExit, rejectCall, webcamList, 
+                audioList, updateWebcam, updateAudio, videoDeviceLabel, audioDeviceLabel
             }}
         >
             {children}

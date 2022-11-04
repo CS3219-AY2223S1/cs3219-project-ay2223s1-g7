@@ -11,7 +11,7 @@ import { useNavigate } from "react-router-dom";
 
 import { STATUS_CODE_OK } from "../constants";
 import { getCookie, deleteCookie } from "../utils/cookies.js"
-import { userApi } from '../apis/api.js'
+import { userApi } from '../utils/api.js'
 
 function SettingsPage() {
     const navigate = useNavigate();

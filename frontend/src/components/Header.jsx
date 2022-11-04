@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import { getCookie, deleteCookie } from "../utils/cookies"
 import { STATUS_CODE_CONFLICT, STATUS_CODE_OK } from "../constants";
-import { userApi } from '../apis/api.js'
+import { userApi } from '../utils/api.js'
 
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
