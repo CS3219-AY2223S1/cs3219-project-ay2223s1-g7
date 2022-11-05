@@ -33,7 +33,7 @@ export async function loginUser(req, res) {
 
         if (!username || !password) return res.status(400).json({ message: 'Username and/or Password are missing!' });
 
-        let user = await _searchUser({ username })
+        const user = await _searchUser({ username })
         if (user.err) return res.status(400).json({ message: 'Invalid credentials' })
 
         let validPassword = await verifyPassword(password, user.password)
@@ -55,7 +55,7 @@ export async function loginUser(req, res) {
 
 export async function logoutUser(req, res) {
     try {
-        let token = req.cookies["token"];
+        const token = req.cookies["token"];
 
         const resp = await _addBlackList({ jwt_token: token });
         if (resp.err) return res.status(500).json({ message: 'Unable to add to blacklist' });
@@ -70,17 +70,17 @@ export async function logoutUser(req, res) {
 
 export async function deleteUser(req, res) {
     try {
-        const { username } = req.body;
-        let token = req.cookies["token"];
+        const { username, _ } = req.userInfo
+        const token = req.cookies["token"];
 
         const resp = await _addBlackList({ jwt_token: token });
         if (resp.err) {
-            return res.status(409).json({ message: 'Unable to add to blacklist' });
+            return res.status(400).json({ message: 'Unable to add to blacklist' });
         }
 
         const deleteResp = await _deleteUser({ username });
         if (deleteResp.err) {
-            return res.status(409).json({ message: 'Unable to delete User' });
+            return res.status(400).json({ message: 'Unable to delete User' });
         }
         res.cookie("token", "", { sameSite: "None", httpOnly: true, secure: true, maxAge: 0 })
         return res.status(200).json({ message: `Delete successful` });
@@ -92,14 +92,13 @@ export async function deleteUser(req, res) {
 
 export async function changepwUser(req, res) {
     try {
-        const { username, oldPassword, newPassword } = req.body;
-        let token = req.cookies["token"];
+        const { username, password } = req.userInfo
+        const { oldPassword, newPassword } = req.body;
+        const token = req.cookies["token"];
+
         if (!username || !oldPassword || !newPassword) return res.status(400).json({ message: 'Missing information!' });
 
-        let user = await _searchUser({ username })
-        if (user.err) return res.status(400).json({ message: 'Invalid credentials' })
-
-        let validPassword = await verifyPassword(oldPassword, user.password)
+        let validPassword = await verifyPassword(oldPassword, password)
         if (!validPassword) return res.status(400).json({ message: 'Invalid credentials!' });
 
         const blacklistResp = await _addBlackList({ jwt_token: token });
@@ -132,11 +131,17 @@ export async function authenticate(req, res, next) {
 
         const user = verifyJWT(token);
         if (user.err) throw new Error("Invalid Token")
+        const username = user.username
 
         const resp = await _checkValidToken({ jwt_token: token })
         if (resp.err) throw new Error("Invalid Token")
 
-        // req.body.username = user.username
+        let userInDb = await _searchUser({ username })
+        if (userInDb.err) throw new Error("Invalid Token")
+        const password = userInDb.password
+
+        req.userInfo = { username, password }
+
         next()
     } catch (err) {
         res.cookie("token", "", { sameSite: "None", httpOnly: true, secure: true, maxAge: 0 })
