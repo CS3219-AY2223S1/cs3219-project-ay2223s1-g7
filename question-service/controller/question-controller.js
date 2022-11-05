@@ -3,15 +3,23 @@ import {
     ormSearchQuestionByDifficulty as _searchQuestionByDifficulty, ormDeleteQuestion as _deleteQuestion, ormSearchQuestionByTitle as _searchQuestionByTitle,
     ormSearchAllQuestionsAttempted as _searchAllQuestionsAttempted, ormAttemptQuestion as _attemptQuestion
 } from '../model/question-orm.js'
-import redis from "redis"
+import Redis from 'ioredis'
 
-const REDIS_HOST = process.env.ENV == "PROD" ? { url: process.env.REDIS_HOST } : '';
-const redisClient = redis.createClient(REDIS_HOST)
-if (!redisClient) {
-    console.log("cannot connect to redis");
-} else {
-    console.log("connected to redis");
-}
+
+const REDIS_CONFIG = process.env.ENV == "PROD" ? {
+    port: process.env.REDIS_HOST.split(":")[1],
+    host: process.env.REDIS_HOST.split(":")[0],
+    retryStrategy: (times) => {
+        return Math.min(times * 50, 2000);
+    },
+} : {}
+
+console.log(`REDIS_CONFIG:`)
+console.log(REDIS_CONFIG)
+
+const redisClient = new Redis(REDIS_CONFIG);
+console.log(`redis status: ${redisClient.status}`)
+
 
 export async function addQuestion(req, res) {
     try {
@@ -73,7 +81,6 @@ export async function getAllQuestions(req, res) {
 
         const { difficulty } = req.body
         const resp = await _searchAllQuestionsByDifficulty(difficulty);
-        console.log(resp)
         if (resp.err) {
             return res.status(409).json({ message: 'Could not find question!' });
         } else {
@@ -89,16 +96,15 @@ export async function getAllQuestions(req, res) {
 export async function getAllQuestionsAttempted(req, res) {
     try {
         const { user } = req.body
-
-        redisClient.get(`questions-${user}`, async (error, questions) => {
-            if (error) console.error(error);
+        console.log(`get all attempts ${user}`)
+        console.log(`redis status: ${redisClient.status}`)
+        redisClient.get(`questions-${user}`).then(async (questions) => {
             if (questions != null) {
                 console.log("Hit")
                 return res.status(201).json({ question: JSON.parse(questions) });
             } else {
                 console.log("Miss")
                 const resp = await _searchAllQuestionsAttempted(user);
-                console.log(resp)
                 if (resp.err) {
                     return res.status(409).json({ message: 'Could not find question!' });
                 } else {
@@ -122,7 +128,6 @@ export async function attemptQuestion(req, res) {
     try {
         const { title, user } = req.body
         const resp = await _attemptQuestion(title, user);
-        console.log(resp)
         if (resp.err) {
             return res.status(409).json({ message: 'Could not find question!' });
         } else {
