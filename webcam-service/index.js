@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import { createServer } from 'http';
 import { Server } from 'socket.io'
+import { validate as uuidValidate } from 'uuid'
 
 const app = express();
 app.use(express.urlencoded({ extended: true }))
@@ -22,7 +23,6 @@ const io = new Server(
     {
         cors: {
             origin: "*",
-            credentials: true
         }
     }
 );
@@ -30,13 +30,20 @@ const io = new Server(
 io.on('connection', async (socket) => {
 
     let query = socket.handshake.query
-    if (query.username.length === 0 || query.roomName.length === 0) {
+    if (!query.username || !query.roomName) {
         console.log("missing username and/or roomName")
         socket.disconnect()
         return
     }
 
     let roomName = query.roomName
+
+    if (uuidValidate(roomName.split("-")[1])) {
+        console.log("invalid roomname")
+        socket.disconnect()
+        return
+    }
+
     console.log(`A user connected ${socket.id} ${query.username} ${roomName}`)
 
     socket.join(roomName)
