@@ -21,7 +21,6 @@ const io = new Server(
     {
         cors: {
             origin: "*",
-            credentials: true
         }
     }
 );
@@ -29,42 +28,36 @@ const io = new Server(
 const port = process.env.ENV === "PROD" ? process.env.PORT : 8001
 
 io.on('connection', (socket) => {
-    let query = socket.handshake.query
-    if (typeof query.username === "undefined" || typeof query.difficulty === "undefined" || query.username.length === 0 || query.difficulty.length === 0) {
-        // can check for valid username or difficulty
-        console.log("missing username and/or difficulty")
+    const query = socket.handshake.query
+    if (!query.username || !query.difficulty) {
+        console.error("missing username and/or difficulty")
         socket.disconnect()
         return
     }
+
     console.log(`A user connected ${socket.id} ${query.username} ${query.difficulty}`)
 
     let timer = null
 
-    let sendMatchFail = (roomName) => {
-        if (io.sockets.adapter.rooms.get(roomName)?.size < 2) {
-            console.log("failed to match")
-            io.to(roomName).emit("matchFail")
-        }
-    }
-    let joinRoom = (roomName) => {
+    const joinRoom = (roomName) => {
         socket.join(roomName)
         timer = setTimeout(async () => {
             let roomSize = io.sockets.adapter.rooms.get(roomName)?.size
             if (!isNaN(roomSize) && roomSize < 2) {
-                sendMatchFail(roomName)
+                console.error("failed to match")
+                io.to(roomName).emit("matchFail")
                 removeMatch(query.username, query.difficulty)
             }
         }, 30000);
     }
 
-    let setUpMessage = (roomName) => {
-        console.log("reach here")
+    const sendMatchSuccess = (roomName) => {
         if (io.sockets.adapter.rooms.get(roomName)?.size === 2) {
             io.to(roomName).emit("matchSuccess", roomName)
         }
     }
 
-    connectMatch(joinRoom, setUpMessage, query.username, query.difficulty)
+    connectMatch(joinRoom, sendMatchSuccess, query.username, query.difficulty)
 
     socket.on('disconnect', () => {
         removeMatch(query.username, query.difficulty)
