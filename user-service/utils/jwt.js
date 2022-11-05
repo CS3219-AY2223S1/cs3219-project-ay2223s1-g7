@@ -5,7 +5,6 @@ const SECRET_KEY = process.env.SECRET_KEY
 
 export function generateJWT(payload) {
     try {
-        console.log(payload)
         return jwt.sign(payload, SECRET_KEY, { algorithm: 'HS256', expiresIn: '1h' });
     } catch (err) {
         console.log('ERROR: Could not generate JWT');

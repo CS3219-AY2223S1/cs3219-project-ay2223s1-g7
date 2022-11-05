@@ -22,7 +22,6 @@ export async function ormSearchUser(username) {
             throw new Error("Missing user")
         }
     } catch (err) {
-        console.error(err);
         return { err };
     }
 }

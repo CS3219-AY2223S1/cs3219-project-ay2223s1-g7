@@ -61,6 +61,7 @@ export async function logoutUser(req, res) {
         if (resp.err) return res.status(500).json({ message: 'Unable to add to blacklist' });
 
         res.cookie("token", "", { sameSite: "None", httpOnly: true, secure: true, maxAge: 0 })
+        console.log(`logout successfully`)
         return res.status(200).json({ message: `Logout successful` });
     } catch (err) {
         console.error(err)
@@ -83,6 +84,7 @@ export async function deleteUser(req, res) {
             return res.status(400).json({ message: 'Unable to delete User' });
         }
         res.cookie("token", "", { sameSite: "None", httpOnly: true, secure: true, maxAge: 0 })
+        console.log(`${username} account deleted successfully`)
         return res.status(200).json({ message: `Delete successful` });
     } catch (err) {
         console.error(err)
@@ -132,7 +134,6 @@ export async function authenticate(req, res, next) {
         const user = verifyJWT(token);
         if (user.err) throw new Error("Invalid Token")
         const username = user.username
-
         const resp = await _checkValidToken(token)
         if (resp.err) throw new Error("Invalid Token")
 
@@ -141,9 +142,10 @@ export async function authenticate(req, res, next) {
         const password = userInDb.password
 
         req.userInfo = { username, password }
-
+        console.log(`Authentication successful ${username}`)
         next()
     } catch (err) {
+        console.error(err)
         res.cookie("token", "", { sameSite: "None", httpOnly: true, secure: true, maxAge: 0 })
         return res.status(401).json({ message: 'Authentication failed' })
     }
