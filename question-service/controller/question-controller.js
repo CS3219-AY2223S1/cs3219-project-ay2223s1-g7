@@ -6,17 +6,17 @@ import {
 // import redis from "redis"
 import Redis from 'ioredis'
 
-const REDIS_CONFIG = process.env.ENV == "PROD" ? () => {
-    const [host, port] = process.env.REDIS_HOST.split(":");
-    return {
-        port: port,
-        host: host,
-        retryStrategy: (times) => {
-            // reconnect after
-            return Math.min(times * 50, 2000);
-        },
-    }
+
+const REDIS_CONFIG = process.env.ENV == "PROD" ? {
+    port: process.env.REDIS_HOST.split(":")[1],
+    host: process.env.REDIS_HOST.split(":")[0],
+    retryStrategy: (times) => {
+        // reconnect after
+        return Math.min(times * 50, 2000);
+    },
 } : {}
+
+console.log(REDIS_CONFIG)
 
 const redisClient = new Redis(REDIS_CONFIG);
 console.log(`redis status: ${redisClient.status}`)

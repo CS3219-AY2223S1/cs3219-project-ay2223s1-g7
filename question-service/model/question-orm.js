@@ -86,7 +86,6 @@ export async function ormSearchAllQuestionsAttempted(user) {
     try {
         
         const questions = await findAllQuestionAttempted(user) 
-        console.log("Question: ", questions)
         if (questions) {
             return questions;
         } else {
