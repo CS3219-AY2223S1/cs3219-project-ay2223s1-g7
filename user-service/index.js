@@ -5,9 +5,8 @@ import cookieParser from 'cookie-parser';
 const app = express();
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
-// app.use(cors()) // config cors so that front-end can use
 
-import { createUser, loginUser, logoutUser, authUser, deleteUser, changepwUser } from './controller/user-controller.js';
+import { createUser, loginUser, logoutUser, authSuccess, deleteUser, changepwUser, authenticate } from './controller/user-controller.js';
 
 const router = express.Router()
 
@@ -27,17 +26,15 @@ router.use(cookieParser())
 // Controller will contain all the User-defined Routes
 router.post('/', createUser)
 router.post('/login', loginUser)
-router.post('/logout', logoutUser)
-router.post('/delete', deleteUser)
-router.post('/changepw', changepwUser)
-router.post('/authenticate', authUser)
+router.post('/logout', authenticate, logoutUser)
+router.post('/delete', authenticate, deleteUser)
+router.post('/changepw', authenticate, changepwUser)
+router.post('/authenticate', authenticate, authSuccess)
 
 
 app.use('/api/user', router).all((req, res) => {
-    console.log(req.headers.origin)
     res.setHeader('content-type', 'application/json')
     res.setHeader('Access-Control-Allow-Origin', req.headers.origin)
-    // res.setHeader('Access-Control-Allow-Credentials', true)
 })
 
 
