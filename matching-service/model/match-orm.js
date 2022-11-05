@@ -1,8 +1,8 @@
-import { storePendingMatch, queryPendingMatches, removeMatch} from './repository.js';
+import { storePendingMatch, queryPendingMatches, removeMatch } from './repository.js';
 
-export async function ormStorePendingMatch(params) {
+export async function ormStorePendingMatch(username, difficulty, roomId) {
     try {
-        const pendingMatch = await storePendingMatch(params);
+        const pendingMatch = await storePendingMatch({ username, difficulty, roomId });
         await pendingMatch.save();
         return true;
     } catch (err) {
@@ -11,10 +11,10 @@ export async function ormStorePendingMatch(params) {
     }
 }
 
-export async function ormQueryPendingMatch(params) {
-    return await queryPendingMatches(params)
+export async function ormQueryPendingMatch(difficulty) {
+    return await queryPendingMatches({ difficulty })
 }
 
-export async function ormRemoveMatch(params) {
-    return await removeMatch(params)
+export async function ormRemoveMatch(difficulty) {
+    return await removeMatch({ difficulty })
 }

@@ -2,9 +2,9 @@ import { createUser, findUser, deleteUser, changePwUser, checkBlackList, createB
 
 //need to separate orm functions from repository to decouple business logic from persistence
 
-export async function ormCreateUser(params) {
+export async function ormCreateUser(username, password) {
     try {
-        const newUser = await createUser(params);
+        const newUser = await createUser({ username, password });
         newUser.save();
         return true;
     } catch (err) {
@@ -13,9 +13,9 @@ export async function ormCreateUser(params) {
     }
 }
 
-export async function ormSearchUser(params) {
+export async function ormSearchUser(username) {
     try {
-        const user = await findUser(params)
+        const user = await findUser({ username })
         if (user) {
             return user;
         } else {
@@ -27,10 +27,10 @@ export async function ormSearchUser(params) {
     }
 }
 
-export async function ormDeleteUser(params) {
+export async function ormDeleteUser(username) {
 
     try {
-        const user = await deleteUser(params)
+        const user = await deleteUser({ username })
         if (user) {
             return true;
         } else {
@@ -42,9 +42,9 @@ export async function ormDeleteUser(params) {
     }
 }
 
-export async function ormChangePwUser(searchParams, updateParams) {
+export async function ormChangePwUser(username, password) {
     try {
-        const user = await changePwUser(searchParams, updateParams)
+        const user = await changePwUser({ username }, { password })
         if (user) {
             return true;
         } else {
@@ -57,10 +57,9 @@ export async function ormChangePwUser(searchParams, updateParams) {
 }
 
 
-export async function ormAddBlacklist(params) {
+export async function ormAddBlacklist(jwt_token) {
     try {
-        params.createdAt = Date.now()
-        const newBlacklist = await createBlackList(params);
+        const newBlacklist = await createBlackList({ jwt_token, createdAt: Date.now() });
         newBlacklist.save();
         return true;
     } catch (err) {
@@ -70,9 +69,9 @@ export async function ormAddBlacklist(params) {
 }
 
 
-export async function ormCheckValidToken(params) {
+export async function ormCheckValidToken(jwt_token) {
     try {
-        const isInBlackList = await checkBlackList(params)
+        const isInBlackList = await checkBlackList({ jwt_token })
         if (isInBlackList) {
             throw new Error("Invalid Token!")
         }

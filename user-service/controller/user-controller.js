@@ -12,11 +12,11 @@ export async function createUser(req, res) {
         const { username, password } = req.body;
         if (!username || !password) return res.status(400).json({ message: 'Username and/or Password are missing!' });
 
-        let user = await _searchUser({ username })
+        let user = await _searchUser(username)
         if (!user.err) return res.status(409).json({ message: 'User already exists' })
 
         let hashedPassword = await hashPassword(password)
-        const resp = await _createUser({ username, password: hashedPassword });
+        const resp = await _createUser(username, hashedPassword);
         if (resp.err) return res.status(409).json({ message: 'Could not create a new user!' });
 
         console.log(`Created new user ${username} successfully!`)
@@ -33,7 +33,7 @@ export async function loginUser(req, res) {
 
         if (!username || !password) return res.status(400).json({ message: 'Username and/or Password are missing!' });
 
-        const user = await _searchUser({ username })
+        const user = await _searchUser(username)
         if (user.err) return res.status(400).json({ message: 'Invalid credentials' })
 
         let validPassword = await verifyPassword(password, user.password)
@@ -57,7 +57,7 @@ export async function logoutUser(req, res) {
     try {
         const token = req.cookies["token"];
 
-        const resp = await _addBlackList({ jwt_token: token });
+        const resp = await _addBlackList(token);
         if (resp.err) return res.status(500).json({ message: 'Unable to add to blacklist' });
 
         res.cookie("token", "", { sameSite: "None", httpOnly: true, secure: true, maxAge: 0 })
@@ -73,12 +73,12 @@ export async function deleteUser(req, res) {
         const { username, _ } = req.userInfo
         const token = req.cookies["token"];
 
-        const resp = await _addBlackList({ jwt_token: token });
+        const resp = await _addBlackList(token);
         if (resp.err) {
             return res.status(400).json({ message: 'Unable to add to blacklist' });
         }
 
-        const deleteResp = await _deleteUser({ username });
+        const deleteResp = await _deleteUser(username);
         if (deleteResp.err) {
             return res.status(400).json({ message: 'Unable to delete User' });
         }
@@ -101,13 +101,13 @@ export async function changepwUser(req, res) {
         let validPassword = await verifyPassword(oldPassword, password)
         if (!validPassword) return res.status(400).json({ message: 'Invalid credentials!' });
 
-        const blacklistResp = await _addBlackList({ jwt_token: token });
+        const blacklistResp = await _addBlackList(token);
         if (blacklistResp.err) return res.status(500).json({ message: 'Unable to add to blacklist' });
 
         res.cookie("token", "", { sameSite: "None", httpOnly: true, secure: true, maxAge: 0 })
 
         const hashedPassword = await hashPassword(newPassword)
-        const changeResp = await _changePwUser({ username }, { password: hashedPassword });
+        const changeResp = await _changePwUser(username, hashedPassword);
         if (changeResp.err) return res.status(500).json({ message: 'Unable to change password' });
 
         console.log(`Change password successfully!`, username);
@@ -133,10 +133,10 @@ export async function authenticate(req, res, next) {
         if (user.err) throw new Error("Invalid Token")
         const username = user.username
 
-        const resp = await _checkValidToken({ jwt_token: token })
+        const resp = await _checkValidToken(token)
         if (resp.err) throw new Error("Invalid Token")
 
-        let userInDb = await _searchUser({ username })
+        let userInDb = await _searchUser(username)
         if (userInDb.err) throw new Error("Invalid Token")
         const password = userInDb.password
 

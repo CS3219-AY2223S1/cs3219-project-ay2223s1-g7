@@ -9,11 +9,11 @@ export async function connectMatch(joinRoom, sendMatchSuccess, username, difficu
             let roomId = uuidv4()
             let roomName = "room-" + roomId
             console.log(`${username}, ${difficulty} pending match in ${roomName}`)
-            await ormStorePendingMatch({ username, difficulty, roomId });
+            await ormStorePendingMatch(username, difficulty, roomId);
             joinRoom(roomName)
         } else {
             // matching
-            await ormRemoveMatch({ difficulty })
+            await ormRemoveMatch(difficulty)
             let pendingUser = pendingMatchUser[0].username
             let roomName = "room-" + pendingMatchUser[0].roomId
             console.log(`matching ${pendingUser} & ${username} in ${roomName}`)
@@ -26,9 +26,9 @@ export async function connectMatch(joinRoom, sendMatchSuccess, username, difficu
     }
 }
 
-export async function removeMatch(username, difficulty) {
+export async function removeMatch(difficulty) {
     try {
-        await ormRemoveMatch({ username, difficulty })
+        await ormRemoveMatch(difficulty)
     } catch (err) {
         console.error(err)
         return err
