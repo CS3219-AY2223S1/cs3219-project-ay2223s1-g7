@@ -3,15 +3,46 @@ import {
     ormSearchQuestionByDifficulty as _searchQuestionByDifficulty, ormDeleteQuestion as _deleteQuestion, ormSearchQuestionByTitle as _searchQuestionByTitle,
     ormSearchAllQuestionsAttempted as _searchAllQuestionsAttempted, ormAttemptQuestion as _attemptQuestion
 } from '../model/question-orm.js'
-import redis from "redis"
+// import redis from "redis"
+import Redis from 'ioredis'
 
-const REDIS_HOST = process.env.ENV == "PROD" ? { url: process.env.REDIS_HOST } : '';
-const redisClient = redis.createClient(REDIS_HOST)
-if (!redisClient) {
-    console.log("cannot connect to redis");
-} else {
-    console.log("connected to redis");
-}
+const REDIS_CONFIG = process.env.ENV == "PROD" ? () => {
+    const [host, port] = process.env.REDIS_HOST.split(":");
+    return {
+        port: port,
+        host: host,
+        retryStrategy: (times) => {
+            // reconnect after
+            return Math.min(times * 50, 2000);
+        },
+    }
+} : {}
+
+const redisClient = new Redis(REDIS_CONFIG);
+console.log(`redis status: ${redisClient.status}`)
+
+// below uses redis package
+// const REDIS_CONFIG = process.env.ENV == "PROD"
+//     ? { 
+//         url: process.env.REDIS_HOST,
+//         socket: {
+//             connectTimeout: 60000,
+//             keepAlive: 60000,
+//             reconnectStrategy: (attempts) => {
+//                 logger.log(`Redis reconnecting attempt ${attempts}`);
+//                 if (attempts == 1) {
+//                     console.log(`${this.constructor.name} failed to connect to ${process.env.REDIS_HOST}. Reconnecting...`);
+//                 }
+//                 return 500;
+//             },
+//         }
+//     } : '';
+// const redisClient = redis.createClient(REDIS_CONFIG)
+// if (!redisClient) {
+//     console.log("cannot connect to redis");
+// } else {
+//     console.log("connected to redis");
+// }
 
 export async function addQuestion(req, res) {
     try {
@@ -89,16 +120,15 @@ export async function getAllQuestions(req, res) {
 export async function getAllQuestionsAttempted(req, res) {
     try {
         const { user } = req.body
-
-        redisClient.get(`questions-${user}`, async (error, questions) => {
-            if (error) console.error(error);
+        console.log(`get all attempts ${user}`)
+        console.log(`redis status: ${redisClient.status}`)
+        redisClient.get(`questions-${user}`).then(async (questions) => {
             if (questions != null) {
                 console.log("Hit")
                 return res.status(201).json({ question: JSON.parse(questions) });
             } else {
                 console.log("Miss")
                 const resp = await _searchAllQuestionsAttempted(user);
-                console.log(resp)
                 if (resp.err) {
                     return res.status(409).json({ message: 'Could not find question!' });
                 } else {
