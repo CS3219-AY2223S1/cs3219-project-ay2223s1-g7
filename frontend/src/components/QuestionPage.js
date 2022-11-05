@@ -57,7 +57,6 @@ function QuestionPage(props) {
 
         collabSocket.on("joinRoomSuccess", async (data) => {
             let users = data.users
-            console.log(users)
             let username = getCookie("user")
             
 
@@ -67,7 +66,6 @@ function QuestionPage(props) {
                 let resp = await getQuestion()
                 setTitle(resp.data.question.title)
                 setQuestion(resp.data.question.question)
-                console.log("QUESTION IS", resp.data)
                 attemptQuestion(resp.data.question.title)
             }
         })
@@ -128,7 +126,6 @@ function QuestionPage(props) {
     }
     
     async function attemptQuestion(title) {
-        console.log("Title is" + title)
         return axios.post(URL_QUESTION_SVC + "attemptQuestion", {
             title: title,
             user: getCookie("user")

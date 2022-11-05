@@ -30,8 +30,8 @@ export class DocumentHistory {
             }
             // Notify pending requests
             while (this.pending.length > 0) {
-                let something = this.pending.pop()
-                something(data.updates)
+                let response = this.pending.pop()
+                response(data.updates)
             }
             resp(true)
         }
