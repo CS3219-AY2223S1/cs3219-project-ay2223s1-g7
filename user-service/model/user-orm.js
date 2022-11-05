@@ -20,7 +20,7 @@ export async function ormCreateUser(username, password) {
 export async function ormSearchUser(username) {
 
     try {
-        const user = await findUser({username})
+        const user = await findUser({ username })
         console.log("SD", user)
         if (user) {
             return user;
@@ -37,7 +37,7 @@ export async function ormSearchUser(username) {
 export async function ormLoginUser(username, password) {
 
     try {
-        const user = await findUser({username})
+        const user = await findUser({ username })
         if (user && (await verifyPassword(password, user.password))) {
             return true;
         } else {
@@ -52,7 +52,7 @@ export async function ormLoginUser(username, password) {
 export async function ormDeleteUser(username) {
 
     try {
-        const user = await deleteUser({username})
+        const user = await deleteUser({ username })
         if (user) {
             return true;
         } else {
@@ -102,7 +102,7 @@ export async function ormCheckValidToken(jwt_token) {
         }
         return true;
     } catch (err) {
-        throw new Error("Invalid Token!")
+        return { err };
     }
 }
 

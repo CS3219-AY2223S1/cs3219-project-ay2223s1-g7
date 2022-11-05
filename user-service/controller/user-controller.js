@@ -67,7 +67,7 @@ export async function logoutUser(req, res) {
         if (resp.err) {
             return res.status(409).json({ message: 'Unable to add to blacklist' });
         } else {
-            res.cookie("token", "", { maxAge: 0 })
+            res.cookie("token", "", { sameSite: "None", httpOnly: true, secure: true, maxAge: 0 })
             return res.status(200).json({ message: `Logout successful` });
         }
 
@@ -90,7 +90,7 @@ export async function deleteUser(req, res) {
         if (deleteResp.err) {
             return res.status(409).json({ message: 'Unable to delete User' });
         }
-        res.cookie("token", "", { maxAge: 0 })
+        res.cookie("token", "", { sameSite: "None", httpOnly: true, secure: true, maxAge: 0 })
         return res.status(200).json({ message: `Delete successful` });
 
     } catch (err) {
@@ -111,7 +111,7 @@ export async function changepwUser(req, res) {
                 if (blacklistResp.err) {
                     return res.status(409).json({ message: 'Unable to add to blacklist' });
                 }
-                res.cookie("token", "", { maxAge: 0 })
+                res.cookie("token", "", { sameSite: "None", httpOnly: true, secure: true, maxAge: 0 })
 
                 let hashedPassword = await hashPassword(newPassword) 
                 const changeResp = await _changepwUser(username, hashedPassword);
@@ -141,12 +141,12 @@ export async function authUser(req, res) {
         let username = verifyJWT(token);
         if (username.err) throw new Error("Invalid Token")
 
-        let resp = _checkValidToken(token)
+        let resp = await _checkValidToken(token)
         if (resp.err) throw new Error("Invalid Token")
 
         return res.status(200).json({ message: `Authentication successful` });
     } catch (err) {
-        res.cookie("token", "", { maxAge: 0 })
+        res.cookie("token", "", { sameSite: "None", httpOnly: true, secure: true, maxAge: 0 })
         return res.status(401).json({ message: 'Authentication failed' })
     }
 }
