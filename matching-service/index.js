@@ -19,6 +19,7 @@ const httpServer = createServer(app)
 const io = new Server(
     httpServer,
     {
+        path: '/api/match',
         cors: {
             origin: "*",
         }

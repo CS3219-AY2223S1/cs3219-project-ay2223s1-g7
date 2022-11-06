@@ -21,6 +21,7 @@ const httpServer = createServer(app)
 const io = new Server(
     httpServer,
     {
+        path: '/api/webcam',
         cors: {
             origin: "*",
         }

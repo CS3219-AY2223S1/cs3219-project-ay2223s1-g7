@@ -13,7 +13,7 @@ import axios from "axios";
 
 import { deleteCookie, getCookie } from "../utils/cookies"
 import { Editor } from "./Editor";
-import { URL_COLLAB_SVC, URL_QUESTION_SVC } from "../configs";
+import { COLLAB_SOCKET_PATH, URL_COLLAB_SVC, URL_QUESTION_SVC } from "../configs";
 import VideoPlayer from './VideoPlayer';
 import Notifications from './Notifications';
 import { Options } from './Options';
@@ -34,6 +34,7 @@ function QuestionPage(props) {
         let username = getCookie("user")
         let roomName = getCookie("room_name")
         setCollabSocket(io(URL_COLLAB_SVC, {
+            path: COLLAB_SOCKET_PATH,
             query: {
                 "username": username,
                 "roomName": roomName

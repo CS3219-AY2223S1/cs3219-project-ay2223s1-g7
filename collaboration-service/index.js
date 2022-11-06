@@ -24,6 +24,7 @@ const httpServer = createServer(app)
 const io = new Server(
     httpServer,
     {
+        path: '/api/collab',
         cors: {
             origin: "*",
         }
