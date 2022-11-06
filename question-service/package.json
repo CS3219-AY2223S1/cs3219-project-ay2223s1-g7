@@ -27,8 +27,6 @@
     "dotenv": "^16.0.1",
     "express": "^4.18.1",
     "ioredis": "^5.2.4",
-    "mongoose": "^6.4.5",
-    "socket.io": "^4.5.1",
-    "uuid": "^8.3.2"
+    "mongoose": "^6.4.5"
   }
 }
