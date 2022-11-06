@@ -3,9 +3,9 @@ import { ChangeSet, Text } from "@codemirror/state"
 // The Authority for operational transformation implementation
 // https://codemirror.net/examples/collab/
 export class DocumentHistory {
-    constructor(roomNumber) {
+    constructor(roomName) {
         this.updates = []
-        this.roomNumber = roomNumber
+        this.roomName = roomName
         this.doc = Text.of([""])
         this.pending = [] // type: function[]
     }

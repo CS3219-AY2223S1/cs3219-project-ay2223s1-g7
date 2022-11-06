@@ -71,7 +71,6 @@ io.on('connection', async (socket) => {
     }
 
     socket.on("pushUpdates", (data, callback) => {
-        console.log(data.updates[0])
         document.pushUpdates(data, callback)
     });
 
