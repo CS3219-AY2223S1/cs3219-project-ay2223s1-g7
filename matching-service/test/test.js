@@ -11,17 +11,19 @@ describe("Matching service test", function () {
 
     it('should connect user with username and difficulty', function (done) {
         client = io(SOCKET_URL, {
+            path: "/api/match",
             query: {
                 "username": "username",
                 "difficulty": "EASY"
             }
         });
-        client.on('connect', function (data) {
+        client.on('connect', function () {
             done();
         });
     });
     it('should match user', function (done) {
         client2 = io(SOCKET_URL, {
+            path: "/api/match",
             query: {
                 "username": "username2",
                 "difficulty": "HARD"
@@ -30,35 +32,40 @@ describe("Matching service test", function () {
         setTimeout(
             () => {
                 client3 = io(SOCKET_URL, {
+                    path: "/api/match",
                     query: {
                         "username": "username3",
                         "difficulty": "HARD"
                     }
-                });
+                })
             }, 40
         )
         client2.on('matchSuccess', function (data) {
+            console.log(data)
+            assert.isString(data)
             done();
         });
     });
     it('should fail match in 30s', function (done) {
         client4 = io(SOCKET_URL, {
+            path: "/api/match",
             query: {
                 "username": "username4",
                 "difficulty": "MEDIUM"
             }
         });
-        client4.on('matchFail', function (data) {
+        client4.on('matchFail', function () {
             done();
         });
     }).timeout(31000);
     it('should disconnect', function (done) {
         client5 = io(SOCKET_URL, {
+            path: "/api/match",
             query: {
                 "username": "username5",
             }
         });
-        client5.on('disconnect', function (data) {
+        client5.on('disconnect', function () {
             done();
         });
     });

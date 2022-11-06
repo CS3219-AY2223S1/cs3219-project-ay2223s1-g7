@@ -13,6 +13,7 @@ describe("Collaboration service test", function () {
     it('should connect user with username and roomId', function (done) {
         let roomId = 'room-' + uuidv4()
         client = io(SOCKET_URL, {
+            path: "/api/collab",
             query: {
                 "username": "username",
                 "roomName": roomId
@@ -26,12 +27,14 @@ describe("Collaboration service test", function () {
     it('should join same room', function (done) {
         let roomId = 'room-' + uuidv4()
         client2 = io(SOCKET_URL, {
+            path: "/api/collab",
             query: {
                 "username": "username2",
                 "roomName": roomId
             }
         });
         client3 = io(SOCKET_URL, {
+            path: "/api/collab",
             query: {
                 "username": "username3",
                 "roomName": roomId
@@ -50,6 +53,7 @@ describe("Collaboration service test", function () {
     it('should get document', function (done) {
         let roomId = 'room-' + uuidv4()
         client4 = io(SOCKET_URL, {
+            path: "/api/collab",
             query: {
                 "username": "username4",
                 "roomName": roomId
@@ -64,12 +68,14 @@ describe("Collaboration service test", function () {
     it('should be notified when peer disconnects', function (done) {
         let roomId = 'room-' + uuidv4()
         client5 = io(SOCKET_URL, {
+            path: "/api/collab",
             query: {
                 "username": "username5",
                 "roomName": roomId
             }
         });
         client6 = io(SOCKET_URL, {
+            path: "/api/collab",
             query: {
                 "username": "username6",
                 "roomName": roomId

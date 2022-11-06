@@ -12,12 +12,14 @@ describe("webcam service test", function () {
     it('should join same room', function (done) {
         let roomId = uuidv4()
         client2 = io(SOCKET_URL, {
+            path: "/api/webcam",
             query: {
                 "username": "username2",
                 "roomName": roomId
             }
         });
         client3 = io(SOCKET_URL, {
+            path: "/api/webcam",
             query: {
                 "username": "username3",
                 "roomName": roomId
