@@ -43,7 +43,7 @@ jobs:
       env:
         ENV: ${{ secrets.ENV }}
         DB_LOCAL_URI: ${{ secrets.DB_LOCAL_URI }}
-        SECRET_KEY: ${{JWT_SECRET_KEY_USER_SVC}}
+        SECRET_KEY: ${{ secrets.JWT_SECRET_KEY_USER_SVC }}
       run: npm run test
     
     - name: Install matching service dependencies
