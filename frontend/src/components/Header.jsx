@@ -94,6 +94,11 @@ const Header = () => {
         navigate("/home")
     };
 
+    const handleCloseNavMenuAndHistory = () => {
+        setAnchorElNav(null);
+        navigate("/history")
+    };
+
     const toHome = () => navigate("/home")
     const toHistory = () => navigate("/history")
     const toLogin = () => navigate("/login")
@@ -167,6 +172,11 @@ const Header = () => {
                                 <MenuItem key={'Home'} onClick={handleCloseNavMenuAndHome}>
                                     <Typography textAlign="center" textTransform='none'>{'Home'}</Typography>
                                 </MenuItem>
+
+                                <MenuItem key={'History'} onClick={handleCloseNavMenuAndHistory}>
+                                    <Typography textAlign="center" textTransform='none'>{'History'}</Typography>
+                                </MenuItem>
+                                 {/* insert new buttons here for collapsible navbar */}
 
                             </Menu>
                         </Box>

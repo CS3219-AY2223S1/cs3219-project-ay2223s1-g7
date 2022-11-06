@@ -65,7 +65,6 @@ function LoginPage() {
                     <Typography align="center" fontSize="15px" fontWeight="700" marginBottom={"0.1rem"}>
                         All-in-one collaborative platform to help you enhance your skills and prepare for technical interviews
                     </Typography>
-                    <br />
                 </Typist>
                 {(hasSubmit && !isLoginSuccess && errMessage) && <Alert severity="error">{errMessage}</Alert>}
                 <form onSubmit={handleLogin}>
