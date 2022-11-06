@@ -17,3 +17,6 @@ export const URL_COLLAB_SVC = URI_COLLAB_SVC + PREFIX_COLLAB_SVC
 export const URL_QUESTION_SVC = URI_QUESTION_SVC + PREFIX_QUESTION_SVC
 export const URL_WEBCAM_SVC = URI_WEBCAM_SVC + PREFIX_WEBCAM_SVC
 
+export const MATCH_SOCKET_PATH = '/api/match'
+export const COLLAB_SOCKET_PATH = '/api/collab'
+export const WEBCAM_SOCKET_PATH = '/api/webcam'

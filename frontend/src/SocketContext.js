@@ -126,6 +126,10 @@ const ContextProvider = ({ children }) => {
             terminateWebcam()
         }
         socket.disconnect()
+
+        // sometimes connected webcam does not terminate 
+        // refreshing page to ensure termination
+        window.location.reload();
     }
 
     const leaveCall = async () => {

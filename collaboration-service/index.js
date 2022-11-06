@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import { createServer } from 'http';
 import { Server } from 'socket.io'
+import { validate as uuidValidate } from 'uuid'
 
 import { DocumentHistory } from './document-history.js'
 
@@ -23,12 +24,13 @@ const httpServer = createServer(app)
 const io = new Server(
     httpServer,
     {
+        path: '/api/collab',
         cors: {
             origin: "*",
-            credentials: true
         }
     }
 );
+
 
 // map of documents for each room
 const documentMap = new Map()
@@ -36,15 +38,27 @@ const documentMap = new Map()
 io.on('connection', async (socket) => {
     let query = socket.handshake.query
 
-    // TODO: possible to use uuid to validate room name 
-    if (typeof query.username === "undefined" || typeof query.roomName === "undefined" || query.username.length === 0 || query.roomName.length === 0) {
+    if (!query.username || !query.roomName) {
         console.log("missing username and/or roomName")
         socket.disconnect()
         return
     }
-    socket.emit("connectSuccess")
 
     let roomName = query.roomName
+
+    if (uuidValidate(roomName.split("-")[1])) {
+        console.log("invalid roomname")
+        socket.disconnect()
+        return
+    }
+
+    let document = documentMap.get(roomName)
+    if (!document) {
+        document = new DocumentHistory(roomName)
+        documentMap.set(roomName, document)
+    }
+
+    socket.emit("connectSuccess")
 
     console.log(`A user connected ${socket.id} ${query.username} ${roomName}`)
 
@@ -53,13 +67,8 @@ io.on('connection', async (socket) => {
     // send everyone's usernames in the room
     let sockets = await io.in(roomName).fetchSockets();
     let users = sockets.map(socket => socket.handshake.query.username)
-    console.log(users)
-    io.to(roomName).emit("joinRoomSuccess", { users })
-
-    let document = documentMap.get(roomName)
-    if (typeof document === "undefined") {
-        document = new DocumentHistory(roomName)
-        documentMap.set(roomName, document)
+    if (users.length === 2) {
+        io.to(roomName).emit("joinRoomSuccess", { users })
     }
 
     socket.on("pushUpdates", (data, callback) => {
@@ -78,7 +87,8 @@ io.on('connection', async (socket) => {
         if (io.sockets.adapter.rooms.get(roomName)?.size === 1) {
             socket.broadcast.to(roomName).emit("collaborator_left");
         }
-        console.log('A user disconnected')
+        console.log(`${query.username} disconnected`)
+        documentMap.delete(roomName)
     })
 })
 

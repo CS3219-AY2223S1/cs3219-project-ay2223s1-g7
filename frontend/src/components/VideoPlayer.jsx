@@ -6,7 +6,7 @@ import { TextField } from '@mui/material';
 import { io } from 'socket.io-client'
 
 import { SocketContext } from "../SocketContext";
-import { URL_WEBCAM_SVC } from '../configs.js'
+import { URL_WEBCAM_SVC, WEBCAM_SOCKET_PATH } from '../configs.js'
 import { getCookie } from "../utils/cookies.js";
 
 
@@ -19,6 +19,7 @@ const VideoPlayer = () => {
         let roomName = getCookie("room_name")
         let username = getCookie("user")
         setSocket(io(URL_WEBCAM_SVC, {
+            path: WEBCAM_SOCKET_PATH,
             query: {
                 "username": username,
                 "roomName": roomName

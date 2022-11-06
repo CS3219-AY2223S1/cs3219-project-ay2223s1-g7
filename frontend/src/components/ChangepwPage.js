@@ -31,9 +31,8 @@ function ChangepwPage() {
     const handleChangePassword = async (e) => {
         e.preventDefault()
         setIsChangeSuccess(false)
-        const username = getCookie("user")
 
-        const res = await userApi.post('/changepw', { username, oldPassword, newPassword })
+        const res = await userApi.post('/changepw', { oldPassword, newPassword })
             .catch((err) => {
                 setErrorDialog('Please check your old/new password and try again')
             })

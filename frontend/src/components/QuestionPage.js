@@ -13,7 +13,7 @@ import axios from "axios";
 
 import { deleteCookie, getCookie } from "../utils/cookies"
 import { Editor } from "./Editor";
-import { URL_COLLAB_SVC, URL_QUESTION_SVC } from "../configs";
+import { COLLAB_SOCKET_PATH, URL_COLLAB_SVC, URL_QUESTION_SVC } from "../configs";
 import VideoPlayer from './VideoPlayer';
 import Notifications from './Notifications';
 import { Options } from './Options';
@@ -34,6 +34,7 @@ function QuestionPage(props) {
         let username = getCookie("user")
         let roomName = getCookie("room_name")
         setCollabSocket(io(URL_COLLAB_SVC, {
+            path: COLLAB_SOCKET_PATH,
             query: {
                 "username": username,
                 "roomName": roomName
@@ -57,7 +58,6 @@ function QuestionPage(props) {
 
         collabSocket.on("joinRoomSuccess", async (data) => {
             let users = data.users
-            console.log(users)
             let username = getCookie("user")
             
 
@@ -67,7 +67,6 @@ function QuestionPage(props) {
                 let resp = await getQuestion()
                 setTitle(resp.data.question.title)
                 setQuestion(resp.data.question.question)
-                console.log("QUESTION IS", resp.data)
                 attemptQuestion(resp.data.question.title)
             }
         })
@@ -128,7 +127,6 @@ function QuestionPage(props) {
     }
     
     async function attemptQuestion(title) {
-        console.log("Title is" + title)
         return axios.post(URL_QUESTION_SVC + "attemptQuestion", {
             title: title,
             user: getCookie("user")

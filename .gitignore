@@ -6,3 +6,4 @@ user-service/.env.bak
 dump.rdb
 run.bat
 update.bat
+test.bat

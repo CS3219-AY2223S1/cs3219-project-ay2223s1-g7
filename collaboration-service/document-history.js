@@ -3,9 +3,9 @@ import { ChangeSet, Text } from "@codemirror/state"
 // The Authority for operational transformation implementation
 // https://codemirror.net/examples/collab/
 export class DocumentHistory {
-    constructor(roomNumber) {
+    constructor(roomName) {
         this.updates = []
-        this.roomNumber = roomNumber
+        this.roomName = roomName
         this.doc = Text.of([""])
         this.pending = [] // type: function[]
     }
@@ -30,8 +30,8 @@ export class DocumentHistory {
             }
             // Notify pending requests
             while (this.pending.length > 0) {
-                let something = this.pending.pop()
-                something(data.updates)
+                let response = this.pending.pop()
+                response(data.updates)
             }
             resp(true)
         }

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { io } from "socket.io-client"
 
 import { getCookie, setCookie } from "../utils/cookies"
@@ -7,10 +7,10 @@ import QuestionSelectionPage from "./QuestionSelectionPage";
 import LoadingPage from "./LoadingPage";
 import QuestionPage from "./QuestionPage";
 import HistoryPage from "./HistoryPage"
-import { URL_USER_SVC, URL_MATCH_SVC } from "../configs";
+import { MATCH_SOCKET_PATH, URL_MATCH_SVC } from "../configs";
 import { authenticate } from '../utils/authentication.js'
 
-function HomePage(props) {
+function HomePage() {
     const navigate = useNavigate()
     const [difficulty, setDifficulty] = useState("")
     const [matchSocket, setMatchSocket] = useState(io())
@@ -45,10 +45,10 @@ function HomePage(props) {
     }, [navigate, matchSocket])
 
     const handleMatching = async (difficulty) => {
-        console.log(difficulty)
         setDifficulty(difficulty)
         let username = getCookie("user")
         setMatchSocket(io(URL_MATCH_SVC, {
+            path: MATCH_SOCKET_PATH,
             query: {
                 "username": username,
                 "difficulty": difficulty

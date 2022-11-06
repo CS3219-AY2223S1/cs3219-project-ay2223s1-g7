@@ -18,17 +18,6 @@ export async function createUser(params) {
     return new UserModel(params)
 }
 
-export async function checkUserInDatabase(username) {
-    return UserModel
-        .countDocuments({ username })
-        .then(num => {
-            if (num > 0) {
-                return true;
-            }
-            return false;
-        });
-}
-
 export async function findUser(params) {
     return UserModel
         .findOne(params);
@@ -39,9 +28,9 @@ export async function deleteUser(params) {
         .findOneAndDelete(params);
 }
 
-export async function changepwUser(username, password) {
+export async function changePwUser(searchParams, updateParams) {
     return UserModel
-        .findOneAndUpdate({ username }, { $set: { password } }, { returnNewDocument: true });
+        .findOneAndUpdate(searchParams, { $set: updateParams }, { returnNewDocument: true });
 }
 
 export async function createBlackList(params) {

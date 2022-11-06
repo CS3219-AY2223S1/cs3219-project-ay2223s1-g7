@@ -55,9 +55,7 @@ const Header = () => {
 
     const handleDelete = async () => {
 
-        const username = getCookie("user")
-
-        const res = await userApi.post('/delete', { username })
+        const res = await userApi.post('/delete', {})
             .catch((err) => {
                 setErrorDialog('Please try again later')
             })
