@@ -68,7 +68,7 @@ function QuestionPage(props) {
                 let resp = await getQuestion()
                 setTitle(resp.data.question.title)
                 setQuestion(resp.data.question.question)
-                attemptQuestion(resp.data.question.title)
+                
             }
         })
 
@@ -128,6 +128,10 @@ function QuestionPage(props) {
     }
     
     async function attemptQuestion(title) {
+        axios.post(URL_QUESTION_SVC + "attemptQuestion", {
+            title,
+            user: collaboratorName
+        })
         return axios.post(URL_QUESTION_SVC + "attemptQuestion", {
             title: title,
             user: getCookie("user")
@@ -183,6 +187,8 @@ function QuestionPage(props) {
     }
 
     async function handleFinish() {
+        attemptQuestion(title)
+        console.log(title)
         await handleExit();
         collabSocket.disconnect()
         deleteCookie("room_name")
