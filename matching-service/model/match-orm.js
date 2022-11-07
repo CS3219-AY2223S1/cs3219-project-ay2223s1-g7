@@ -16,5 +16,10 @@ export async function ormQueryPendingMatch(difficulty) {
 }
 
 export async function ormRemoveMatch(difficulty) {
-    return await removeMatch({ difficulty })
+    try {
+        await removeMatch({ difficulty })
+    } catch (err) {
+        console.error(err)
+        return { err }
+    }
 }
