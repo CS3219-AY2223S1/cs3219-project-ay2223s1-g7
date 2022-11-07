@@ -47,7 +47,7 @@ io.on('connection', (socket) => {
             if (!isNaN(roomSize) && roomSize < 2) {
                 console.error("failed to match")
                 io.to(roomName).emit("matchFail")
-                removeMatch(query.username, query.difficulty)
+                removeMatch(query.difficulty)
             }
         }, 30000);
     }
@@ -61,7 +61,7 @@ io.on('connection', (socket) => {
     connectMatch(joinRoom, sendMatchSuccess, query.username, query.difficulty)
 
     socket.on('disconnect', () => {
-        removeMatch(query.username, query.difficulty)
+        removeMatch(query.difficulty)
         if (timer) {
             clearTimeout(timer)
         }

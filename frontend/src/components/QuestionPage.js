@@ -60,20 +60,17 @@ function QuestionPage(props) {
         collabSocket.on("joinRoomSuccess", async (data) => {
             let users = data.users
             let username = getCookie("user")
-            
 
-            if (users.length === 2) {
-                collabName = users.filter(name => name !== username)[0]
-                setCollaboratorName(collabName)
-                let resp = await getQuestion()
-                setTitle(resp.data.question.title)
-                setQuestion(resp.data.question.question)
-                
-            }
+            collabName = users.filter(name => name !== username)[0]
+            setCollaboratorName(collabName)
+            let resp = await getQuestion()
+            setTitle(resp.data.question.title)
+            setQuestion(resp.data.question.question)
+
         })
 
         collabSocket.on("collaborator_left", () => {
-           
+
             handleFinish()
         })
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -126,7 +123,7 @@ function QuestionPage(props) {
             difficulty
         })
     }
-    
+
     async function attemptQuestion(title) {
         axios.post(URL_QUESTION_SVC + "attemptQuestion", {
             title,
