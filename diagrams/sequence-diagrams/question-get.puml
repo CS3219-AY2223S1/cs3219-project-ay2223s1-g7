@@ -5,11 +5,11 @@ participant QuestionService
 database mongodb
 
 activate user1
-user1 -> QuestionService: getQuestion(difficulty)
+user1 -> QuestionService: searchQuestionByDifficulty(difficulty, username, collabName)
 activate QuestionService
 
 
-QuestionService -> mongodb: getQuestion(difficulty)
+QuestionService -> mongodb: searchQuestionByDifficulty(difficulty, username, collabName)
 
 note over QuestionService
     Returns the first question 
@@ -19,12 +19,23 @@ end note
 
 mongodb --> QuestionService: question
 
-
-
 QuestionService -> user1: question
 
-
 deactivate QuestionService
+
+
+note over user1
+    After a period of time, 
+    user exits from the room.
+end note
+
+user1 -> QuestionService: attemptQuestion(title,username)
+activate QuestionService
+deactivate QuestionService
+user1 -> QuestionService: attemptQuestion(title,collabName)
+activate QuestionService
+deactivate QuestionService
+
 
 @enduml
 
