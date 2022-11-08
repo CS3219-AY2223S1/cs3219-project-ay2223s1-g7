@@ -85,7 +85,7 @@ io.on('connection', async (socket) => {
 
     socket.on('disconnect', () => {
         if (io.sockets.adapter.rooms.get(roomName)?.size === 1) {
-            socket.broadcast.to(roomName).emit("collaborator_left");
+            socket.broadcast.to(roomName).emit("collaboratorLeft");
         }
         console.log(`${query.username} disconnected`)
         documentMap.delete(roomName)

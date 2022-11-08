@@ -62,10 +62,14 @@ function HomePage() {
 
     const handleExitToHome = async () => {
         matchSocket.disconnect()
-        let isAuth = await authenticate()
-        if (!isAuth) window.location.reload();
-        setRoute("/home")
-        navigate("/home")
+        // let isAuth = await authenticate()
+        // if (!isAuth) window.location.reload();
+        // setRoute("/home")
+        // navigate("/home")
+        
+        // reloading the page will automatically do authentication
+        // and navigate to the home page
+        window.location.reload();
     }
 
     return (

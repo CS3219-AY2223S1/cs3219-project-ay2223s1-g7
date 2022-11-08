@@ -29,7 +29,6 @@ function QuestionPage(props) {
     const [initDoc, setInitDoc] = useState("")
     const [initVersion, setInitVersion] = useState(0)
     const { handleExit } = useContext(SocketContext);
-    var collabName = "";
 
     useEffect(() => {
         let username = getCookie("user")
@@ -49,7 +48,7 @@ function QuestionPage(props) {
         // remove old listeners
         collabSocket.removeListener("connectSuccess")
         collabSocket.removeListener("joinRoomSuccess")
-        collabSocket.removeListener("collaborator_left")
+        collabSocket.removeListener("collaboratorLeft")
 
         collabSocket.on("connectSuccess", async () => {
             let { version, doc } = await getDocument()
@@ -61,20 +60,20 @@ function QuestionPage(props) {
             let users = data.users
             let username = getCookie("user")
 
-            collabName = users.filter(name => name !== username)[0]
+            let collabName = users.filter(name => name !== username)[0]
             setCollaboratorName(collabName)
-            let resp = await getQuestion()
+            let resp = await getQuestion(username, collabName)
             setTitle(resp.data.question.title)
             setQuestion(resp.data.question.question)
 
         })
 
-        collabSocket.on("collaborator_left", () => {
-
+        collabSocket.on("collaboratorLeft", () => {
             handleFinish()
         })
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [collabSocket, handleExit])
+        
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [collabSocket, handleFinish])
 
     function pushUpdates(version, fullUpdates) {
         // Strip off transaction data
@@ -115,21 +114,21 @@ function QuestionPage(props) {
         })
     }
 
-    async function getQuestion() {
+    async function getQuestion(userOne, userTwo) {
         let difficulty = props.difficulty
-        return axios.post(URL_QUESTION_SVC + "get", {
-            userOne: getCookie("user"),
-            userTwo: collabName,
+        return await axios.post(URL_QUESTION_SVC + "get", {
+            userOne,
+            userTwo,
             difficulty
         })
     }
 
     async function attemptQuestion(title) {
-        axios.post(URL_QUESTION_SVC + "attemptQuestion", {
-            title,
-            user: collaboratorName
-        })
-        return axios.post(URL_QUESTION_SVC + "attemptQuestion", {
+        // await axios.post(URL_QUESTION_SVC + "attemptQuestion", {
+        //     title,
+        //     user: collaboratorName
+        // })
+        return await axios.post(URL_QUESTION_SVC + "attemptQuestion", {
             title: title,
             user: getCookie("user")
         })
@@ -184,10 +183,9 @@ function QuestionPage(props) {
     }
 
     async function handleFinish() {
-        attemptQuestion(title)
-        console.log(title)
-        await handleExit();
         collabSocket.disconnect()
+        await attemptQuestion(title)
+        await handleExit();
         deleteCookie("room_name")
         props.handleExit()
     }
