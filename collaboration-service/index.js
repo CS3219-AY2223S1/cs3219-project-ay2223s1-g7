@@ -46,7 +46,9 @@ io.on('connection', async (socket) => {
 
     let roomName = query.roomName
 
-    if (uuidValidate(roomName.split("-")[1])) {
+    let index = roomName.indexOf('-');
+    let roomId = roomName.slice(index + 1);
+    if (!uuidValidate(roomId)) {
         console.log("invalid roomname")
         socket.disconnect()
         return

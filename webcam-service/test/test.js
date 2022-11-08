@@ -7,42 +7,88 @@ const SOCKET_URL = "http://localhost:8004"
 
 
 describe("webcam service test", function () {
-    let client2, client3, client4, client5, client6
+    let client1, client2
 
-    it('should join same room', function (done) {
-        let roomId = uuidv4()
-        client2 = io(SOCKET_URL, {
+    it('should disconnect on sending empty username', function (done) {
+        let roomName = 'room-' + uuidv4()
+        client1 = io(SOCKET_URL, {
+            path: "/api/webcam",
+            query: {
+                "username": "",
+                "roomName": roomName
+            }
+        });
+        client1.on('disconnect', function () {
+            done()
+        })
+    });
+
+    it('should disconnect on sending invalid roomname', function (done) {
+        let roomName = 'room-invalid_roomname'
+        client1 = io(SOCKET_URL, {
             path: "/api/webcam",
             query: {
                 "username": "username2",
-                "roomName": roomId
+                "roomName": roomName
             }
         });
-        client3 = io(SOCKET_URL, {
+        client1.on('disconnect', function () {
+            done()
+        })
+    });
+
+    it('should join same room', function (done) {
+        let roomName = 'room-' + uuidv4()
+        client1 = io(SOCKET_URL, {
+            path: "/api/webcam",
+            query: {
+                "username": "username2",
+                "roomName": roomName
+            }
+        });
+        client2 = io(SOCKET_URL, {
             path: "/api/webcam",
             query: {
                 "username": "username3",
-                "roomName": roomId
+                "roomName": roomName
             }
         });
-        client2.on('joinRoomSuccess', function (data) {
-            if (data.users.length === 2) {
-                done()
-            }
+        client1.on('joinRoomSuccess', function (data) {
+            assert.strictEqual(data.users.length, 2)
+            done()
         });
     });
 
     it('should receive signal data', function (done) {
-        client2.on('calluser', function (data) {
+        client1.on('calluser', function (data) {
             assert.deepEqual(data, { signal: 'data' });
             done()
         });
         function call() {
-            client3.emit("calluser", { signalData: 'data' })
+            client2.emit("calluser", { signalData: 'data' })
         }
-        setTimeout(call, 30)
+        setTimeout(call, 10)
     });
 
-    // add more tests
+    it('should receive end call', function (done) {
+        client1.on('callended', function () {
+            done()
+        });
+        function call() {
+            client2.emit("endCall")
+        }
+        setTimeout(call, 10)
+    });
+
+    it('should receive reject call', function (done) {
+        client1.on('rejectCall', function () {
+            done()
+        });
+        function call() {
+            client2.emit("rejectCall")
+        }
+        setTimeout(call, 10)
+    });
+
 });
 
