@@ -143,10 +143,14 @@ export async function authenticate(req, res, next) {
 
         req.userInfo = { username, password }
         console.log(`Authentication successful ${username}`)
+        
+        res.cookie("user", username, { maxAge: ONE_HR_IN_MS })
+        
         next()
     } catch (err) {
         console.error(err)
         res.cookie("token", "", { sameSite: "None", httpOnly: true, secure: true, maxAge: 0 })
+        res.cookie("user", "", { maxAge: 0 })
         return res.status(401).json({ message: 'Authentication failed' })
     }
 }

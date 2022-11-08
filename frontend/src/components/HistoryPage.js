@@ -46,21 +46,6 @@ function HistoryPage(props) {
     };
     
     return (
-        // <Container component="main" maxWidth="xs" className="box-container">
-        //     <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
-        //         <ListSubheader>
-        //             <ListItemText primary={`title`} />
-        //             <ListItemText primary={`difficulty`} />
-        //         </ListSubheader>
-        //         {history.map((attempt) => (
-        //             <ListItem key={attempt.title}>
-        //                 <ListItemText primary={`${attempt.title}`} />
-        //                 <ListItemText primary={`${attempt.difficulty}`} />
-        //             </ListItem>
-        //         ))}
-        //     </List>
-
-        // </Container>
         
         <Box flexDirection={"column"} display={"flex"} alignItems={"center"} justifyContent={"center"} height="calc(100vh - 64px)" width="100%" minHeight={"100px"}>
         <h1>List of attempted Questions</h1>
@@ -85,7 +70,7 @@ function HistoryPage(props) {
                             {history
                                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                 .map((attempt) => {
-                                    return <MyRow attempt={attempt} header={header} />
+                                    return <MyRow attempt={attempt} header={header} key={attempt.title} />
                                 })
                             }
                         </TableBody>

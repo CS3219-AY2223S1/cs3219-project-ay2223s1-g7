@@ -39,7 +39,9 @@ io.on('connection', async (socket) => {
 
     let roomName = query.roomName
 
-    if (uuidValidate(roomName.split("-")[1])) {
+    let index = roomName.indexOf('-');
+    let roomId = roomName.slice(index + 1);
+    if (!uuidValidate(roomId)) {
         console.log("invalid roomname")
         socket.disconnect()
         return
@@ -60,7 +62,7 @@ io.on('connection', async (socket) => {
         console.log(`${query.username} ending call`)
         io.to(roomName).emit("callended")
     });
-    
+
     socket.on("calluser", ({ signalData }) => {
         console.log(`${query.username} calling`)
         socket.to(roomName).emit("calluser", { signal: signalData });

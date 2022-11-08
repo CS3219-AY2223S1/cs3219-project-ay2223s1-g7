@@ -81,7 +81,7 @@ describe("Collaboration service test", function () {
                 "roomName": roomId
             }
         });
-        client6.on("collaborator_left", function () {
+        client6.on("collaboratorLeft", function () {
             done();
         })
         function disconnect() {

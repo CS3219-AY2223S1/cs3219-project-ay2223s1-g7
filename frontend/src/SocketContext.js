@@ -119,17 +119,13 @@ const ContextProvider = ({ children }) => {
         }
     }
 
-    const handleExit = () => {
+    const handleExit = async () => {
         leaveCall()
-        endCall()
+        await endCall()
         if (stream) {
-            terminateWebcam()
+            await terminateWebcam()
         }
         socket.disconnect()
-
-        // sometimes connected webcam does not terminate 
-        // refreshing page to ensure termination
-        window.location.reload();
     }
 
     const leaveCall = async () => {

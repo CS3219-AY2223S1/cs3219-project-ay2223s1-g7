@@ -1,9 +1,12 @@
 import { v4 as uuidv4 } from 'uuid';
+import { Mutex } from 'async-mutex';
 
 import { ormQueryPendingMatch, ormRemoveMatch, ormStorePendingMatch } from '../model/match-orm.js'
 
+const mutex = new Mutex();
+
 export async function connectMatch(joinRoom, sendMatchSuccess, username, difficulty) {
-    try {
+    await mutex.runExclusive(async () => {
         const pendingMatchUser = await ormQueryPendingMatch(difficulty);
         if (pendingMatchUser.length === 0) {
             let roomId = uuidv4()
@@ -20,17 +23,12 @@ export async function connectMatch(joinRoom, sendMatchSuccess, username, difficu
             joinRoom(roomName)
             sendMatchSuccess(roomName)
         }
-    } catch (err) {
-        console.error(err)
-        return err
-    }
+    });
+
 }
 
 export async function removeMatch(difficulty) {
-    try {
+    await mutex.runExclusive(async () => {
         await ormRemoveMatch(difficulty)
-    } catch (err) {
-        console.error(err)
-        return err
-    }
+    });
 }

@@ -46,7 +46,9 @@ io.on('connection', async (socket) => {
 
     let roomName = query.roomName
 
-    if (uuidValidate(roomName.split("-")[1])) {
+    let index = roomName.indexOf('-');
+    let roomId = roomName.slice(index + 1);
+    if (!uuidValidate(roomId)) {
         console.log("invalid roomname")
         socket.disconnect()
         return
@@ -85,7 +87,7 @@ io.on('connection', async (socket) => {
 
     socket.on('disconnect', () => {
         if (io.sockets.adapter.rooms.get(roomName)?.size === 1) {
-            socket.broadcast.to(roomName).emit("collaborator_left");
+            socket.broadcast.to(roomName).emit("collaboratorLeft");
         }
         console.log(`${query.username} disconnected`)
         documentMap.delete(roomName)

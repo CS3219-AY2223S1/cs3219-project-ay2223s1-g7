@@ -14,7 +14,6 @@ function HomePage() {
     const navigate = useNavigate()
     const [difficulty, setDifficulty] = useState("")
     const [matchSocket, setMatchSocket] = useState(io())
-    const [text, setText] = useState("")
     const [route, setRoute] = useState("/home")
 
     useEffect(() => {
@@ -62,12 +61,15 @@ function HomePage() {
     }
 
     const handleExitToHome = async () => {
-        setText("")
         matchSocket.disconnect()
-        let isAuth = await authenticate()
-        if (!isAuth) window.location.reload();
-        setRoute("/home")
-        navigate("/home")
+        // let isAuth = await authenticate()
+        // if (!isAuth) window.location.reload();
+        // setRoute("/home")
+        // navigate("/home")
+        
+        // reloading the page will automatically do authentication
+        // and navigate to the home page
+        window.location.reload();
     }
 
     return (
@@ -80,7 +82,6 @@ function HomePage() {
                 />
                 : (route === "/history" ?
                     <HistoryPage /> : <QuestionPage
-                        text={text}
                         handleExit={handleExitToHome}
                         difficulty={difficulty} />)
             )
