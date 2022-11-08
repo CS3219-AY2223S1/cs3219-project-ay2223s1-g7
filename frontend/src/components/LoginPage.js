@@ -13,7 +13,7 @@ import GroupIcon from '@mui/icons-material/Group';
 // import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { useState } from "react";
 import { useNavigate } from 'react-router-dom'
-import { STATUS_CODE_CONFLICT, STATUS_CODE_OK } from "../constants";
+import { STATUS_CODE_ERR, STATUS_CODE_OK } from "../constants";
 import Typist from 'react-typist-component';
 import { setCookie } from '../utils/cookies.js'
 import { userApi } from '../utils/api.js'
@@ -32,7 +32,7 @@ function LoginPage() {
         setIsLoginSuccess(false)
         const res = await userApi.post('/login', { username, password })
             .catch((err) => {
-                if (err.response.status === STATUS_CODE_CONFLICT) {
+                if (err.response.status === STATUS_CODE_ERR) {
                     setErrMessage('The username and password you entered did not match our records.');
                 } else {
                     setErrMessage("Please double-check and try again later.");
