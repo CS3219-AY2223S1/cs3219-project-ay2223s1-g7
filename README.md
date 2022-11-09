@@ -1,8 +1,23 @@
 # CS3219-AY22-23-Project-Skeleton
 
-This is a template repository for CS3219 project.
+This is the repository for CS3219 project. Below are the deployed and local setup.
 
-## Apply this to the different sub-folders
+## Deployed
+Visit the links and trust the certificates:
+- https://matserv-env.eba-ei3vpcg2.ap-southeast-1.elasticbeanstalk.com/ 
+- https://userservice-env.eba-p3j8behu.ap-southeast-1.elasticbeanstalk.com/ 
+- https://webserv-env.eba-jwtv3m3g.ap-southeast-1.elasticbeanstalk.com/
+- https://collab-env.eba-jd3df2b9.ap-southeast-1.elasticbeanstalk.com/
+- https://quessvc-env.eba-2agrnkqm.ap-southeast-1.elasticbeanstalk.com/ 
+
+Frontend:
+https://dj17yv8d2l9t3.cloudfront.net/
+
+
+
+
+## Local
+Apply this to the different sub-folders
  - collaboration-service
  - frontend
  - matching-service
