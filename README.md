@@ -19,7 +19,6 @@ https://dj17yv8d2l9t3.cloudfront.net/
 ## Local
 Apply this to the different sub-folders
  - collaboration-service
- - frontend
  - matching-service
  - question-service
  - user-service
@@ -40,7 +39,11 @@ SECRET_KEY ={anything that you want}
 4. Install npm packages for the respective services using `npm i`.
 5. Run the respective services using `npm run dev`.
 
-## Before running
+In the frontend sub-folder
+1. Install npm packages for the respective services using `npm i`.
+2. Run `npm start`.
+
+## Before running any sub-folder
 1. Run a redis server locally
 
 https://tableplus.com/blog/2018/10/how-to-start-stop-restart-redis.html
