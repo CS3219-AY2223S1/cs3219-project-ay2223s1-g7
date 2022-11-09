@@ -13,10 +13,13 @@ Visit the links and trust the certificates:
 Frontend:
 https://dj17yv8d2l9t3.cloudfront.net/
 
-
-
-
 ## Local
+
+Before running any sub-folder
+- Run a redis server locally
+
+https://tableplus.com/blog/2018/10/how-to-start-stop-restart-redis.html
+
 Apply this to the different sub-folders
  - collaboration-service
  - matching-service
@@ -40,10 +43,5 @@ SECRET_KEY ={anything that you want}
 5. Run the respective services using `npm run dev`.
 
 In the frontend sub-folder
-1. Install npm packages for the respective services using `npm i`.
+1. Install npm packages using `npm i`.
 2. Run `npm start`.
-
-## Before running any sub-folder
-1. Run a redis server locally
-
-https://tableplus.com/blog/2018/10/how-to-start-stop-restart-redis.html
