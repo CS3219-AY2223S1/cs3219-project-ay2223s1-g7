@@ -2,13 +2,30 @@
 
 This is a template repository for CS3219 project.
 
-## User Service 
-1. Rename `.env.sample` file to `.env`.
-2. Create a Cloud DB URL using Mongo Atlas.
-3. Enter the DB URL created as `DB_CLOUD_URI` in `.env` file.
-4. Install npm packages using `npm i`.
-5. Run User Service using `npm run dev`.
+## Apply this to the different sub-folders
+ - collaboration-service
+ - frontend
+ - matching-service
+ - question-service
+ - user-service
+ - webcam-service
+1. Create `.env` file
+2. Create a Cloud DB URL using Mongo Atlas (Only need to do this once)
 
-## Frontend
-1. Install npm packages using `npm i`.
-2. Run Frontend using `npm start`.
+In the `.env` file, copy and paste the following and replace the Cloud DB URL:
+
+ENV=DEV
+
+DB_LOCAL_URI={your_url}
+
+3. For user-service, add an additional attribute in `.env` file
+
+SECRET_KEY ={anything that you want}
+
+4. Install npm packages for the respective services using `npm i`.
+5. Run the respective services using `npm run dev`.
+
+## Before running
+1. Run a redis server locally
+
+https://tableplus.com/blog/2018/10/how-to-start-stop-restart-redis.html
