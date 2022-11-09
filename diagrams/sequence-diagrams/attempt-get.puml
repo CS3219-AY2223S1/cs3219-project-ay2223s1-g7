@@ -1,0 +1,29 @@
+@startuml matching-disconnect
+
+participant "user1:Frontend" as user1
+participant QuestionService
+database mongodb
+
+activate user1
+user1 -> QuestionService: searchAllQuestionsAttempted(username)
+activate QuestionService
+
+
+QuestionService -> mongodb: searchAllQuestionsAttempted(username)
+
+note over QuestionService
+    Returns all the questions 
+    that has username in "attempts"
+end note
+
+mongodb --> QuestionService: questions
+
+QuestionService -> user1: questions
+
+deactivate QuestionService
+
+
+
+
+@enduml
+
